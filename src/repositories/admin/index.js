@@ -1,4 +1,4 @@
 const { adminsDb } = require("../../data-access");
-const signinAdmin = require("./signin-admin");
+const { makeSigninAdmin } = require("./signin-admin");
 
-exports.signinAdmin = signinAdmin(adminsDb);
+exports.signinAdmin = makeSigninAdmin(adminsDb);

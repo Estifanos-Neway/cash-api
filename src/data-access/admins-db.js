@@ -1,10 +1,8 @@
-const { exists } = require("./commons");
-const { admin } = require("./db-schemas");
+const { exists } = require("./db-commons/functions");
+const { adminModel } = require("./db-models");
 
-module.exports = function (dbConnector) {
-    return async function () {
-        return Object.freeze({
-            exists: async (doc) => exists(dbConnector, admin, doc),
-        });
-    };
+exports.makeAdminsDb = function (dbConnector) {
+    return Object.freeze({
+        exists: async (doc) => exists(dbConnector, adminModel, doc),
+    });
 };

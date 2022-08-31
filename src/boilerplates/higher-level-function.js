@@ -1,5 +1,5 @@
-module.exports = function () {
-    return function () {
+exports.makeX = function () {
+    return function x() {
 
     };
 };

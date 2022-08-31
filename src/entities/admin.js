@@ -1,9 +1,9 @@
 const _ = require("lodash");
-
-module.exports = function () {
-    return function (username, passwordHash) {
+const { invalidInput, requiredParamsNotFound } = require("../commons/variables");
+exports.makeAdmin = function () {
+    return function admin(username, passwordHash) {
         if (_.isUndefined(username) || _.isUndefined(passwordHash)) {
-            throw new Error("Required_Params (username and passwordHash)");
+            throw new Error(`${invalidInput}${requiredParamsNotFound}:(username and passwordHash)`);
         } else {
             return Object.freeze({
                 username,

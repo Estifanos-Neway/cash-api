@@ -1,3 +1,3 @@
-const admin = require("./admin");
+const { makeAdmin } = require("./admin");
 
-exports.admin  = admin();
+exports.admin = makeAdmin();
