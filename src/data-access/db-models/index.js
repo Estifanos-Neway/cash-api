@@ -1,1 +1,0 @@
-exports.adminModel = require("./admin-model");

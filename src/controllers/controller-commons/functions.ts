@@ -1,7 +1,7 @@
-function singleResponse(response) {
+function singleResponse(response: string): string {
     return JSON.stringify({ message: response });
 }
 
-module.exports = {
+export {
     singleResponse
 };
