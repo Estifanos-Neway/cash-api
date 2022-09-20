@@ -1,5 +1,5 @@
-const { makeSigninAdminController } = require("./signin-admin-controller");
+const { makeSignInAdminController } = require("./sign-in-admin-controller");
 
 module.exports = {
-    signinAdminController: makeSigninAdminController()
+    signInAdminController: makeSignInAdminController()
 };

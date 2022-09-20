@@ -1,17 +1,8 @@
-const express = require("express");
-const { defaultPort } = require("./commons/variables");
-const { adminRouter } = require("./routers");
+const color = require("cli-color");
+const app = require("./app");
 
-const app = express();
-const port = process.env.PORT || defaultPort;
-
-app.use(express.json());
-app.use("/admin", adminRouter);
-
-app.use((req, res) => {
-    res.status(404).end(JSON.stringify({ message: "Path_Not_Found" }));
-});
+const port = app.get("port");
 
 app.listen(port, () => {
-    console.log(`server started running at port: ${port}`);
+    console.log(color.blue(`\nserver started running at port: ${color.bold(port)}`));
 });

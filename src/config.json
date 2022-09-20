@@ -1,0 +1,6 @@
+{
+    "defaultAdmin":{
+        "username":"Admin",
+        "password":"password"
+    }
+}

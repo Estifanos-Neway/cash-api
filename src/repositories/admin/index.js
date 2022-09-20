@@ -1,4 +1,8 @@
-const { adminsDb } = require("../../data-access");
-const { makeSigninAdmin } = require("./signin-admin");
+const { admin } = require("../../entities");
+const { adminsDb } = require("../../data-access/dbs");
+const { makeSignInAdmin, makeSignUpAdmin } = require("./admin-repo");
 
-exports.signinAdmin = makeSigninAdmin(adminsDb);
+module.exports = {
+    signInAdmin: makeSignInAdmin(admin, adminsDb),
+    signUpAdmin: makeSignUpAdmin(admin, adminsDb)
+};
