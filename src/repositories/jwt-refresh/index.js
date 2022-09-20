@@ -1,8 +1,8 @@
 const { jwtRefreshDb } = require("../../data-access/dbs");
-const { makeAddJwtRefresh, makeCheckJwtRefresh, makeDeleteJwtRefresh } = require("./jwt-refresh-repo");
+const { makeAddJwtRefreshRepo, makeCheckJwtRefreshRepo, makeDeleteJwtRefreshRepo } = require("./jwt-refresh-repo");
 
 module.exports = {
-    addJwtRefresh: makeAddJwtRefresh(jwtRefreshDb),
-    checkJwtRefresh: makeCheckJwtRefresh(jwtRefreshDb),
-    deleteJwtRefresh: makeDeleteJwtRefresh(jwtRefreshDb)
+    addJwtRefreshRepo: makeAddJwtRefreshRepo(jwtRefreshDb),
+    checkJwtRefreshRepo: makeCheckJwtRefreshRepo(jwtRefreshDb),
+    deleteJwtRefreshRepo: makeDeleteJwtRefreshRepo(jwtRefreshDb)
 };

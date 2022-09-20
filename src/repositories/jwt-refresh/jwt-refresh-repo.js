@@ -1,12 +1,11 @@
-
-exports.makeAddJwtRefresh = function (jwtRefreshDb) {
+exports.makeAddJwtRefreshRepo = function (jwtRefreshDb) {
     return async (token) => await jwtRefreshDb.create(token);
 };
 
-exports.makeCheckJwtRefresh = function (jwtRefreshDb) {
+exports.makeCheckJwtRefreshRepo = function (jwtRefreshDb) {
     return async (token) => await jwtRefreshDb.exists(token);
 };
 
-exports.makeDeleteJwtRefresh = function (jwtRefreshDb) {
+exports.makeDeleteJwtRefreshRepo = function (jwtRefreshDb) {
     return async (token) => await jwtRefreshDb.deleteOne(token);
 };

@@ -1,12 +1,15 @@
 require("dotenv").config();
+const mongoose = require("mongoose");
 const { makeDbConnector } = require("../db-connector");
 const { makeAdminsDb } = require("./admins-db");
 const { adminModel } = require("../db-models");
-const {env} = require("../../env");
+const { admin } = require("../../entities");
+const { env } = require("../../env");
 const jwtRefreshModel = require("../db-models/jwt-refresh-model");
 const { makeJwtRefreshDb } = require("./jwt-refresh-db");
+const { exists, deleteOne, count, create, findOne } = require("../db-commons/functions");
 
-const dbConnector = makeDbConnector(env.DB_URL);
+const dbConnector = makeDbConnector(mongoose,env.DB_URL);
 
-exports.adminsDb = makeAdminsDb(dbConnector, adminModel);
-exports.jwtRefreshDb = makeJwtRefreshDb (dbConnector, jwtRefreshModel);
+exports.adminsDb = makeAdminsDb(admin,dbConnector, adminModel, exists, count, create, findOne);
+exports.jwtRefreshDb = makeJwtRefreshDb(dbConnector, jwtRefreshModel, exists, deleteOne, create);

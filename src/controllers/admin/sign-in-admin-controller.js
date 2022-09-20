@@ -1,25 +1,18 @@
-const jwt = require("jsonwebtoken");
-const { env } = require("../../env");
-const { signInAdmin } = require("../../repositories/admin");
-const { addJwtRefresh } = require("../../repositories/jwt-refresh");
-const { errorHandler } = require("../controller-commons");
-const { singleResponse } = require("../controller-commons/functions");
-const { notFound } = require("../controller-commons/variables");
-
-exports.makeSignInAdminController = function () {
-    return async function signInAdminController(req, res) {
+exports.makeSignInAdminCont = (jwt, env, signInAdminRepo, addJwtRefreshRepo, errorHandler, singleResponse, createAccessToken, notFound) => {
+    return async (req, res) => {
         try {
             const { username, passwordHash } = req.body;
-            const signedInAdmin = await signInAdmin(username, passwordHash);
+            const signedInAdmin = await signInAdminRepo(username, passwordHash);
             if (signedInAdmin) {
+                const tokenData = { userId: signedInAdmin.username, userType: "admin" };
                 // @ts-ignore
-                const token = jwt.sign({ username: signedInAdmin.username }, env.JWT_SECRETE, { expiresIn: "10m" });
+                const accessToken = createAccessToken(tokenData);
                 // @ts-ignore
-                const refreshToken = jwt.sign({ username: signedInAdmin.username }, env.JWT_REFRESH_SECRETE);
-                await addJwtRefresh(refreshToken);
+                const refreshToken = jwt.sign(tokenData, env.JWT_REFRESH_SECRETE);
+                await addJwtRefreshRepo(refreshToken);
                 const response = {
                     admin: signedInAdmin,
-                    token,
+                    accessToken,
                     refreshToken
                 };
                 res.end(JSON.stringify(response));

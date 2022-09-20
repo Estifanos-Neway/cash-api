@@ -1,8 +1,4 @@
-const { invalidInput } = require("../../commons/variables");
-const { singleResponse } = require("./functions");
-const { internalError } = require("./variables");
-
-exports.makeErrorHandler = function () {
+exports.makeErrorHandler = (invalidInput, internalError, singleResponse) => {
     return function errorHandler(error, res) {
         const errorMessage = error.message;
         if (errorMessage.startsWith(invalidInput)) {

@@ -1,7 +1,4 @@
-const { admin } = require("../../entities");
-const { exists, count, create, findOne } = require("../db-commons/functions");
-
-exports.makeAdminsDb = function (dbConnector, adminModel) {
+exports.makeAdminsDb = function (admin, dbConnector, adminModel, exists, count, create, findOne) {
     return Object.freeze({
         exists: (condition) => exists(dbConnector, adminModel, condition),
         count: () => count(dbConnector, adminModel),
