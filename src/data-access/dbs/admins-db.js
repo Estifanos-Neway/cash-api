@@ -1,4 +1,4 @@
-exports.makeAdminsDb = function (admin, dbConnector, adminModel, exists, count, create, findOne) {
+exports.makeAdminsDb = function (admin, dbConnector, adminModel, exists, count, create, findOne,updateOne) {
     return Object.freeze({
         exists: (condition) => exists(dbConnector, adminModel, condition),
         count: () => count(dbConnector, adminModel),
@@ -10,6 +10,7 @@ exports.makeAdminsDb = function (admin, dbConnector, adminModel, exists, count, 
             } else {
                 return null;
             }
-        }
+        },
+        updateOne: (condition, updates) => updateOne(dbConnector, adminModel, condition, updates)
     });
 };

@@ -23,10 +23,22 @@ async function deleteOne(dbConnector, model, condition) {
     return await model.deleteOne(condition);
 }
 
+async function updateOne(dbConnector, model, condition, updates) {
+    await dbConnector();
+    let doc = await model.findOne(condition);
+    Object.entries(updates).forEach(update => {
+        if (update[0] in doc){
+            doc[update[0]] = update[1];
+        }
+    });
+    doc.save();
+}
+
 module.exports = {
     exists,
     count,
     create,
     findOne,
-    deleteOne
+    deleteOne,
+    updateOne
 };

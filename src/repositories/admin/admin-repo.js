@@ -5,7 +5,7 @@ exports.makeSignUpAdminRepo = function (admin, adminsDb) {
     };
 };
 
-exports.makeSignInAdminRepo = function (admin, adminsDb) {
+exports.makeSignInAdminRepo = (admin, adminsDb) => {
     return async (username, passwordHash) => {
         const adminToSignIn = admin(username, passwordHash);
         const signedInAdmin = await adminsDb.findOne({ username: adminToSignIn.username, passwordHash: adminToSignIn.passwordHash });
@@ -17,3 +17,6 @@ exports.makeSignInAdminRepo = function (admin, adminsDb) {
     };
 };
 
+exports.makeChangeAdminUsernameRepo = (adminsDb) => {
+    return async (oldUsername, newUsername) => await adminsDb.updateOne({ username: oldUsername }, { username: newUsername });
+};
