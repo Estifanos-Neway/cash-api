@@ -1,1 +1,0 @@
-export { default as adminModel } from "./admin-model";

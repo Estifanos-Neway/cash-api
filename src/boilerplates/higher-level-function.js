@@ -1,4 +1,4 @@
-export function makeX() {
+exports.makeX = function () {
     return function x() {
 
     };
