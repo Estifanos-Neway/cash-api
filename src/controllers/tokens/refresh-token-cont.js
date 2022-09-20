@@ -1,28 +1,35 @@
 const _ = require("lodash");
-const { invalidAccessToken } = require("../../commons/variables");
+const { createUserData } = require("../controller-commons/functions");
 
-exports.makeRefreshTokenCont = (jwt, env, checkJwtRefreshRepo, createAccessToken, singleResponse, errorHandler) => {
+exports.makeRefreshTokenCont = (jwt, env, checkJwtRefreshRepo, createAccessToken, singleResponse, errorHandler, invalidAccessToken) => {
     return async (req, res) => {
         try {
-            const { refreshToken } = req.body;
-            // eslint-disable-next-line no-unsafe-optional-chaining
-            const user1 = req.user;
-            if (_.isUndefined(refreshToken) || _.isUndefined(user1)) {
-                res.status(400).end(singleResponse("Missing_Tokens (accessToken or refreshToken)"));
+            const { refreshToken, accessToken } = req.body;
+            if (_.isUndefined(refreshToken) || _.isUndefined(accessToken)) {
+                res.status(400).end(singleResponse("Missing_Tokens (accessToken or refreshToken"));
             } else {
                 const refreshTokenExists = await checkJwtRefreshRepo(refreshToken);
                 if (refreshTokenExists) {
                     // @ts-ignore
-                    jwt.verify(refreshToken, env.JWT_REFRESH_SECRETE, (error, user2) => {
+                    jwt.verify(refreshToken, env.JWT_REFRESH_SECRETE, (error, user1) => {
                         if (error) {
                             res.status(401).end(singleResponse("Invalid_Refresh_Token"));
                         } else {
-                            if (user1.userType === user2.userType && user1.userId === user2.userId) {
-                                const newAccessToken = createAccessToken(user1);
-                                res.end(JSON.stringify({ newAccessToken }));
-                            } else {
-                                res.status(401).end(singleResponse("None_Matching_Tokens"));
-                            }
+                            // @ts-ignore
+                            jwt.verify(accessToken, env.JWT_SECRETE, { ignoreExpiration: true }, (error, user2) => {
+                                if (error) {
+                                    res.status(401).end(singleResponse("Invalid_Access_Token"));
+                                } else {
+                                    // @ts-ignore
+                                    if (user1.userType === user2.userType && user1.userId === user2.userId) {
+                                        const userData = createUserData(user1.userId, user1.userType);
+                                        const newAccessToken = createAccessToken(userData);
+                                        res.end(JSON.stringify({ newAccessToken }));
+                                    } else {
+                                        res.status(401).end(singleResponse("None_Matching_Tokens"));
+                                    }
+                                }
+                            });
                         }
                     });
                 } else {

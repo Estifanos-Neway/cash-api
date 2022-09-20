@@ -4,13 +4,16 @@ const { env } = require("../../env");
 function singleResponse(response) {
     return JSON.stringify({ message: response });
 }
-
-function createAccessToken(data) {
+function createUserData(userId, userType){
+    return {userId, userType};
+}
+function createAccessToken(userData) {
     // @ts-ignore
-    return jwt.sign(data, env.JWT_SECRETE, { expiresIn: "10m" });
+    return jwt.sign(userData, env.JWT_SECRETE, { expiresIn: "10m" });
 }
 
 module.exports = {
     singleResponse,
-    createAccessToken
+    createAccessToken,
+    createUserData
 };
