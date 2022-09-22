@@ -1,11 +1,11 @@
-const _ = require("lodash");
+const { hasValue } = require("../../commons/functions");
 const { createUserData } = require("../controller-commons/functions");
 
 exports.makeRefreshTokenCont = (jwt, env, checkJwtRefreshRepo, createAccessToken, singleResponse, errorHandler, invalidAccessToken) => {
     return async (req, res) => {
         try {
             const { refreshToken, accessToken } = req.body;
-            if (_.isUndefined(refreshToken) || _.isUndefined(accessToken)) {
+            if (!hasValue(refreshToken) || !hasValue(accessToken)) {
                 res.status(400).end(singleResponse("Missing_Tokens (accessToken or refreshToken"));
             } else {
                 const refreshTokenExists = await checkJwtRefreshRepo(refreshToken);

@@ -1,11 +1,11 @@
 
 // http response messages
-const success = "OK";
+const successResponseText = "OK";
 const notFound = "Not_Found";
 const internalError = "Internal_Error";
 
 module.exports = {
-    success,
+    successResponseText,
     notFound,
     internalError
 };

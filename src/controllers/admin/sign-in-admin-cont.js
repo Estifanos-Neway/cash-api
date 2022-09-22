@@ -1,12 +1,12 @@
-const { createUserData } = require("../controller-commons/functions");
 
-exports.makeSignInAdminCont = (jwt, env, signInAdminRepo, addJwtRefreshRepo, errorHandler, singleResponse, createAccessToken, notFound) => {
+exports.makeSignInAdminCont = (
+    jwt, env, signInAdminRepo, addJwtRefreshRepo, errorHandler, singleResponse, createAccessToken, notFound, createUserData) => {
     return async (req, res) => {
         try {
             const { username, passwordHash } = req.body;
             const signedInAdmin = await signInAdminRepo(username, passwordHash);
             if (signedInAdmin) {
-                const userData = createUserData(signedInAdmin.username, "admin");
+                const userData = createUserData(signedInAdmin.userId, "admin");
                 // @ts-ignore
                 const accessToken = createAccessToken(userData);
                 // @ts-ignore

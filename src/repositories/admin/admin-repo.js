@@ -18,5 +18,5 @@ exports.makeSignInAdminRepo = (admin, adminsDb) => {
 };
 
 exports.makeChangeAdminUsernameRepo = (adminsDb) => {
-    return async (oldUsername, newUsername) => await adminsDb.updateOne({ username: oldUsername }, { username: newUsername });
+    return async (userId, newUsername) => await adminsDb.updateOne({ id: userId }, { username: newUsername });
 };

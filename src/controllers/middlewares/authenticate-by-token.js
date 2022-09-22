@@ -1,10 +1,8 @@
-const { invalidAccessToken } = require("../../commons/variables");
 
-exports.makeAuthenticateByToken = (env, singleResponse, jwt) => {
+exports.makeAuthenticateByToken = (env, singleResponse, jwt,invalidAccessToken) => {
     return (req, res, next) => {
         let accessToken = req.get("Authorization");
         accessToken = accessToken && accessToken.split(" ")[1];
-        console.log(accessToken);
         if (accessToken) {
             try {
                 const userData = jwt.verify(accessToken, env.JWT_SECRETE);

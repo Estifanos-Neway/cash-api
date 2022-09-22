@@ -6,7 +6,7 @@ exports.makeAdminsDb = function (admin, dbConnector, adminModel, exists, count, 
         findOne: async (condition) => {
             const result = await findOne(dbConnector, adminModel, condition);
             if (result) {
-                return admin(result.username, result.passwordHash);
+                return admin(result.username, result.passwordHash, result.id);
             } else {
                 return null;
             }

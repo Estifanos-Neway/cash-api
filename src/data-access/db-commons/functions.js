@@ -31,7 +31,7 @@ async function updateOne(dbConnector, model, condition, updates) {
             doc[update[0]] = update[1];
         }
     });
-    doc.save();
+    await doc.save();
 }
 
 module.exports = {
