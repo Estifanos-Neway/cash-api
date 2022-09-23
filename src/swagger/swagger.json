@@ -8,5 +8,136 @@
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
     "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/{token}",
+      "variables": {
+        "token": {
+          "description": "Access token",
+          "default": ""
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/admins/signin": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Sign in an admin.",
+        "requestBody": {
+          "description": "Admin cridentials",
+          "required": true,
+          "content": {
+            "applicaton/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "passwordHash": {
+                    "type": "string"
+                  }
+                },
+                "required": ["username", "passwordHash"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfull sign in.",
+            "content": {
+              "applicaton/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "admin": {
+                      "type": "object",
+                      "properties": {
+                        "username": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "accessToken": {
+                      "type": "string"
+                    },
+                    "refreshToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "404": {
+            "$ref": "#/components/responses/userNotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/admin/username":{},
+    "/tokens/refresh": {},
+    "/tokens/signout":{}
+  },
+  "components": {
+    "responses": {
+      "userNotFound": {
+        "description": "User to be signed in is not found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "internalError": {
+        "description": "An internal error happened and couldn't serve the request.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "invalidInput": {
+        "description": "An invalid input from the user, like not sending required params.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

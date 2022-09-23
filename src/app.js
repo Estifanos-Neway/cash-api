@@ -15,18 +15,18 @@ const swaggerDoc = require("./swagger/swagger.json");
 const swaggerOptions = {
     explorer: true
 };
-app.use("/docs", (req, res, next) => {
-    // @ts-ignore
-    swaggerDoc.host = req.get("host");
-    req.swaggerDoc = swaggerDoc;
-    next();
-}, swaggerUi.serveFiles(swaggerDoc, swaggerOptions), swaggerUi.setup());
 
 // middleware configurations
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(authenticateByToken);
 
+app.use("/docs", (req, res, next) => {
+    // @ts-ignore
+    swaggerDoc.host = req.get("host");
+    req.swaggerDoc = swaggerDoc;
+    next();
+}, swaggerUi.serveFiles(swaggerDoc, swaggerOptions), swaggerUi.setup());
 app.use("/admins", adminRouter);
 app.use("/tokens", tokensRouter);
 
