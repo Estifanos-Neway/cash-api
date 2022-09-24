@@ -23,7 +23,7 @@
   "paths": {
     "/admins/signin": {
       "post": {
-        "tags": ["Admin"],
+        "tags": ["Admins"],
         "summary": "Sign in an admin.",
         "requestBody": {
           "description": "Admin cridentials",
@@ -32,6 +32,7 @@
             "applicaton/json": {
               "schema": {
                 "type": "object",
+                "required": ["username", "passwordHash"],
                 "properties": {
                   "username": {
                     "type": "string"
@@ -39,8 +40,7 @@
                   "passwordHash": {
                     "type": "string"
                   }
-                },
-                "required": ["username", "passwordHash"]
+                }
               }
             }
           }
@@ -87,12 +87,171 @@
         }
       }
     },
-    "/admin/username":{},
-    "/tokens/refresh": {},
-    "/tokens/signout":{}
+    "/admin/username": {
+      "patch": {
+        "summary": "Change admins username. [Must_Be_Auth_As_Admin]",
+        "tags": ["Admins"],
+        "requestBody": {
+          "description": "The new username must be provided",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["newUsername"],
+                "properties": {
+                  "newUsername": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/success"
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/tokens/refresh": {
+      "post": {
+        "summary": "Refrsh an access token.",
+        "tags": ["Tokens"],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/bothTokens"
+        },
+        "responses": {
+          "200": {
+            "description": "Successfull refresh.",
+            "content": {
+              "applicaton/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/tokens/signout": {
+      "delete": {
+        "summary": "Sign out a user.",
+        "tags": ["Tokens"],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/bothTokens"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/success"
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    }
   },
   "components": {
+    "requestBodies": {
+      "bothTokens": {
+        "required": true,
+        "content": {
+          "appliation/json": {
+            "schema": {
+              "type": "object",
+              "required": ["accessToken", "refreshToken"],
+              "properties": {
+                "accessToken": {
+                  "type": "string",
+                  "description": "The old access token."
+                },
+                "refreshToken": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "responses": {
+      "success": {
+        "description": "Request has been successfully served.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "invalidInput": {
+        "description": "An invalid input from the user, like not sending required params.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "unauthorized": {
+        "description": "An invalid or missing access token",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
       "userNotFound": {
         "description": "User to be signed in is not found.",
         "content": {
@@ -110,21 +269,6 @@
       },
       "internalError": {
         "description": "An internal error happened and couldn't serve the request.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      },
-      "invalidInput": {
-        "description": "An invalid input from the user, like not sending required params.",
         "content": {
           "application/json": {
             "schema": {
