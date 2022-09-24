@@ -1,11 +1,9 @@
-const { singleResponse } = require("../controller-commons/functions");
-const jwt = require("jsonwebtoken");
-const { env } = require("../../env");
 const { makeAuthenticateByToken } = require("./authenticate-by-token");
-const { invalidAccessToken } = require("../../commons/variables");
 const { makeForceAccessToken } = require("./force-access-token");
+const { makeForceApiKey } = require("./force-api-key");
 
 module.exports = {
-    authenticateByToken: makeAuthenticateByToken(env, singleResponse, jwt, invalidAccessToken),
-    forceAccessToken: makeForceAccessToken(singleResponse)
+    authenticateByToken: makeAuthenticateByToken(),
+    forceAccessToken: makeForceAccessToken(),
+    forceApiKey: makeForceApiKey()
 };

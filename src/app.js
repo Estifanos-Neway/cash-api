@@ -3,7 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const swaggerUi = require("swagger-ui-express");
 const { defaultPort } = require("./commons/variables");
-const { authenticateByToken } = require("./controllers/middlewares");
+const { authenticateByToken, forceApiKey } = require("./controllers/middlewares");
 const { env } = require("./env");
 const { adminRouter, tokensRouter } = require("./routers");
 const app = express();
@@ -27,6 +27,7 @@ app.use("/docs", (req, res, next) => {
     req.swaggerDoc = swaggerDoc;
     next();
 }, swaggerUi.serveFiles(swaggerDoc, swaggerOptions), swaggerUi.setup());
+app.use(forceApiKey);
 app.use("/admins", adminRouter);
 app.use("/tokens", tokensRouter);
 

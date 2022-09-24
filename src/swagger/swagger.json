@@ -3,21 +3,16 @@
   "info": {
     "title": "Cash Machine Mart",
     "description": "This is the back-end api for Cash Machine Mart.",
-    "license": {
-      "name": "Apache 2.0",
-      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
-    },
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "/{token}",
-      "variables": {
-        "token": {
-          "description": "Access token",
-          "default": ""
-        }
-      }
+      "url": "/"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
     }
   ],
   "paths": {
@@ -26,10 +21,10 @@
         "tags": ["Admins"],
         "summary": "Sign in an admin.",
         "requestBody": {
-          "description": "Admin cridentials",
+          "description": "Admin credentials",
           "required": true,
           "content": {
-            "applicaton/json": {
+            "application/json": {
               "schema": {
                 "type": "object",
                 "required": ["username", "passwordHash"],
@@ -47,9 +42,9 @@
         },
         "responses": {
           "200": {
-            "description": "Successfull sign in.",
+            "description": "Successful sign in.",
             "content": {
-              "applicaton/json": {
+              "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -126,16 +121,16 @@
     },
     "/tokens/refresh": {
       "post": {
-        "summary": "Refrsh an access token.",
+        "summary": "Refresh an access token.",
         "tags": ["Tokens"],
         "requestBody": {
           "$ref": "#/components/requestBodies/bothTokens"
         },
         "responses": {
           "200": {
-            "description": "Successfull refresh.",
+            "description": "Successful refresh.",
             "content": {
-              "applicaton/json": {
+              "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -184,11 +179,19 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "description": "Api key to access this api.",
+        "in": "header",
+        "name": "api-key"
+      }
+    },
     "requestBodies": {
       "bothTokens": {
         "required": true,
         "content": {
-          "appliation/json": {
+          "application/json": {
             "schema": {
               "type": "object",
               "required": ["accessToken", "refreshToken"],
