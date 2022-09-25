@@ -1,23 +1,16 @@
-const { singleResponse } = require("../controller-commons/functions");
 const jwt = require("jsonwebtoken");
 const { env } = require("../../env");
-const { invalidAccessToken } = require("../../commons/variables");
+const { getAccessToken } = require("../controller-commons/functions");
 
 exports.makeAuthenticateByToken = () => {
     return (req, res, next) => {
-        let accessToken = req.get("Authorization");
-        accessToken = accessToken && accessToken.split(" ")[1];
-        if (accessToken) {
-            try {
-                // @ts-ignore
-                const userData = jwt.verify(accessToken, env.JWT_SECRETE);
+        const accessToken = getAccessToken(req.get("Authorization"));
+        // @ts-ignore
+        jwt.verify(accessToken, env.JWT_SECRETE, (error, userData) => {
+            if (!error) {
                 req.user = userData;
-                next();
-            } catch (error) {
-                res.status(401).end(singleResponse(invalidAccessToken));
             }
-        } else {
             next();
-        }
+        });
     };
 };

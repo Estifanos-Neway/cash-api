@@ -1,4 +1,4 @@
-const { jwtRefreshDb } = require("../../data-access/dbs");
+const { jwtRefreshDb } = require("../../data-access");
 const { makeAddJwtRefreshRepo, makeCheckJwtRefreshRepo, makeDeleteJwtRefreshRepo } = require("./jwt-refresh-repo");
 
 module.exports = {

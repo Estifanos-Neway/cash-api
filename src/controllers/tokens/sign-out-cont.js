@@ -1,29 +1,35 @@
 const { hasValue } = require("../../commons/functions");
+const jwt = require("jsonwebtoken");
+const { env } = require("../../env");
+const { errorHandler } = require("../controller-commons/functions");
+const { createSingleResponse, getAccessToken } = require("../controller-commons/functions");
+const { successResponseText } = require("../controller-commons/variables");
+const { invalidAccessTokenResponseText, invalidRefreshTokenResponseText, requiredParamsNotFoundResponseText } = require("../../commons/variables");
 
-exports.makeSignOutCont = (
-    jwt, env, singleResponse, errorHandler,successResponseText,deleteJwtRefreshRepo) => {
+exports.makeSignOutCont = (deleteJwtRefreshRepo) => {
     return async (req, res) => {
         try {
-            const { refreshToken, accessToken } = req.body;
+            const refreshToken = req.get("refresh-token");
+            const accessToken = getAccessToken(req.get("Authorization"));
             if (!hasValue(refreshToken) || !hasValue(accessToken)) {
-                res.status(400).end(singleResponse("Missing_Tokens (accessToken or refreshToken"));
+                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
             } else {
                 // @ts-ignore
                 jwt.verify(refreshToken, env.JWT_REFRESH_SECRETE, (error, user1) => {
                     if (error) {
-                        res.status(401).end(singleResponse("Invalid_Refresh_Token"));
+                        res.status(401).end(createSingleResponse(invalidRefreshTokenResponseText));
                     } else {
                         // @ts-ignore
                         jwt.verify(accessToken, env.JWT_SECRETE, { ignoreExpiration: true }, async (error, user2) => {
                             if (error) {
-                                res.status(401).end(singleResponse("Invalid_Access_Token"));
+                                res.status(401).end(createSingleResponse(invalidAccessTokenResponseText));
                             } else {
                                 // @ts-ignore
                                 if (user1.userType === user2.userType && user1.userId === user2.userId) {
                                     await deleteJwtRefreshRepo(refreshToken);
-                                    res.end(singleResponse(successResponseText));
+                                    res.end(createSingleResponse(successResponseText));
                                 } else {
-                                    res.status(401).end(singleResponse("None_Matching_Tokens"));
+                                    res.status(401).end(createSingleResponse("None_Matching_Tokens"));
                                 }
                             }
                         });

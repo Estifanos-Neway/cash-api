@@ -5,11 +5,16 @@ function errorLog(errorMessage, error) {
 }
 
 function hasValue(element) {
-    if(_.isNumber(element)) return true;
+    if (_.isNumber(element)) return true;
     else if (_.isUndefined(element) || _.isEmpty(element)) return false;
     else return true;
 }
+
+function createResult(success, result) {
+    return { success, result: _.isUndefined(result) ? null : result };
+}
 module.exports = {
     errorLog,
-    hasValue
+    hasValue,
+    createResult
 };

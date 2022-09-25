@@ -1,5 +1,5 @@
 const { createHash } = require("crypto");
-const { adminsDb } = require("./data-access/dbs");
+const { adminsDb } = require("./data-access");
 const { signUpAdminRepo } = require("./repositories/admin");
 const { defaultAdmin } = require("./config.json");
 const { errorLog } = require("./commons/functions");

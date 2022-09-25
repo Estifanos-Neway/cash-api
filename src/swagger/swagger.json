@@ -120,12 +120,13 @@
       }
     },
     "/tokens/refresh": {
-      "post": {
+      "patch": {
         "summary": "Refresh an access token.",
         "tags": ["Tokens"],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/bothTokens"
-        },
+        "parameters": [
+          { "$ref": "#/components/parameters/accessToken" },
+          { "$ref": "#/components/parameters/refreshToken" }
+        ],
         "responses": {
           "200": {
             "description": "Successful refresh.",
@@ -158,9 +159,10 @@
       "delete": {
         "summary": "Sign out a user.",
         "tags": ["Tokens"],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/bothTokens"
-        },
+        "parameters": [
+          { "$ref": "#/components/parameters/accessToken" },
+          { "$ref": "#/components/parameters/refreshToken" }
+        ],
         "responses": {
           "200": {
             "$ref": "#/components/responses/success"
@@ -207,6 +209,28 @@
             }
           }
         }
+      }
+    },
+    "parameters": {
+      "accessToken": {
+        "name": "accessToken",
+        "description": "The old access token.",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "style": "simple"
+      },
+      "refreshToken": {
+        "name": "refreshToken",
+        "description": "The old refresh token.",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "style": "simple"
       }
     },
     "responses": {

@@ -1,6 +1,11 @@
+const jwt = require("jsonwebtoken");
+const { env } = require("../../env");
+const { errorHandler } = require("../controller-commons/functions");
+const { createSingleResponse, createAccessToken } = require("../controller-commons/functions");
+const { notFound } = require("../controller-commons/variables");
+const { createUserData } = require("../controller-commons/functions");
 
-exports.makeSignInAdminCont = (
-    jwt, env, signInAdminRepo, addJwtRefreshRepo, errorHandler, singleResponse, createAccessToken, notFound, createUserData) => {
+exports.makeSignInAdminCont = (signInAdminRepo, addJwtRefreshRepo) => {
     return async (req, res) => {
         try {
             const { username, passwordHash } = req.body;
@@ -19,7 +24,7 @@ exports.makeSignInAdminCont = (
                 };
                 res.end(JSON.stringify(response));
             } else {
-                res.status(404).end(singleResponse(notFound));
+                res.status(404).end(createSingleResponse(notFound));
             }
         } catch (error) {
             errorHandler(error, res);

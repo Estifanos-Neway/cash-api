@@ -1,39 +1,46 @@
 const { hasValue } = require("../../commons/functions");
-const { createUserData } = require("../controller-commons/functions");
+const { createUserData, getAccessToken } = require("../controller-commons/functions");
+const jwt = require("jsonwebtoken");
+const { env } = require("../../env");
+const { errorHandler } = require("../controller-commons/functions");
+const { createAccessToken, createSingleResponse } = require("../controller-commons/functions");
+const { invalidAccessTokenResponseText, invalidRefreshTokenResponseText, requiredParamsNotFoundResponseText } = require("../../commons/variables");
 
-exports.makeRefreshTokenCont = (jwt, env, checkJwtRefreshRepo, createAccessToken, singleResponse, errorHandler, invalidAccessToken) => {
+exports.makeRefreshTokenCont = (checkJwtRefreshRepo) => {
     return async (req, res) => {
         try {
-            const { refreshToken, accessToken } = req.body;
+            const refreshToken = req.get("refresh-token");
+            const accessToken = getAccessToken(req.get("Authorization"));
             if (!hasValue(refreshToken) || !hasValue(accessToken)) {
-                res.status(400).end(singleResponse("Missing_Tokens (accessToken or refreshToken"));
+                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
             } else {
                 const refreshTokenExists = await checkJwtRefreshRepo(refreshToken);
                 if (refreshTokenExists) {
                     // @ts-ignore
                     jwt.verify(refreshToken, env.JWT_REFRESH_SECRETE, (error, user1) => {
                         if (error) {
-                            res.status(401).end(singleResponse("Invalid_Refresh_Token"));
+                            res.status(401).end(createSingleResponse(invalidRefreshTokenResponseText));
                         } else {
                             // @ts-ignore
                             jwt.verify(accessToken, env.JWT_SECRETE, { ignoreExpiration: true }, (error, user2) => {
                                 if (error) {
-                                    res.status(401).end(singleResponse("Invalid_Access_Token"));
+                                    res.status(401).end(createSingleResponse(invalidAccessTokenResponseText));
                                 } else {
                                     // @ts-ignore
                                     if (user1.userType === user2.userType && user1.userId === user2.userId) {
+                                        // @ts-ignore
                                         const userData = createUserData(user1.userId, user1.userType);
                                         const newAccessToken = createAccessToken(userData);
                                         res.end(JSON.stringify({ newAccessToken }));
                                     } else {
-                                        res.status(401).end(singleResponse("None_Matching_Tokens"));
+                                        res.status(401).end(createSingleResponse("None_Matching_Tokens"));
                                     }
                                 }
                             });
                         }
                     });
                 } else {
-                    res.status(401).end(singleResponse(`${invalidAccessToken} (maybe signed out)`));
+                    res.status(401).end(createSingleResponse(`${invalidAccessTokenResponseText} (maybe signed out)`));
                 }
             }
         } catch (error) {

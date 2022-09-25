@@ -14,7 +14,7 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
 
     // swagger
     const swaggerDoc = require("./swagger/swagger.json");
-    const { singleResponse } = require("./controllers/controller-commons/functions");
+    const { createSingleResponse } = require("./controllers/controller-commons/functions");
     const swaggerOptions = {
         explorer: true
     };
@@ -31,7 +31,7 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     const limiter = rateLimit({
         windowMs: 1 * 60 * 1000,
         max: 10,
-        message: singleResponse("Too_Many_Requests"),
+        message: createSingleResponse("Too_Many_Requests"),
         skipSuccessfulRequests: true,
         standardHeaders: true,
         legacyHeaders: false
@@ -46,14 +46,14 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     ));
 
     // middleware configurations
-    app.use(morgan("combined"));
+    app.use(morgan("dev"));
     app.use(express.json());
-    app.use(authenticateByToken);
-
+    
     // Routes
     app.use(forceApiKey);
-    app.use("/admins", adminRouter);
+    app.use(authenticateByToken);
     app.use("/tokens", tokensRouter);
+    app.use("/admins", adminRouter);
 
     app.use("*", (req, res) => {
         res.status(404).end(JSON.stringify({ message: "Path_Not_Found" }));
