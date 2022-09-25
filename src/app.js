@@ -1,38 +1,62 @@
 
 const express = require("express");
 const morgan = require("morgan");
+const helmet = require("helmet");
+const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 const swaggerUi = require("swagger-ui-express");
-const { defaultPort } = require("./commons/variables");
 const { authenticateByToken, forceApiKey } = require("./controllers/middlewares");
 const { env } = require("./env");
-const { adminRouter, tokensRouter } = require("./routers");
-const app = express();
 
-app.set("port", env.PORT || defaultPort);
+exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
+    const app = express();
+    app.set("port", env.PORT || defaultPort);
 
-// swagger
-const swaggerDoc = require("./swagger/swagger.json");
-const swaggerOptions = {
-    explorer: true
-};
+    // swagger
+    const swaggerDoc = require("./swagger/swagger.json");
+    const { singleResponse } = require("./controllers/controller-commons/functions");
+    const swaggerOptions = {
+        explorer: true
+    };
+    app.use("/docs", (req, res, next) => {
+        // @ts-ignore
+        swaggerDoc.host = req.get("host");
+        req.swaggerDoc = swaggerDoc;
+        next();
+    }, swaggerUi.serveFiles(swaggerDoc, swaggerOptions), swaggerUi.setup());
 
-// middleware configurations
-app.use(morgan("dev"));
-app.use(express.json());
-app.use(authenticateByToken);
-
-app.use("/docs", (req, res, next) => {
+    // Security
+    app.set("trust proxy", 1);
     // @ts-ignore
-    swaggerDoc.host = req.get("host");
-    req.swaggerDoc = swaggerDoc;
-    next();
-}, swaggerUi.serveFiles(swaggerDoc, swaggerOptions), swaggerUi.setup());
-app.use(forceApiKey);
-app.use("/admins", adminRouter);
-app.use("/tokens", tokensRouter);
+    const limiter = rateLimit({
+        windowMs: 1 * 60 * 1000,
+        max: 10,
+        message: singleResponse("Too_Many_Requests"),
+        skipSuccessfulRequests: true,
+        standardHeaders: true,
+        legacyHeaders: false
+    });
+    app.use(helmet.hidePoweredBy());
+    app.use(limiter);
+    app.use(cors(
+        {
+            origin: env.CORS_WHITE_LIST?.split(","),
+            optionsSuccessStatus: 200
+        }
+    ));
 
-app.use((req, res) => {
-    res.status(404).end(JSON.stringify({ message: "Path_Not_Found" }));
-});
+    // middleware configurations
+    app.use(morgan("combined"));
+    app.use(express.json());
+    app.use(authenticateByToken);
 
-module.exports = app;
+    // Routes
+    app.use(forceApiKey);
+    app.use("/admins", adminRouter);
+    app.use("/tokens", tokensRouter);
+
+    app.use("*", (req, res) => {
+        res.status(404).end(JSON.stringify({ message: "Path_Not_Found" }));
+    });
+    return app;
+};
