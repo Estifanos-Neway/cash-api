@@ -3,6 +3,7 @@ const { adminsDb } = require("./data-access");
 const { signUpAdminRepo } = require("./repositories/admin");
 const { defaultAdmin } = require("./config.json");
 const { errorLog } = require("./commons/functions");
+
 async function init() {
     // Adding the default admin
     const adminsCount = await adminsDb.count();

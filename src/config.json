@@ -1,6 +1,7 @@
 {
-    "defaultAdmin":{
-        "username":"Admin",
-        "password":"password"
-    }
+  "defaultAdmin": {
+    "username": "Admin",
+    "password": "password"
+  },
+  "defaultCommissionRate": 10
 }

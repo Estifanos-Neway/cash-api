@@ -1,26 +1,39 @@
 const { exists, create, findOne, count } = require("../db-commons/functions");
 const { updateOne } = require("../db-commons/functions");
 
+function adaptAdmin(Admin, adminDoc) {
+    adminDoc = adminDoc.toJSON();
+    adminDoc.userId = adminDoc._id.toString();
+    return new Admin(adminDoc);
+}
+
 exports.makeAdminsDb = function (Admin, dbConnector, adminModel) {
     return Object.freeze({
         exists: (condition) => exists(dbConnector, adminModel, condition),
         count: () => count(dbConnector, adminModel),
-        create: (admin) => create(dbConnector, adminModel, admin.toJson()),
-        findOne: async (condition) => {
-            const result = await findOne(dbConnector, adminModel, condition);
+        create: async (admin) => {
+            let result = await create(dbConnector, adminModel, admin.toJson());
             if (result) {
-                const admin = new Admin(
-                    {
-                        username: result.username,
-                        passwordHash: result.passwordHash,
-                        userId: result.id
-                    }
-                );
-                return admin;
+                return adaptAdmin(Admin, result);
             } else {
                 return null;
             }
         },
-        updateOne: (condition, updates) => updateOne(dbConnector, adminModel, condition, updates)
+        findOne: async (condition) => {
+            let result = await findOne(dbConnector, adminModel, condition);
+            if (result) {
+                return adaptAdmin(Admin, result);
+            } else {
+                return null;
+            }
+        },
+        updateOne: async (condition, updates) => {
+            let result = await updateOne(dbConnector, adminModel, condition, updates);
+            if (result) {
+                return adaptAdmin(Admin, result);
+            } else {
+                return null;
+            }
+        }
     });
 };

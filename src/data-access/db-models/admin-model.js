@@ -9,6 +9,12 @@ const AdminSchema = new mongoose.Schema({
     passwordHash: {
         type: String,
         required: true
+    },
+    settings: {
+        commissionRate: {
+            type: Number,
+            required: true
+        }
     }
 });
 

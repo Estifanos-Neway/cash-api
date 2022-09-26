@@ -10,7 +10,7 @@ async function count(dbConnector, model) {
 
 async function create(dbConnector, model, doc) {
     await dbConnector();
-    await model.create(doc);
+    return await model.create(doc);
 }
 
 async function findOne(dbConnector, model, condition) {
@@ -31,7 +31,7 @@ async function updateOne(dbConnector, model, condition, updates) {
             doc[update[0]] = update[1];
         }
     });
-    await doc.save();
+    return await doc.save();
 }
 
 module.exports = {

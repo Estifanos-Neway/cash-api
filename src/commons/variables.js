@@ -10,6 +10,8 @@ const invalidPasswordHashResponseText = "Invalid_Password_Hash";
 const wrongPasswordHashResponseText = "Wrong_Password_Hash";
 const invalidUsernameResponseText = "Invalid_Username";
 const adminNotFoundResponseText = "Admin_Not_Found";
+const unknownSettingResponseText = "Unknown_Setting";
+const invalidCommissionRateResponseText = "Invalid_Commission_Rate";
 
 const defaultPort = 5000;
 
@@ -23,5 +25,7 @@ module.exports = {
     invalidPasswordHashResponseText,
     invalidUsernameResponseText,
     adminNotFoundResponseText,
-    wrongPasswordHashResponseText
+    wrongPasswordHashResponseText,
+    unknownSettingResponseText,
+    invalidCommissionRateResponseText
 };
