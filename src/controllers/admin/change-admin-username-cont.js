@@ -12,8 +12,12 @@ exports.makeChangeAdminUsernameCont = (changeAdminUsernameRepo) => {
             if (!hasValue(newUsername)) {
                 res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
             } else {
-                await changeAdminUsernameRepo(userId, newUsername);
-                res.end(createSingleResponse(successResponseText));
+                const result = await changeAdminUsernameRepo({userId, newUsername});
+                if (result.success) {
+                    res.end(createSingleResponse(successResponseText));
+                } else {
+                    res.status(400).end(result.result);
+                }
             }
         } catch (error) {
             errorHandler(error, res);

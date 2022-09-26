@@ -5,11 +5,11 @@ const { createSingleResponse, createAccessToken } = require("../controller-commo
 const { notFound } = require("../controller-commons/variables");
 const { createUserData } = require("../controller-commons/functions");
 
-exports.makeSignInAdminCont = (signInAdminRepo, addJwtRefreshRepo) => {
+exports.makeSignInAdminCont = ({ signInAdminRepo, addJwtRefreshRepo }) => {
     return async (req, res) => {
         try {
             const { username, passwordHash } = req.body;
-            const signedInAdmin = await signInAdminRepo(username, passwordHash);
+            const signedInAdmin = await signInAdminRepo({ username, passwordHash });
             if (signedInAdmin) {
                 const userData = createUserData(signedInAdmin.userId, "admin");
                 // @ts-ignore
@@ -18,7 +18,7 @@ exports.makeSignInAdminCont = (signInAdminRepo, addJwtRefreshRepo) => {
                 const refreshToken = jwt.sign(userData, env.JWT_REFRESH_SECRETE);
                 await addJwtRefreshRepo(refreshToken);
                 const response = {
-                    admin: signedInAdmin,
+                    admin: signedInAdmin.toJson(),
                     accessToken,
                     refreshToken
                 };

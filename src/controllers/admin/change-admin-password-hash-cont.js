@@ -12,7 +12,7 @@ exports.makeChangeAdminPasswordHashCont = (changeAdminPasswordHashRepo) => {
             if (!hasValue(oldPasswordHash) || !hasValue(newPasswordHash)) {
                 res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
             } else {
-                const result = await changeAdminPasswordHashRepo(userId, oldPasswordHash, newPasswordHash);
+                const result = await changeAdminPasswordHashRepo({ userId, oldPasswordHash, newPasswordHash });
                 if (result.success) {
                     res.end(createSingleResponse(successResponseText));
                 } else {

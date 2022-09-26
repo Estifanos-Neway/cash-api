@@ -9,7 +9,7 @@ async function init() {
     if (adminsCount === 0) {
         const passwordHash = createHash("sha256").update(defaultAdmin.password).digest("hex");
         try {
-            await signUpAdminRepo(defaultAdmin.username, passwordHash);
+            await signUpAdminRepo({ username: defaultAdmin.username, passwordHash });
             console.log("Default admin created successfully.");
         } catch (error) {
             errorLog("Failed to create the default admin", error);
