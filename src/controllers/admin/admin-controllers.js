@@ -50,6 +50,23 @@ exports.makeGetAdminCont = ({ getAdminRepo }) => {
     };
 };
 
+exports.makeGetAdminSettingsCont = ({ getAdminSettingsRepo }) => {
+    return async (req, res) => {
+        try {
+            const userId = req.user.userId;
+            const adminSettings = await getAdminSettingsRepo({ userId });
+            if (adminSettings) {
+                res.end(JSON.stringify(adminSettings));
+            } else {
+                res.status(404).end(createSingleResponse(notFound));
+            }
+        } catch (error) {
+            errorHandler(error, res);
+        }
+
+    };
+};
+
 exports.makeChangeAdminPasswordHashCont = ({ changeAdminPasswordHashRepo }) => {
     return async (req, res) => {
         try {

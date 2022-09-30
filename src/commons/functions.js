@@ -14,12 +14,8 @@ function createResult(success, result) {
     return { success, result: _.isUndefined(result) ? null : result };
 }
 
-function isValidUsername(username) {
-    return hasValue(username) && (_.isString(username) || _.isNumber(username));
-}
 module.exports = {
     errorLog,
     hasValue,
-    createResult,
-    isValidUsername
+    createResult
 };

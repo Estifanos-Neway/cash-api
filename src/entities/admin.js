@@ -1,7 +1,13 @@
 const _ = require("lodash");
+const validator = require("validator");
 const { defaultCommissionRate } = require("../config.json");
-const { isValidUsername, hasValue } = require("../commons/functions");
-const { invalidInput, invalidUsernameResponseText, invalidPasswordHashResponseText, wrongPasswordHashResponseText, invalidCommissionRateResponseText } = require("../commons/variables");
+const { hasValue } = require("../commons/functions");
+const {
+    invalidInput,
+    invalidPasswordHashResponseText,
+    wrongPasswordHashResponseText,
+    invalidCommissionRateResponseText,
+    invalidEmailResponseText } = require("../commons/variables");
 
 function adaptCommissionRate(commissionRate) {
     if (!_.isNumber(commissionRate)) {
@@ -19,9 +25,7 @@ class AdminSettings {
     #commissionRate = defaultCommissionRate;
 
     constructor({ commissionRate }) {
-        if (hasValue(commissionRate)) {
-            this.#commissionRate = adaptCommissionRate(commissionRate);
-        }
+        this.commissionRate = hasValue(commissionRate) ? commissionRate : this.#commissionRate;
     }
 
     set commissionRate(newCommissionRate) {
@@ -38,43 +42,48 @@ exports.makeAdmin = () => {
     return class Admin {
         #username;
         #passwordHash;
+        #recoveryEmail;
         #userId;
         // @ts-ignore
         #settings = new AdminSettings({});
 
         get username() { return this.#username; }
         get passwordHash() { return this.#passwordHash; }
+        get recoveryEmail() { return this.#recoveryEmail; }
         get userId() { return this.#userId; }
         get settings() { return this.#settings.toJson(); }
+
+        set recoveryEmail(newRecoveryEmail) {
+            if (!_.isUndefined(this.recoveryEmail)) {
+                newRecoveryEmail += "";
+                // @ts-ignore
+                if (validator.isEmail(newRecoveryEmail)) {
+                    this.#recoveryEmail = newRecoveryEmail;
+                } else {
+                    throw new Error(`${invalidInput}${invalidEmailResponseText}`);
+                }
+            }
+        }
 
         toJson() {
             return Object.freeze(
                 {
-                    username: this.#username,
-                    passwordHash: this.#passwordHash,
-                    userId: this.#userId,
-                    settings: this.#settings.toJson()
+                    username: this.username,
+                    passwordHash: this.passwordHash,
+                    recoveryEmail: this.recoveryEmail,
+                    userId: this.userId,
+                    settings: this.settings
                 }
             );
         }
 
-        constructor({ username, passwordHash, userId, settings }) {
-            if (!isValidUsername(username)) {
-                throw new Error(`${invalidInput}${invalidUsernameResponseText}`);
-            } else {
-                this.#username = username;
-                this.#passwordHash = passwordHash;
-                this.#userId = userId;
-                this.#settings = new AdminSettings({ ...settings });
-            }
-        }
+        constructor({ username, passwordHash, recoveryEmail, userId, settings }) {
+            this.#username = username;
+            this.#passwordHash = passwordHash;
+            this.recoveryEmail = recoveryEmail;
+            this.#userId = userId;
+            this.#settings = new AdminSettings({ ...settings });
 
-        changeUsername({ newUsername }) {
-            if (!isValidUsername(newUsername)) {
-                throw new Error(`${invalidInput}${invalidUsernameResponseText}`);
-            } else {
-                this.#username = newUsername;
-            }
         }
 
         changePasswordHash({ oldPasswordHash, newPasswordHash }) {

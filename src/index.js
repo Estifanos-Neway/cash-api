@@ -7,5 +7,5 @@ const app = makeApp(defaultPort, adminRouter, tokensRouter);
 const port = app.get("port");
 
 app.listen(port, () => {
-    console.log(color.blue(`\nserver started running at port: ${color.bold(port)}`));
+    console.log(color.blue(`\nserver started running at port: ${color.bold(port)}\n`));
 });

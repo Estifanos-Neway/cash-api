@@ -13,9 +13,9 @@ async function create(dbConnector, model, doc) {
     return await model.create(doc);
 }
 
-async function findOne(dbConnector, model, condition) {
+async function findOne(dbConnector, model, condition, selection) {
     await dbConnector();
-    return await model.findOne(condition);
+    return await model.findOne(condition).select(selection).exec();
 }
 
 async function deleteOne(dbConnector, model, condition) {
@@ -27,7 +27,7 @@ async function updateOne(dbConnector, model, condition, updates) {
     await dbConnector();
     let doc = await model.findOne(condition);
     Object.entries(updates).forEach(update => {
-        if (update[0] in doc){
+        if (update[0] in doc) {
             doc[update[0]] = update[1];
         }
     });

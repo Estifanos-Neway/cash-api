@@ -19,8 +19,8 @@ exports.makeAdminsDb = function (Admin, dbConnector, adminModel) {
                 return null;
             }
         },
-        findOne: async (condition) => {
-            let result = await findOne(dbConnector, adminModel, condition);
+        findOne: async (condition, selection) => {
+            let result = await findOne(dbConnector, adminModel, condition, selection);
             if (result) {
                 return adaptAdmin(Admin, result);
             } else {

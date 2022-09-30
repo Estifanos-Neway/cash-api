@@ -7,9 +7,17 @@ const {
     signInAdminCont,
     changeAdminPasswordHashCont,
     getAdminCont,
-    updateAdminSettingsCont } = require("../controllers/admin");
+    updateAdminSettingsCont,
+    getAdminSettingsCont } = require("../controllers/admin");
 
 module.exports = {
-    adminRouter: makeAdminRouter({ signInAdminCont, changeAdminUsernameCont, changeAdminPasswordHashCont, getAdminCont, updateAdminSettingsCont }),
+    adminRouter: makeAdminRouter({
+        signInAdminCont,
+        changeAdminUsernameCont,
+        changeAdminPasswordHashCont,
+        getAdminCont,
+        updateAdminSettingsCont,
+        getAdminSettingsCont
+    }),
     tokensRouter: makeTokensRouter(refreshTokenCont, signOutCont)
 };

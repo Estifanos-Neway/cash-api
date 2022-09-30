@@ -32,7 +32,7 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/userNotFound"
+            "$ref": "#/components/responses/notFound"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -89,7 +89,7 @@
             "$ref": "#/components/responses/invalidInput"
           },
           "404": {
-            "$ref": "#/components/responses/userNotFound"
+            "$ref": "#/components/responses/notFound"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -173,6 +173,31 @@
       }
     },
     "/admin/settings": {
+      "get": {
+        "summary": "Get admin settings. [Requires_Admin_Access_Token]",
+        "tags": ["Admin"],
+        "responses": {
+          "200": {
+            "description": "Admin settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref":"#/components/schemas/adminSettings"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
       "patch": {
         "summary": "Update admin settings. [Requires_Admin_Access_Token]",
         "tags": ["Admin"],
@@ -364,8 +389,8 @@
           }
         }
       },
-      "userNotFound": {
-        "description": "User to be signed in is not found.",
+      "notFound": {
+        "description": "The requested content not found.",
         "content": {
           "application/json": {
             "schema": {

@@ -27,6 +27,17 @@ exports.makeGetAdminRepo = ({ adminsDb }) => {
     };
 };
 
+exports.makeGetAdminSettingsRepo = ({ adminsDb }) => {
+    return async ({ userId }) => {
+        const admin = await adminsDb.findOne({ userId }, ["settings"]);
+        if (admin) {
+            return admin.settings;
+        } else {
+            return null;
+        }
+    };
+};
+
 exports.makeSignInAdminRepo = ({ Admin, adminsDb }) => {
     return async ({ username, passwordHash }) => {
         const admin = new Admin({ username, passwordHash });
@@ -43,7 +54,7 @@ exports.makeChangeAdminUsernameRepo = ({ adminsDb }) => {
     return async ({ userId, newUsername }) => {
         const admin = await adminsDb.findOne({ id: userId });
         if (admin) {
-            admin.changeUsername({ newUsername });
+            admin.username = newUsername;
             await adminsDb.updateOne({ id: userId }, { username: admin.username });
             return createResult(true);
         } else {
