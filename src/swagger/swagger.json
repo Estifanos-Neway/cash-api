@@ -16,17 +16,17 @@
     }
   ],
   "paths": {
-    "/admin":{
-      "get":{
-        "tags":["Admin"],
-        "summary":"Get admin data. [Requires_Admin_Access_Token",
+    "/admin": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get admin data. [Requires_Admin_Access_Token",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref":"#/components/schemas/adminData"
+                  "$ref": "#/components/schemas/adminData"
                 }
               }
             }
@@ -72,7 +72,7 @@
                   "type": "object",
                   "properties": {
                     "admin": {
-                      "$ref":"#/components/schemas/adminData"
+                      "$ref": "#/components/schemas/adminData"
                     },
                     "accessToken": {
                       "type": "string"
@@ -133,6 +133,99 @@
         }
       }
     },
+    "/admin/email": {
+      "put": {
+        "tags": ["Admin"],
+        "summary": "Create or updates the admins email. [Requires_Admin_Access_Token]",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["newEmail"],
+                "properties": {
+                  "newEmail": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK - A verification code is sent to the submitted email.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "verificationToken": {
+                      "type": "string",
+                      "description": "This token must be sent back with the verification code."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/admin/verify-email": {
+      "put": {
+        "tags": ["Admin"],
+        "summary": "Verifies an email. [Requires_Admin_Access_Token]",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["verificationCode", "verificationToken"],
+                "properties": {
+                  "verificationCode": {
+                    "type": "string",
+                    "description": "The code that has been sent to the email."
+                  },
+                  "verificationToken": {
+                    "type": "string",
+                    "description": "The verification token returned when adding the new email."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/success"
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "408": {
+            "$ref": "#/components/responses/timeOut"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
     "/admin/password-hash": {
       "patch": {
         "summary": "Change admins password hash. [Requires_Admin_Access_Token]",
@@ -182,7 +275,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref":"#/components/schemas/adminSettings"
+                  "$ref": "#/components/schemas/adminSettings"
                 }
               }
             }
@@ -205,7 +298,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref":"#/components/schemas/adminSettings"
+                "$ref": "#/components/schemas/adminSettings"
               }
             }
           }
@@ -216,7 +309,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref":"#/components/schemas/adminSettings"
+                  "$ref": "#/components/schemas/adminSettings"
                 }
               }
             }
@@ -297,9 +390,9 @@
         "name": "api-key"
       }
     },
-    "schemas":{
-      "adminData":{
-        "type":"object",
+    "schemas": {
+      "adminData": {
+        "type": "object",
         "properties": {
           "username": {
             "type": "string"
@@ -308,18 +401,26 @@
             "type": "string"
           },
           "settings": {
-            "$ref":"#/components/schemas/adminSettings"
-      }
-    }
-      },
-      "adminSettings":{
-            "type": "object",
-            "properties": {
-              "commissionRate": {
-                "type": "number"
+            "$ref": "#/components/schemas/adminSettings"
           }
         }
-    }
+      },
+      "adminSettings": {
+        "type": "object",
+        "properties": {
+          "commissionRate": {
+            "type": "number"
+          }
+        }
+      },
+      "singleResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      }
     },
     "parameters": {
       "accessToken": {
@@ -349,12 +450,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/components/schemas/singleResponse"
             }
           }
         }
@@ -364,12 +460,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/components/schemas/singleResponse"
             }
           }
         }
@@ -379,12 +470,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/components/schemas/singleResponse"
             }
           }
         }
@@ -394,12 +480,17 @@
         "content": {
           "application/json": {
             "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/components/schemas/singleResponse"
+            }
+          }
+        }
+      },
+      "timeOut": {
+        "description": "Timeout or token expired.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/singleResponse"
             }
           }
         }
@@ -412,7 +503,8 @@
               "type": "object",
               "properties": {
                 "message": {
-                  "type": "string"
+                  "type": "string",
+                  "example": "Internal_Error"
                 }
               }
             }

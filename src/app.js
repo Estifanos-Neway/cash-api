@@ -53,7 +53,7 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     app.use(forceApiKey);
     app.use(authenticateByToken);
     app.use("/tokens", tokensRouter);
-    app.use("/admins", adminRouter);
+    app.use("/admin", adminRouter);
 
     app.use("*", (req, res) => {
         res.status(404).end(JSON.stringify({ message: "Path_Not_Found" }));

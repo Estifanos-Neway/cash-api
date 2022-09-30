@@ -42,23 +42,23 @@ exports.makeAdmin = () => {
     return class Admin {
         #username;
         #passwordHash;
-        #recoveryEmail;
+        #email;
         #userId;
         // @ts-ignore
         #settings = new AdminSettings({});
 
         get username() { return this.#username; }
         get passwordHash() { return this.#passwordHash; }
-        get recoveryEmail() { return this.#recoveryEmail; }
+        get email() { return this.#email; }
         get userId() { return this.#userId; }
         get settings() { return this.#settings.toJson(); }
 
-        set recoveryEmail(newRecoveryEmail) {
-            if (!_.isUndefined(this.recoveryEmail)) {
-                newRecoveryEmail += "";
+        set email(newEmail) {
+            if (!_.isUndefined(this.email)) {
+                newEmail += "";
                 // @ts-ignore
-                if (validator.isEmail(newRecoveryEmail)) {
-                    this.#recoveryEmail = newRecoveryEmail;
+                if (validator.isEmail(newEmail)) {
+                    this.#email = newEmail;
                 } else {
                     throw new Error(`${invalidInput}${invalidEmailResponseText}`);
                 }
@@ -70,17 +70,17 @@ exports.makeAdmin = () => {
                 {
                     username: this.username,
                     passwordHash: this.passwordHash,
-                    recoveryEmail: this.recoveryEmail,
+                    email: this.email,
                     userId: this.userId,
                     settings: this.settings
                 }
             );
         }
 
-        constructor({ username, passwordHash, recoveryEmail, userId, settings }) {
+        constructor({ username, passwordHash, email, userId, settings }) {
             this.#username = username;
             this.#passwordHash = passwordHash;
-            this.recoveryEmail = recoveryEmail;
+            this.email = email;
             this.#userId = userId;
             this.#settings = new AdminSettings({ ...settings });
 

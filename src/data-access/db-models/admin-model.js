@@ -10,7 +10,7 @@ const AdminSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    recoveryEmail:String,
+    email:String,
     settings: {
         commissionRate: {
             type: Number,

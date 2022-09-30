@@ -1,5 +1,7 @@
+const _ = require("lodash");
 const { hasValue } = require("../../commons/functions");
-const { requiredParamsNotFoundResponseText } = require("../../commons/variables");
+const validator = require("validator");
+const { requiredParamsNotFoundResponseText, invalidEmailResponseText } = require("../../commons/variables");
 const { errorHandler, createUserData, createAccessToken, createSingleResponse } = require("../controller-commons/functions");
 const { successResponseText, notFound } = require("../controller-commons/variables");
 const jwt = require("jsonwebtoken");
@@ -123,6 +125,25 @@ exports.makeUpdateAdminSettingsCont = ({ updateAdminSettingsRepo }) => {
                 } else {
                     res.status(400).end(result.result);
                 }
+            }
+        } catch (error) {
+            errorHandler(error, res);
+        }
+    };
+};
+
+exports.makeSendAdminEmailVerificationCont = ({sendEmailVerificationCode}) => {
+    return async (req, res) => {
+        try {
+            const { newEmail } = req.body;
+            if (!hasValue(newEmail)) {
+                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
+                // @ts-ignore
+            } else if (!_.isString(newEmail) || !validator.isEmail(newEmail)) {
+                res.status(400).end(createSingleResponse(invalidEmailResponseText));
+            } else {
+                const verificationToken = await sendEmailVerificationCode(newEmail);
+                res.end(JSON.stringify({ verificationToken }));
             }
         } catch (error) {
             errorHandler(error, res);

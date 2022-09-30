@@ -1,5 +1,6 @@
 const { addJwtRefreshRepo } = require("../../repositories/jwt-refresh");
 const { changeAdminUsernameRepo } = require("../../repositories/admin");
+const { sendEmailVerificationCode } = require("../../commons/functions");
 const {
     signInAdminRepo,
     changeAdminPasswordHashRepo,
@@ -12,7 +13,8 @@ const {
     makeChangeAdminUsernameCont,
     makeSignInAdminCont,
     makeUpdateAdminSettingsCont,
-    makeGetAdminSettingsCont } = require("./admin-controllers");
+    makeGetAdminSettingsCont,
+    makeSendAdminEmailVerificationCont } = require("./admin-controllers");
 
 module.exports = {
     signInAdminCont: makeSignInAdminCont({ signInAdminRepo, addJwtRefreshRepo }),
@@ -21,4 +23,5 @@ module.exports = {
     changeAdminUsernameCont: makeChangeAdminUsernameCont({ changeAdminUsernameRepo }),
     changeAdminPasswordHashCont: makeChangeAdminPasswordHashCont({ changeAdminPasswordHashRepo }),
     updateAdminSettingsCont: makeUpdateAdminSettingsCont({ updateAdminSettingsRepo }),
+    sendAdminEmailVerificationCont: makeSendAdminEmailVerificationCont({ sendEmailVerificationCode })
 };
