@@ -1,4 +1,5 @@
-const gvc = require("generate-sms-verification-code");
+const cryptoJS = require("crypto-js");
+const shortUniqueId = require("short-unique-id");
 const nodemailer = require("nodemailer");
 const color = require("cli-color");
 const _ = require("lodash");
@@ -18,13 +19,15 @@ function createResult(success, result) {
     return { success, result: _.isUndefined(result) ? null : result };
 }
 
-function createVerificationCode() {
-    return gvc(6, { type: "string" });
+function createVerificationCode(length= 6) {
+    // @ts-ignore
+    const uid = new shortUniqueId({ length, dictionary:"alpha_upper" });
+    return uid();
 }
 
 async function sendEmail({ subject, html, to, from = env.EMAIL_FROM, smtpUrl = env.SMTP_URL }) {
     if (!hasValue(to) ||
-        !hasValue(subject) ||
+        !hasValue(subject) || 
         !hasValue(html)) {
         throw new Error(requiredParamsNotFoundResponseText);
     } else {
@@ -33,13 +36,16 @@ async function sendEmail({ subject, html, to, from = env.EMAIL_FROM, smtpUrl = e
         return await transporter.sendMail(mailOptions);
     }
 }
+
 async function sendEmailVerificationCode(email) {
     const verificationCode = createVerificationCode();
     const subject = "Email verification";
     const html = `Verification code: ${verificationCode}`;
-    await sendEmail({subject, html, to:email});
-    const verificationToken = `${email}:${verificationCode}`;
-    return verificationToken;
+    // await sendEmail({ subject, html, to: email });
+    console.log(html);
+    const verificationObject = { email, verificationCode };
+    // @ts-ignore
+    return cryptoJS.AES.encrypt(JSON.stringify(verificationObject), env.PRIVATE_KEY).toString();
 }
 
 module.exports = {

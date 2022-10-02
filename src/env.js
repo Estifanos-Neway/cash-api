@@ -10,5 +10,6 @@ exports.env = {
     API_KEY: environment.API_KEY,
     CORS_WHITE_LIST: environment.CORS_WHITE_LIST,
     EMAIL_FROM: environment.EMAIL_FROM,
-    SMTP_URL: environment.SMTP_URL
+    SMTP_URL: environment.SMTP_URL,
+    PRIVATE_KEY: environment.PRIVATE_KEY
 };
