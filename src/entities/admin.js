@@ -1,7 +1,6 @@
 const _ = require("lodash");
-const validator = require("validator");
 const { defaultCommissionRate } = require("../config.json");
-const { hasValue } = require("../commons/functions");
+const { hasValue, isEmail } = require("../commons/functions");
 const {
     invalidInput,
     invalidPasswordHashResponseText,
@@ -54,10 +53,8 @@ exports.makeAdmin = () => {
         get settings() { return this.#settings.toJson(); }
 
         set email(newEmail) {
-            if (!_.isUndefined(this.email)) {
-                newEmail += "";
-                // @ts-ignore
-                if (validator.isEmail(newEmail)) {
+            if (hasValue(newEmail)) {
+                if (isEmail(newEmail)) {
                     this.#email = newEmail;
                 } else {
                     throw new Error(`${invalidInput}${invalidEmailResponseText}`);
@@ -83,7 +80,6 @@ exports.makeAdmin = () => {
             this.email = email;
             this.#userId = userId;
             this.#settings = new AdminSettings({ ...settings });
-
         }
 
         changePasswordHash({ oldPasswordHash, newPasswordHash }) {

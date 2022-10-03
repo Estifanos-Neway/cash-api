@@ -1,5 +1,4 @@
 const express = require("express");
-const { sendAdminEmailVerificationCont } = require("../controllers/admin");
 const { forceAccessToken } = require("../controllers/middlewares");
 
 exports.makeAdminRouter = (
@@ -9,7 +8,9 @@ exports.makeAdminRouter = (
         getAdminSettingsCont,
         changeAdminUsernameCont,
         changeAdminPasswordHashCont,
-        updateAdminSettingsCont
+        updateAdminSettingsCont,
+        sendAdminEmailVerificationCont,
+        verifyAdminEmailCont
     }) => {
     const adminRouter = express.Router();
     adminRouter.post("/sign-in", signInAdminCont);
@@ -18,6 +19,7 @@ exports.makeAdminRouter = (
     adminRouter.patch("/username", changeAdminUsernameCont);
     adminRouter.patch("/password-hash", changeAdminPasswordHashCont);
     adminRouter.put("/email", sendAdminEmailVerificationCont);
+    adminRouter.put("/verify-email", verifyAdminEmailCont);
     adminRouter.get("/settings", getAdminSettingsCont);
     adminRouter.patch("/settings", updateAdminSettingsCont);
     return adminRouter;

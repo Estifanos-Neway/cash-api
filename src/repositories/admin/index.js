@@ -7,7 +7,8 @@ const {
     makeChangeAdminPasswordHashRepo,
     makeGetAdminRepo,
     makeUpdateAdminSettingsRepo,
-    makeGetAdminSettingsRepo } = require("./admin-repo");
+    makeGetAdminSettingsRepo,
+    makeUpdateAdminEmailRepo } = require("./admin-repo");
 
 module.exports = {
     signInAdminRepo: makeSignInAdminRepo({ Admin, adminsDb }),
@@ -17,4 +18,5 @@ module.exports = {
     changeAdminUsernameRepo: makeChangeAdminUsernameRepo({ adminsDb }),
     changeAdminPasswordHashRepo: makeChangeAdminPasswordHashRepo({ adminsDb }),
     updateAdminSettingsRepo: makeUpdateAdminSettingsRepo({ adminsDb }),
+    updateAdminEmailRepo: makeUpdateAdminEmailRepo({ adminsDb })
 };

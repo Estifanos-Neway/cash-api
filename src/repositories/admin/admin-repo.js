@@ -5,6 +5,7 @@ function createAdminInfo(admin) {
     return Object.freeze({
         userId: admin.userId,
         username: admin.username,
+        email:admin.email,
         settings: admin.settings
     });
 }
@@ -83,6 +84,19 @@ exports.makeUpdateAdminSettingsRepo = ({ adminsDb }) => {
             admin.updateSettings({ updates });
             const result = await adminsDb.updateOne({ id: userId }, { settings: admin.settings });
             return createResult(true, result.settings);
+        } else {
+            return createResult(false, adminNotFoundResponseText);
+        }
+    };
+};
+
+exports.makeUpdateAdminEmailRepo = ({ adminsDb }) => {
+    return async ({ userId, email }) => {
+        const admin = await adminsDb.findOne({ id: userId });
+        if (admin) {
+            admin.email = email;
+            const result = await adminsDb.updateOne({ id: userId }, { email: admin.email });
+            return createResult(true, result.email);
         } else {
             return createResult(false, adminNotFoundResponseText);
         }

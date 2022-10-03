@@ -8,7 +8,9 @@ const {
     changeAdminPasswordHashCont,
     getAdminCont,
     updateAdminSettingsCont,
-    getAdminSettingsCont } = require("../controllers/admin");
+    getAdminSettingsCont,
+    sendAdminEmailVerificationCont,
+    verifyAdminEmailCont } = require("../controllers/admin");
 
 module.exports = {
     adminRouter: makeAdminRouter({
@@ -17,7 +19,9 @@ module.exports = {
         changeAdminPasswordHashCont,
         getAdminCont,
         updateAdminSettingsCont,
-        getAdminSettingsCont
+        getAdminSettingsCont,
+        sendAdminEmailVerificationCont,
+        verifyAdminEmailCont
     }),
     tokensRouter: makeTokensRouter(refreshTokenCont, signOutCont)
 };

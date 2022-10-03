@@ -1,11 +1,10 @@
-const _ = require("lodash");
-const { hasValue } = require("../../commons/functions");
-const validator = require("validator");
-const { requiredParamsNotFoundResponseText, invalidEmailResponseText } = require("../../commons/variables");
+const { hasValue, decrypt, isEmail } = require("../../commons/functions");
+const { requiredParamsNotFoundResponseText, invalidEmailResponseText, invalidVerificationCodeResponseText, expiredVerificationTokenResponseText, invalidVerificationTokenResponseText } = require("../../commons/variables");
 const { errorHandler, createUserData, createAccessToken, createSingleResponse } = require("../controller-commons/functions");
 const { successResponseText, notFound } = require("../controller-commons/variables");
 const jwt = require("jsonwebtoken");
 const { env } = require("../../env");
+const { updateAdminEmailRepo } = require("../../repositories/admin");
 
 exports.makeSignInAdminCont = ({ signInAdminRepo, addJwtRefreshRepo }) => {
     return async (req, res) => {
@@ -102,7 +101,7 @@ exports.makeChangeAdminUsernameCont = ({ changeAdminUsernameRepo }) => {
                 if (result.success) {
                     res.end(createSingleResponse(successResponseText));
                 } else {
-                    res.status(400).end(result.result);
+                    res.status(400).end(createSingleResponse(result.result));
                 }
             }
         } catch (error) {
@@ -123,7 +122,7 @@ exports.makeUpdateAdminSettingsCont = ({ updateAdminSettingsRepo }) => {
                 if (result.success) {
                     res.end(JSON.stringify(result.result));
                 } else {
-                    res.status(400).end(result.result);
+                    res.status(400).end(createSingleResponse(result.result));
                 }
             }
         } catch (error) {
@@ -132,14 +131,14 @@ exports.makeUpdateAdminSettingsCont = ({ updateAdminSettingsRepo }) => {
     };
 };
 
-exports.makeSendAdminEmailVerificationCont = ({sendEmailVerificationCode}) => {
+exports.makeSendAdminEmailVerificationCont = ({ sendEmailVerificationCode }) => {
     return async (req, res) => {
         try {
             const { newEmail } = req.body;
             if (!hasValue(newEmail)) {
                 res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
                 // @ts-ignore
-            } else if (!_.isString(newEmail) || !validator.isEmail(newEmail)) {
+            } else if (!isEmail(newEmail)) {
                 res.status(400).end(createSingleResponse(invalidEmailResponseText));
             } else {
                 const verificationToken = await sendEmailVerificationCode(newEmail);
@@ -147,6 +146,48 @@ exports.makeSendAdminEmailVerificationCont = ({sendEmailVerificationCode}) => {
             }
         } catch (error) {
             errorHandler(error, res);
+        }
+    };
+};
+
+exports.makeVerifyAdminEmailCont = () => {
+    return async (req, res) => {
+        try {
+            const userId = req.user.userId;
+            const { verificationCode, verificationToken } = req.body;
+            if (!hasValue(verificationCode) || !hasValue(verificationToken)) {
+                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
+            } else {
+                const decrypted = decrypt(verificationToken);
+                let verificationObject;
+                try {
+                    verificationObject = JSON.parse(decrypted);
+                } catch (error) {
+                    res.status(400).end(createSingleResponse(invalidVerificationTokenResponseText));
+                    return;
+                }
+                if (new Date().getTime() > verificationObject.validUntil) {
+                    res.status(400).end(createSingleResponse(expiredVerificationTokenResponseText));
+                } else if (verificationCode !== verificationObject.verificationCode) {
+                    res.status(400).end(createSingleResponse(invalidVerificationCodeResponseText));
+                    // @ts-ignore
+                } else if (!isEmail(verificationObject.email)) {
+                    res.status(400).end(createSingleResponse(invalidVerificationTokenResponseText));
+                } else {
+                    const result = await updateAdminEmailRepo({ userId, email: verificationObject.email });
+                    if (result.success) {
+                        res.end(JSON.stringify({ newEmail: result.result }));
+                    } else {
+                        res.status(400).end(createSingleResponse(result.result));
+                    }
+                }
+            }
+        } catch (error) {
+            if (error.message === "Malformed UTF-8 data") {
+                res.status(400).end(createSingleResponse(invalidVerificationTokenResponseText));
+            } else {
+                errorHandler(error, res);
+            }
         }
     };
 };
