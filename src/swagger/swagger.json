@@ -163,7 +163,7 @@
                   "properties": {
                     "verificationToken": {
                       "type": "string",
-                      "description": "This token must be sent back with the verification code."
+                      "description": "This token must be sent back with the verification code. It will be expired in 5 minutes."
                     }
                   }
                 }
@@ -209,7 +209,19 @@
         },
         "responses": {
           "200": {
-            "$ref": "#/components/responses/success"
+            "description": "OK - The email is updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "newEmail": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "$ref": "#/components/responses/invalidInput"
@@ -398,6 +410,9 @@
             "type": "string"
           },
           "userId": {
+            "type": "string"
+          },
+          "email": {
             "type": "string"
           },
           "settings": {
