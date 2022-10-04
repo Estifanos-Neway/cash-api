@@ -7,7 +7,8 @@ const { env } = require("../../env");
 const {
     createVerificationCode,
     sendEmail,
-    encrypt } = require("../../commons/functions");
+    encrypt,
+    isNonEmptyString } = require("../../commons/functions");
 const { urls } = require("../../config.json");
 
 function createSingleResponse(response) {
@@ -24,7 +25,11 @@ function createAccessToken(userData, expiresIn = "10m") {
 }
 
 function getAccessToken(authHeader) {
-    return authHeader && authHeader.split(" ")[1];
+    if (isNonEmptyString(authHeader)) {
+        return authHeader.split(" ")[1];
+    } else {
+        return null;
+    }
 }
 
 function errorHandler(error, res) {

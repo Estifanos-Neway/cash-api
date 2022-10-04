@@ -1,4 +1,4 @@
-const { hasValue } = require("../../commons/functions");
+const { hasSingleValue } = require("../../commons/functions");
 const jwt = require("jsonwebtoken");
 const { env } = require("../../env");
 const { errorHandler } = require("../controller-commons/functions");
@@ -6,7 +6,7 @@ const { createSingleResponse, getAccessToken } = require("../controller-commons/
 const {
     invalidAccessTokenResponseText,
     invalidRefreshTokenResponseText,
-    requiredParamsNotFoundResponseText,
+    invalidInputResponseText,
     successResponseText } = require("../../commons/variables");
 
 exports.makeSignOutCont = (deleteJwtRefreshRepo) => {
@@ -14,8 +14,8 @@ exports.makeSignOutCont = (deleteJwtRefreshRepo) => {
         try {
             const refreshToken = req.get("refresh-token");
             const accessToken = getAccessToken(req.get("Authorization"));
-            if (!hasValue(refreshToken) || !hasValue(accessToken)) {
-                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
+            if (!hasSingleValue(refreshToken) || !hasSingleValue(accessToken)) {
+                res.status(400).end(createSingleResponse(invalidInputResponseText));
             } else {
                 // @ts-ignore
                 jwt.verify(refreshToken, env.JWT_REFRESH_SECRETE, (error, user1) => {

@@ -262,6 +262,22 @@
           "401": {
             "$ref": "#/components/responses/unauthorized"
           },
+          "404": {
+            "description": "Recovery email not found. If there is no registered recovery email.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Recovery_Email_Not_Found"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "$ref": "#/components/responses/internalError"
           }

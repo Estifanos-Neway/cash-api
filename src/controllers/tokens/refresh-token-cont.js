@@ -1,18 +1,18 @@
-const { hasValue } = require("../../commons/functions");
+const { hasSingleValue } = require("../../commons/functions");
 const { createUserData, getAccessToken } = require("../controller-commons/functions");
 const jwt = require("jsonwebtoken");
 const { env } = require("../../env");
 const { errorHandler } = require("../controller-commons/functions");
 const { createAccessToken, createSingleResponse } = require("../controller-commons/functions");
-const { invalidAccessTokenResponseText, invalidRefreshTokenResponseText, requiredParamsNotFoundResponseText } = require("../../commons/variables");
+const { invalidAccessTokenResponseText, invalidRefreshTokenResponseText, invalidInputResponseText } = require("../../commons/variables");
 
 exports.makeRefreshTokenCont = (checkJwtRefreshRepo) => {
     return async (req, res) => {
         try {
             const refreshToken = req.get("refresh-token");
             const accessToken = getAccessToken(req.get("Authorization"));
-            if (!hasValue(refreshToken) || !hasValue(accessToken)) {
-                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
+            if (!hasSingleValue(refreshToken) || !hasSingleValue(accessToken)) {
+                res.status(400).end(createSingleResponse(invalidInputResponseText));
             } else {
                 const refreshTokenExists = await checkJwtRefreshRepo(refreshToken);
                 if (refreshTokenExists) {

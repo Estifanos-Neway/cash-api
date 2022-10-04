@@ -11,13 +11,21 @@ function errorLog(errorMessage, error) {
     console.error(color.red(errorMessage), color.red("\n[\n"), error, color.red("\n]"));
 }
 
-function hasValue(element) {
-    if (_.isNumber(element)) return true;
-    else if (_.isUndefined(element) || _.isEmpty(element)) return false;
+function hasValue(object) {
+    if (_.isNumber(object)) return true;
+    else if (_.isUndefined(object) || _.isEmpty(object)) return false;
     else return true;
 }
 
-function isEmail(email){
+function hasSingleValue(object) {
+    return _.isNumber(object) || (_.isString(object) && !_.isEmpty(object));
+}
+
+function isNonEmptyString(object) {
+    return _.isString(object) && !_.isEmpty(object);
+}
+
+function isEmail(email) {
     // @ts-ignore
     return _.isString(email) && validator.isEmail(email);
 }
@@ -26,16 +34,16 @@ function createResult(success, result) {
     return { success, result: _.isUndefined(result) ? null : result };
 }
 
-function createVerificationCode(length= 6) {
+function createVerificationCode(length = 6) {
     // @ts-ignore
-    const uid = new shortUniqueId({ length, dictionary:"alpha_upper" });
+    const uid = new shortUniqueId({ length, dictionary: "alpha_upper" });
     return uid();
 }
 
 async function sendEmail({ subject, html, to, from = env.EMAIL_FROM, smtpUrl = env.SMTP_URL }) {
-    if (!hasValue(to) ||
-        !hasValue(subject) || 
-        !hasValue(html)) {
+    if (!hasSingleValue(to) ||
+        !hasSingleValue(subject) ||
+        !hasSingleValue(html)) {
         throw new Error(requiredParamsNotFoundResponseText);
     } else {
         const mailOptions = { from, to, subject, html };
@@ -44,19 +52,21 @@ async function sendEmail({ subject, html, to, from = env.EMAIL_FROM, smtpUrl = e
     }
 }
 
-function encrypt(original){
+function encrypt(original) {
     // @ts-ignore
     return cryptoJS.AES.encrypt(JSON.stringify(original), env.PRIVATE_KEY).toString();
 }
 
-function decrypt(encrypted){
+function decrypt(encrypted) {
     // @ts-ignore
-    return cryptoJS.AES.decrypt(encrypted,env.PRIVATE_KEY).toString(cryptoJS.enc.Utf8);
+    return cryptoJS.AES.decrypt(encrypted, env.PRIVATE_KEY).toString(cryptoJS.enc.Utf8);
 }
 
 module.exports = {
     errorLog,
     hasValue,
+    hasSingleValue,
+    isNonEmptyString,
     createResult,
     createVerificationCode,
     sendEmail,

@@ -3,6 +3,7 @@ const invalidInput = "|:Invalid_Input:|";
 
 // http response messages
 const invalidAccessTokenResponseText = "Invalid_Access_Token";
+const invalidInputResponseText = "Invalid_Input";
 const invalidRefreshTokenResponseText = "Invalid_Refresh_Token";
 const invalidCommissionRateResponseText = "Invalid_Commission_Rate";
 const invalidPasswordHashResponseText = "Invalid_Password_Hash";
@@ -10,7 +11,7 @@ const invalidUsernameResponseText = "Invalid_Username";
 const invalidVerificationCodeResponseText = "Invalid_Verification_Code";
 const invalidTokenResponseText = "Invalid_Token";
 const invalidEmailResponseText = "Invalid_Email";
-const recoveryEmailNotFoundResponseText = "Recovery_Email_Not_Found";
+const cantFindValidEmailResponseText = "Can_Not_Find_Valid_Recovery_Email";
 const expiredTokenResponseText = "Expired_Token";
 const requiredParamsNotFoundResponseText = "Required_Params_Not_Found";
 const notImplementedYetResponseText = "Not_ImplementedYet";
@@ -27,6 +28,7 @@ const defaultPort = 5000;
 const verificationTokenExpiresIn = 5;
 
 module.exports = {
+    invalidInputResponseText,
     invalidInput,
     invalidAccessTokenResponseText,
     invalidRefreshTokenResponseText,
@@ -36,7 +38,7 @@ module.exports = {
     invalidEmailResponseText,
     invalidVerificationCodeResponseText,
     invalidTokenResponseText,
-    recoveryEmailNotFoundResponseText,
+    cantFindValidEmailResponseText,
     expiredTokenResponseText,
     notImplementedYetResponseText,
     requiredParamsNotFoundResponseText,

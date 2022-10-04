@@ -1,15 +1,19 @@
+const _ = require("lodash");
 const path = require("path");
 const fs = require("fs");
-const { hasValue, decrypt, isEmail } = require("../../commons/functions");
 const {
-    requiredParamsNotFoundResponseText,
+    decrypt,
+    isEmail,
+    hasSingleValue } = require("../../commons/functions");
+const {
     invalidEmailResponseText,
     invalidVerificationCodeResponseText,
     expiredTokenResponseText,
     invalidTokenResponseText,
-    recoveryEmailNotFoundResponseText,
+    cantFindValidEmailResponseText,
     successResponseText,
-    userNotFoundResponseText } = require("../../commons/variables");
+    userNotFoundResponseText,
+    invalidInputResponseText } = require("../../commons/variables");
 const {
     errorHandler,
     createUserData,
@@ -25,22 +29,26 @@ exports.makeSignInAdminCont = ({ signInAdminRepo, addJwtRefreshRepo }) => {
     return async (req, res) => {
         try {
             const { username, passwordHash } = req.body;
-            const signedInAdmin = await signInAdminRepo({ username, passwordHash });
-            if (signedInAdmin) {
-                const userData = createUserData(signedInAdmin.userId, "admin");
-                // @ts-ignore
-                const accessToken = createAccessToken(userData);
-                // @ts-ignore
-                const refreshToken = jwt.sign(userData, env.JWT_REFRESH_SECRETE);
-                await addJwtRefreshRepo(refreshToken);
-                const response = {
-                    admin: signedInAdmin,
-                    accessToken,
-                    refreshToken
-                };
-                res.end(JSON.stringify(response));
+            if (!hasSingleValue(username) || !hasSingleValue(passwordHash)) {
+                res.status(400).end(createSingleResponse(invalidInputResponseText));
             } else {
-                res.status(404).end(createSingleResponse(userNotFoundResponseText));
+                const signedInAdmin = await signInAdminRepo({ username, passwordHash });
+                if (signedInAdmin) {
+                    const userData = createUserData(signedInAdmin.userId, "admin");
+                    // @ts-ignore
+                    const accessToken = createAccessToken(userData);
+                    // @ts-ignore
+                    const refreshToken = jwt.sign(userData, env.JWT_REFRESH_SECRETE);
+                    await addJwtRefreshRepo(refreshToken);
+                    const response = {
+                        admin: signedInAdmin,
+                        accessToken,
+                        refreshToken
+                    };
+                    res.end(JSON.stringify(response));
+                } else {
+                    res.status(404).end(createSingleResponse(userNotFoundResponseText));
+                }
             }
         } catch (error) {
             errorHandler(error, res);
@@ -88,8 +96,8 @@ exports.makeChangeAdminPasswordHashCont = ({ changeAdminPasswordHashRepo }) => {
         try {
             const userId = req.user.userId;
             const { oldPasswordHash, newPasswordHash } = req.body;
-            if (!hasValue(oldPasswordHash) || !hasValue(newPasswordHash)) {
-                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
+            if (!hasSingleValue(oldPasswordHash) || !hasSingleValue(newPasswordHash)) {
+                res.status(400).end(createSingleResponse(invalidInputResponseText));
             } else {
                 const result = await changeAdminPasswordHashRepo({ userId, oldPasswordHash, newPasswordHash });
                 if (result.success) {
@@ -108,9 +116,9 @@ exports.makeChangeAdminUsernameCont = ({ changeAdminUsernameRepo }) => {
     return async (req, res) => {
         try {
             const userId = req.user.userId;
-            const newUsername = req.body.newUsername;
-            if (!hasValue(newUsername)) {
-                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
+            const { newUsername } = req.body;
+            if (!hasSingleValue(newUsername)) {
+                res.status(400).end(createSingleResponse(invalidInputResponseText));
             } else {
                 const result = await changeAdminUsernameRepo({ userId, newUsername });
                 if (result.success) {
@@ -130,8 +138,8 @@ exports.makeUpdateAdminSettingsCont = ({ updateAdminSettingsRepo }) => {
         try {
             const userId = req.user.userId;
             const updates = req.body;
-            if (!hasValue(updates)) {
-                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
+            if (!_.isPlainObject(updates)) {
+                res.status(400).end(createSingleResponse(invalidInputResponseText));
             } else {
                 const result = await updateAdminSettingsRepo({ userId, updates });
                 if (result.success) {
@@ -150,8 +158,8 @@ exports.makeSendAdminEmailVerificationCont = ({ sendEmailVerificationCode }) => 
     return async (req, res) => {
         try {
             const { newEmail } = req.body;
-            if (!hasValue(newEmail)) {
-                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
+            if (!hasSingleValue(newEmail)) {
+                res.status(400).end(createSingleResponse(invalidInputResponseText));
                 // @ts-ignore
             } else if (!isEmail(newEmail)) {
                 res.status(400).end(createSingleResponse(invalidEmailResponseText));
@@ -172,8 +180,8 @@ exports.makeVerifyAdminEmailCont = () => {
         try {
             const userId = req.user.userId;
             const { verificationCode, verificationToken } = req.body;
-            if (!hasValue(verificationCode) || !hasValue(verificationToken)) {
-                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
+            if (!hasSingleValue(verificationCode) || !hasSingleValue(verificationToken)) {
+                res.status(400).end(createSingleResponse(invalidInputResponseText));
             } else {
                 const decrypted = decrypt(verificationToken);
                 let verificationObject;
@@ -219,8 +227,8 @@ exports.makeSendAdminPasswordRecoveryEmailCont = ({ getAdminRepo, sendEmailVerif
                 res.status(404).end(createSingleResponse(userNotFoundResponseText));
             } else {
                 const email = adminInfo.email;
-                if (!hasValue(email)) {
-                    res.status(404).end(createSingleResponse(recoveryEmailNotFoundResponseText));
+                if (!isEmail(email)) {
+                    res.status(404).end(createSingleResponse(cantFindValidEmailResponseText));
                 } else {
                     const path = urls.passwordRecoveryPath;
                     const subject = "Password recovery";
@@ -240,8 +248,8 @@ exports.makeRecoverAdminPasswordCont = ({ getAdminRepo, recoverAdminPasswordHash
         try {
             const userId = req.user.userId;
             const { recoveryToken, newPasswordHash } = req.body;
-            if (!hasValue(recoveryToken) || !hasValue(newPasswordHash)) {
-                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
+            if (!hasSingleValue(recoveryToken) || !hasSingleValue(newPasswordHash)) {
+                res.status(400).end(createSingleResponse(invalidInputResponseText));
             } else {
                 const adminInfo = await getAdminRepo({ userId });
                 if (!adminInfo) {

@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const { defaultCommissionRate } = require("../config.json");
-const { hasValue, isEmail } = require("../commons/functions");
+const { hasValue, isEmail, hasSingleValue } = require("../commons/functions");
 const {
     invalidInput,
     invalidPasswordHashResponseText,
@@ -23,8 +23,8 @@ function adaptCommissionRate(commissionRate) {
 class AdminSettings {
     #commissionRate = defaultCommissionRate;
 
-    constructor({ commissionRate }) {
-        this.commissionRate = hasValue(commissionRate) ? commissionRate : this.#commissionRate;
+    constructor({ commissionRate = defaultCommissionRate }) {
+        this.commissionRate = commissionRate;
     }
 
     set commissionRate(newCommissionRate) {
@@ -83,7 +83,7 @@ exports.makeAdmin = () => {
         }
 
         changePasswordHash({ oldPasswordHash, newPasswordHash }) {
-            if (!hasValue(newPasswordHash)) {
+            if (!hasSingleValue(newPasswordHash)) {
                 throw new Error(`${invalidInput}${invalidPasswordHashResponseText}`);
             } else if (oldPasswordHash !== this.#passwordHash) {
                 throw new Error(`${invalidInput}${wrongPasswordHashResponseText}`);
