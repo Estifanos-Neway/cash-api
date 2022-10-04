@@ -1,11 +1,26 @@
+const path = require("path");
+const fs = require("fs");
 const { hasValue, decrypt, isEmail } = require("../../commons/functions");
-const { requiredParamsNotFoundResponseText, invalidEmailResponseText, invalidVerificationCodeResponseText, expiredVerificationTokenResponseText, invalidVerificationTokenResponseText } = require("../../commons/variables");
-const { errorHandler, createUserData, createAccessToken, createSingleResponse } = require("../controller-commons/functions");
-const { successResponseText, notFound } = require("../controller-commons/variables");
+const {
+    requiredParamsNotFoundResponseText,
+    invalidEmailResponseText,
+    invalidVerificationCodeResponseText,
+    expiredTokenResponseText,
+    invalidTokenResponseText,
+    recoveryEmailNotFoundResponseText,
+    successResponseText,
+    userNotFoundResponseText } = require("../../commons/variables");
+const {
+    errorHandler,
+    createUserData,
+    createAccessToken,
+    createSingleResponse } = require("../controller-commons/functions");
 const jwt = require("jsonwebtoken");
 const { env } = require("../../env");
+const { urls } = require("../../config.json");
 const { updateAdminEmailRepo } = require("../../repositories/admin");
-
+const passwordRecoveryEmail = fs.readFileSync(path.resolve("src/assets/emails/password-recovery.html"), { encoding: "utf-8" });
+const emailVerificationEmail = fs.readFileSync(path.resolve("src/assets/emails/email-verification.html"), { encoding: "utf-8" });
 exports.makeSignInAdminCont = ({ signInAdminRepo, addJwtRefreshRepo }) => {
     return async (req, res) => {
         try {
@@ -25,7 +40,7 @@ exports.makeSignInAdminCont = ({ signInAdminRepo, addJwtRefreshRepo }) => {
                 };
                 res.end(JSON.stringify(response));
             } else {
-                res.status(404).end(createSingleResponse(notFound));
+                res.status(404).end(createSingleResponse(userNotFoundResponseText));
             }
         } catch (error) {
             errorHandler(error, res);
@@ -42,7 +57,7 @@ exports.makeGetAdminCont = ({ getAdminRepo }) => {
             if (adminInfo) {
                 res.end(JSON.stringify(adminInfo));
             } else {
-                res.status(404).end(createSingleResponse(notFound));
+                res.status(404).end(createSingleResponse(userNotFoundResponseText));
             }
         } catch (error) {
             errorHandler(error, res);
@@ -59,7 +74,7 @@ exports.makeGetAdminSettingsCont = ({ getAdminSettingsRepo }) => {
             if (adminSettings) {
                 res.end(JSON.stringify(adminSettings));
             } else {
-                res.status(404).end(createSingleResponse(notFound));
+                res.status(404).end(createSingleResponse(userNotFoundResponseText));
             }
         } catch (error) {
             errorHandler(error, res);
@@ -141,7 +156,9 @@ exports.makeSendAdminEmailVerificationCont = ({ sendEmailVerificationCode }) => 
             } else if (!isEmail(newEmail)) {
                 res.status(400).end(createSingleResponse(invalidEmailResponseText));
             } else {
-                const verificationToken = await sendEmailVerificationCode(newEmail);
+                const html = emailVerificationEmail;
+                const subject = "Email verification";
+                const verificationToken = await sendEmailVerificationCode({ email: newEmail, subject, html });
                 res.end(JSON.stringify({ verificationToken }));
             }
         } catch (error) {
@@ -163,16 +180,16 @@ exports.makeVerifyAdminEmailCont = () => {
                 try {
                     verificationObject = JSON.parse(decrypted);
                 } catch (error) {
-                    res.status(400).end(createSingleResponse(invalidVerificationTokenResponseText));
+                    res.status(400).end(createSingleResponse(invalidTokenResponseText));
                     return;
                 }
                 if (new Date().getTime() > verificationObject.validUntil) {
-                    res.status(400).end(createSingleResponse(expiredVerificationTokenResponseText));
+                    res.status(400).end(createSingleResponse(expiredTokenResponseText));
                 } else if (verificationCode !== verificationObject.verificationCode) {
                     res.status(400).end(createSingleResponse(invalidVerificationCodeResponseText));
                     // @ts-ignore
                 } else if (!isEmail(verificationObject.email)) {
-                    res.status(400).end(createSingleResponse(invalidVerificationTokenResponseText));
+                    res.status(400).end(createSingleResponse(invalidTokenResponseText));
                 } else {
                     const result = await updateAdminEmailRepo({ userId, email: verificationObject.email });
                     if (result.success) {
@@ -184,10 +201,80 @@ exports.makeVerifyAdminEmailCont = () => {
             }
         } catch (error) {
             if (error.message === "Malformed UTF-8 data") {
-                res.status(400).end(createSingleResponse(invalidVerificationTokenResponseText));
+                res.status(400).end(createSingleResponse(invalidTokenResponseText));
             } else {
                 errorHandler(error, res);
             }
+        }
+    };
+};
+
+
+exports.makeSendAdminPasswordRecoveryEmailCont = ({ getAdminRepo, sendEmailVerification }) => {
+    return async (req, res) => {
+        try {
+            const userId = req.user.userId;
+            const adminInfo = await getAdminRepo({ userId });
+            if (!adminInfo) {
+                res.status(404).end(createSingleResponse(userNotFoundResponseText));
+            } else {
+                const email = adminInfo.email;
+                if (!hasValue(email)) {
+                    res.status(404).end(createSingleResponse(recoveryEmailNotFoundResponseText));
+                } else {
+                    const path = urls.passwordRecoveryPath;
+                    const subject = "Password recovery";
+                    const html = passwordRecoveryEmail;
+                    await sendEmailVerification({ email, path, subject, html });
+                    res.end(createSingleResponse(successResponseText));
+                }
+            }
+        } catch (error) {
+            errorHandler(error, res);
+        }
+    };
+};
+
+exports.makeRecoverAdminPasswordCont = ({ getAdminRepo, recoverAdminPasswordHashRepo }) => {
+    return async (req, res) => {
+        try {
+            const userId = req.user.userId;
+            const { recoveryToken, newPasswordHash } = req.body;
+            if (!hasValue(recoveryToken) || !hasValue(newPasswordHash)) {
+                res.status(400).end(createSingleResponse(requiredParamsNotFoundResponseText));
+            } else {
+                const adminInfo = await getAdminRepo({ userId });
+                if (!adminInfo) {
+                    res.status(404).end(createSingleResponse(userNotFoundResponseText));
+                } else {
+                    let recoveryObject;
+                    try {
+                        // @ts-ignore
+                        recoveryObject = jwt.verify(recoveryToken, env.JWT_SECRETE);
+                    } catch (error) {
+                        res.status(400).end(createSingleResponse(invalidTokenResponseText));
+                        return;
+                    }
+                    if (new Date().getTime() > recoveryObject.validUntil) {
+                        res.status(400).end(createSingleResponse(expiredTokenResponseText));
+                    } else {
+                        const emailFrom = recoveryObject.email;
+                        const adminEmail = adminInfo.email;
+                        if (emailFrom !== adminEmail) {
+                            res.status(400).end(createSingleResponse(invalidTokenResponseText));
+                        } else {
+                            const result = await recoverAdminPasswordHashRepo({ userId, newPasswordHash });
+                            if (result.success) {
+                                res.end(createSingleResponse(successResponseText));
+                            } else {
+                                res.status(400).end(createSingleResponse(result.result));
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            errorHandler(error, res);
         }
     };
 };

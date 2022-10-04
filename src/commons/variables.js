@@ -1,21 +1,27 @@
 // Error types
 const invalidInput = "|:Invalid_Input:|";
 
-// message texts
+// http response messages
 const invalidAccessTokenResponseText = "Invalid_Access_Token";
 const invalidRefreshTokenResponseText = "Invalid_Refresh_Token";
 const invalidCommissionRateResponseText = "Invalid_Commission_Rate";
 const invalidPasswordHashResponseText = "Invalid_Password_Hash";
 const invalidUsernameResponseText = "Invalid_Username";
 const invalidVerificationCodeResponseText = "Invalid_Verification_Code";
-const invalidVerificationTokenResponseText = "Invalid_Verification_Token";
+const invalidTokenResponseText = "Invalid_Token";
 const invalidEmailResponseText = "Invalid_Email";
-const expiredVerificationTokenResponseText = "Expired_Verification_Token";
+const recoveryEmailNotFoundResponseText = "Recovery_Email_Not_Found";
+const expiredTokenResponseText = "Expired_Token";
 const requiredParamsNotFoundResponseText = "Required_Params_Not_Found";
 const notImplementedYetResponseText = "Not_ImplementedYet";
 const wrongPasswordHashResponseText = "Wrong_Password_Hash";
 const adminNotFoundResponseText = "Admin_Not_Found";
 const unknownSettingResponseText = "Unknown_Setting";
+const successResponseText = "OK";
+const userNotFoundResponseText = "User_Not_Found";
+const internalErrorResponseText = "Internal_Error";
+const invalidApiKeyResponseText = "Invalid_Api_Key";
+const missingApiKeyResponseText = "Api_Key_Is_Required";
 
 const defaultPort = 5000;
 const verificationTokenExpiresIn = 5;
@@ -29,13 +35,19 @@ module.exports = {
     invalidCommissionRateResponseText,
     invalidEmailResponseText,
     invalidVerificationCodeResponseText,
-    invalidVerificationTokenResponseText,
-    expiredVerificationTokenResponseText,
+    invalidTokenResponseText,
+    recoveryEmailNotFoundResponseText,
+    expiredTokenResponseText,
     notImplementedYetResponseText,
     requiredParamsNotFoundResponseText,
     defaultPort,
     adminNotFoundResponseText,
     wrongPasswordHashResponseText,
     unknownSettingResponseText,
-    verificationTokenExpiresIn
+    verificationTokenExpiresIn,
+    successResponseText,
+    userNotFoundResponseText,
+    internalErrorResponseText,
+    invalidApiKeyResponseText,
+    missingApiKeyResponseText
 };

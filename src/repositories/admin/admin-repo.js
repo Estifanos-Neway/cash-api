@@ -77,6 +77,19 @@ exports.makeChangeAdminPasswordHashRepo = ({ adminsDb }) => {
     };
 };
 
+exports.makeRecoverAdminPasswordHashRepo = ({ adminsDb }) => {
+    return async ({ userId, newPasswordHash }) => {
+        const admin = await adminsDb.findOne({ id: userId });
+        if (admin) {
+            admin.changePasswordHash({ oldPasswordHash:admin.passwordHash, newPasswordHash });
+            await adminsDb.updateOne({ id: userId }, { passwordHash: admin.passwordHash });
+            return createResult(true);
+        } else {
+            return createResult(false, adminNotFoundResponseText);
+        }
+    };
+};
+
 exports.makeUpdateAdminSettingsRepo = ({ adminsDb }) => {
     return async ({ userId, updates }) => {
         const admin = await adminsDb.findOne({ id: userId });

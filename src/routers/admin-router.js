@@ -10,7 +10,9 @@ exports.makeAdminRouter = (
         changeAdminPasswordHashCont,
         updateAdminSettingsCont,
         sendAdminEmailVerificationCont,
-        verifyAdminEmailCont
+        verifyAdminEmailCont,
+        sendAdminPasswordRecoveryEmailCont,
+        recoverAdminPasswordCont
     }) => {
     const adminRouter = express.Router();
     adminRouter.post("/sign-in", signInAdminCont);
@@ -18,9 +20,11 @@ exports.makeAdminRouter = (
     adminRouter.get("/", getAdminCont);
     adminRouter.patch("/username", changeAdminUsernameCont);
     adminRouter.patch("/password-hash", changeAdminPasswordHashCont);
-    adminRouter.put("/email", sendAdminEmailVerificationCont);
-    adminRouter.put("/verify-email", verifyAdminEmailCont);
     adminRouter.get("/settings", getAdminSettingsCont);
     adminRouter.patch("/settings", updateAdminSettingsCont);
+    adminRouter.put("/email", sendAdminEmailVerificationCont);
+    adminRouter.put("/verify-email", verifyAdminEmailCont);
+    adminRouter.put("/forgot-password", sendAdminPasswordRecoveryEmailCont);
+    adminRouter.put("/recover-password", recoverAdminPasswordCont);
     return adminRouter;
 };

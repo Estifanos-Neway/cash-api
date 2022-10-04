@@ -3,5 +3,10 @@
     "username": "Admin",
     "password": "password"
   },
-  "defaultCommissionRate": 10
+  "defaultCommissionRate": 10,
+  "urls":{
+    "baseUrl":"http://localhost:5000",
+    "passwordRecoveryPath":"/password-recovery",
+    "emailVerificationPath":"/verify-email"
+  }
 }

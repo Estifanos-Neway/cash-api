@@ -3,8 +3,11 @@ const jwt = require("jsonwebtoken");
 const { env } = require("../../env");
 const { errorHandler } = require("../controller-commons/functions");
 const { createSingleResponse, getAccessToken } = require("../controller-commons/functions");
-const { successResponseText } = require("../controller-commons/variables");
-const { invalidAccessTokenResponseText, invalidRefreshTokenResponseText, requiredParamsNotFoundResponseText } = require("../../commons/variables");
+const {
+    invalidAccessTokenResponseText,
+    invalidRefreshTokenResponseText,
+    requiredParamsNotFoundResponseText,
+    successResponseText } = require("../../commons/variables");
 
 exports.makeSignOutCont = (deleteJwtRefreshRepo) => {
     return async (req, res) => {

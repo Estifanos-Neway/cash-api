@@ -5,7 +5,8 @@ const {
     changeAdminPasswordHashRepo,
     getAdminRepo,
     updateAdminSettingsRepo,
-    getAdminSettingsRepo } = require("../../repositories/admin");
+    getAdminSettingsRepo,
+    recoverAdminPasswordHashRepo } = require("../../repositories/admin");
 const {
     makeGetAdminCont,
     makeChangeAdminPasswordHashCont,
@@ -13,24 +14,13 @@ const {
     makeSignInAdminCont,
     makeUpdateAdminSettingsCont,
     makeGetAdminSettingsCont,
-    makeSendAdminEmailVerificationCont, 
-    makeVerifyAdminEmailCont} = require("./admin-controllers");
+    makeSendAdminEmailVerificationCont,
+    makeVerifyAdminEmailCont,
+    makeSendAdminPasswordRecoveryEmailCont,
+    makeRecoverAdminPasswordCont } = require("./admin-controllers");
 const {
-    createVerificationCode,
-    sendEmail, 
-    encrypt} = require("../../commons/functions");
-const { verificationTokenExpiresIn } = require("../../commons/variables");
-
-async function sendEmailVerificationCode(email) {
-    const verificationCode = createVerificationCode();
-    const subject = "Recovery Email verification";
-    const html = `Verification code: ${verificationCode}`;
-    const validUntil = new Date().getTime() +  verificationTokenExpiresIn * 60 * 1000;
-    await sendEmail({ subject, html, to: email });
-    console.log(html);
-    const verificationObject = { email, verificationCode, validUntil };
-    return encrypt(verificationObject);
-}
+    sendEmailVerification,
+    sendEmailVerificationCode } = require("../controller-commons/functions");
 
 module.exports = {
     signInAdminCont: makeSignInAdminCont({ signInAdminRepo, addJwtRefreshRepo }),
@@ -40,5 +30,7 @@ module.exports = {
     changeAdminPasswordHashCont: makeChangeAdminPasswordHashCont({ changeAdminPasswordHashRepo }),
     updateAdminSettingsCont: makeUpdateAdminSettingsCont({ updateAdminSettingsRepo }),
     sendAdminEmailVerificationCont: makeSendAdminEmailVerificationCont({ sendEmailVerificationCode }),
-    verifyAdminEmailCont: makeVerifyAdminEmailCont()
+    verifyAdminEmailCont: makeVerifyAdminEmailCont(),
+    sendAdminPasswordRecoveryEmailCont: makeSendAdminPasswordRecoveryEmailCont({ getAdminRepo, sendEmailVerification }),
+    recoverAdminPasswordCont: makeRecoverAdminPasswordCont({ getAdminRepo, recoverAdminPasswordHashRepo })
 };

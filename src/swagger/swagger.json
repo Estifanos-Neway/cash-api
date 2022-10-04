@@ -19,7 +19,7 @@
     "/admin": {
       "get": {
         "tags": ["Admin"],
-        "summary": "Get admin data. [Requires_Admin_Access_Token",
+        "summary": "Get admin data. [Requires_Admin_Access_Token]",
         "responses": {
           "200": {
             "description": "OK",
@@ -217,6 +217,93 @@
                   "properties": {
                     "newEmail": {
                       "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "408": {
+            "$ref": "#/components/responses/timeOut"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/admin/forgot-password": {
+      "put": {
+        "tags": ["Admin"],
+        "summary": "Send password recovery link to the admins email. [Requires_Admin_Access_Token]",
+        "responses": {
+          "200": {
+            "description": "OK - A password recovery link is sent to the admins email. (it expires in 5 minutes)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/admin/recover-password": {
+      "put": {
+        "tags": ["Admin"],
+        "summary": "Recover the admins password hash. [Requires_Admin_Access_Token]",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["recoveryToken", "newPasswordHash"],
+                "properties": {
+                 
+                  "recoveryToken": {
+                    "type": "string",
+                    "description": "The recovery token that has been attached to the recovery link sent to the admins email."
+                  },
+                   "newPasswordHash": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK - The password hash is updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example":"OK"
                     }
                   }
                 }

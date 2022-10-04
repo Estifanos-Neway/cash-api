@@ -1,7 +1,6 @@
+const { invalidApiKeyResponseText } = require("../../commons/variables");
 const { env } = require("../../env");
 const { createSingleResponse } = require("../controller-commons/functions");
-const { invalidApiKeyResponseText } = require("../controller-commons/variables");
-
 exports.makeForceApiKey = () => {
     return (req, res, next) => {
         const apiKey = req.get("api-key");
