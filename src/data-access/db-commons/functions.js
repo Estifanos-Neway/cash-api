@@ -1,30 +1,30 @@
 async function exists(dbConnector, model, condition) {
-    await dbConnector();
+    // await dbConnector();
     return await model.exists(condition);
 }
 
 async function count(dbConnector, model) {
-    await dbConnector();
+    // await dbConnector();
     return await model.count();
 }
 
 async function create(dbConnector, model, doc) {
-    await dbConnector();
+    // await dbConnector();
     return await model.create(doc);
 }
 
 async function findOne(dbConnector, model, condition, selection) {
-    await dbConnector();
+    // await dbConnector();
     return await model.findOne(condition).select(selection).exec();
 }
 
 async function deleteOne(dbConnector, model, condition) {
-    await dbConnector();
+    // await dbConnector();
     return await model.deleteOne(condition);
 }
 
 async function updateOne(dbConnector, model, condition, updates) {
-    await dbConnector();
+    // await dbConnector();
     let doc = await model.findOne(condition);
     Object.entries(updates).forEach(update => {
         if (update[0] in doc) {

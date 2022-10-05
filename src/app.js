@@ -12,19 +12,16 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     const app = express();
     app.set("port", env.PORT || defaultPort);
 
+    app.use(express.static("src/public"));
     // swagger
-    const swaggerDoc = require("./swagger/swagger.json");
+    const swaggerDoc = require("./swagger.json");
     const { createSingleResponse } = require("./controllers/controller-commons/functions");
     const swaggerOptions = {
-        explorer: true
+        // explorer: true,
+        customCssUrl: "/swagger.css"
     };
-    app.use("/docs", (req, res, next) => {
-        // @ts-ignore
-        swaggerDoc.host = req.get("host");
-        req.swaggerDoc = swaggerDoc;
-        next();
-    }, swaggerUi.serveFiles(swaggerDoc, swaggerOptions), swaggerUi.setup());
-
+    
+    app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, swaggerOptions));
     // Security
     app.set("trust proxy", 1);
     // @ts-ignore
@@ -47,7 +44,7 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     // middleware configurations
     app.use(morgan("dev"));
     app.use(express.json());
-    
+
     // Routes
     app.use(forceApiKey);
     app.use(authenticateByToken);

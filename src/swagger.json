@@ -296,12 +296,11 @@
                 "type": "object",
                 "required": ["recoveryToken", "newPasswordHash"],
                 "properties": {
-                 
                   "recoveryToken": {
                     "type": "string",
                     "description": "The recovery token that has been attached to the recovery link sent to the admins email."
                   },
-                   "newPasswordHash": {
+                  "newPasswordHash": {
                     "type": "string"
                   }
                 }
@@ -319,7 +318,7 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example":"OK"
+                      "example": "OK"
                     }
                   }
                 }
@@ -502,7 +501,7 @@
         "type": "apiKey",
         "description": "Api key to access this api.",
         "in": "header",
-        "name": "api-key"
+        "name": "Api-Key"
       }
     },
     "schemas": {

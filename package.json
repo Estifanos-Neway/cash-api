@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "init": "node src/init.js"
+    "init": "node src/init.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,11 @@
   },
   "homepage": "https://github.com/Estifanos-Neway/cash#readme",
   "devDependencies": {
-    "eslint": "^8.23.0"
+    "@types/jest": "^29.1.1",
+    "eslint": "^8.23.0",
+    "jest": "^29.1.2",
+    "mongodb-memory-server": "^8.9.3",
+    "supertest": "^6.3.0"
   },
   "dependencies": {
     "cli-color": "^2.0.3",

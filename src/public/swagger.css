@@ -1,0 +1,13 @@
+.swagger-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.swagger-container .swagger-ui {
+    max-width: 800px;
+}
+.swagger-container .topbar{
+    width: 100vw;
+    padding: 15px 40px;
+}
