@@ -32,7 +32,6 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
         windowMs: 1 * 60 * 1000,
         max: 10,
         message: createSingleResponse("Too_Many_Requests"),
-        skipSuccessfulRequests: true,
         standardHeaders: true,
         legacyHeaders: false
     });

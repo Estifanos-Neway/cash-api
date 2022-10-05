@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const { isEmail } = require("../../commons/functions");
 const AdminSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -10,7 +10,15 @@ const AdminSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    email:String,
+    email: {
+        type: String,
+        validate: {
+            validator: (value) => {
+                return isEmail(value);
+            },
+            message: "Invalid_Email"
+        }
+    },
     settings: {
         commissionRate: {
             type: Number,

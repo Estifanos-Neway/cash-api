@@ -19,6 +19,7 @@ async function init() {
         console.log("Default admin already exists.");
     }
     console.log("Done!");
+    process.exit();
 }
 
 init();
