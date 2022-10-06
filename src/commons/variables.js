@@ -25,6 +25,8 @@ const userNotFoundResponseText = "User_Not_Found";
 const internalErrorResponseText = "Internal_Error";
 const invalidApiKeyResponseText = "Invalid_Api_Key";
 const missingApiKeyResponseText = "Api_Key_Is_Required";
+const pathNotFoundResponseText = "Path_Not_Found";
+const tooManyRequestsResponseText = "Too_Many_Requests";
 
 const defaultPort = 5000;
 const verificationTokenExpiresIn = 5;
@@ -55,5 +57,7 @@ module.exports = {
     userNotFoundResponseText,
     internalErrorResponseText,
     invalidApiKeyResponseText,
-    missingApiKeyResponseText
+    missingApiKeyResponseText,
+    pathNotFoundResponseText,
+    tooManyRequestsResponseText
 };

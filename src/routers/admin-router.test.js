@@ -5,12 +5,12 @@ const { adminRouter, tokensRouter } = require(".");
 const { makeApp } = require("../app");
 const commonFunctions = require("../commons/functions");
 const { hash, encrypt } = require("../commons/functions");
-const { defaultPort, wrongPasswordHashResponseText, invalidInputResponseText, userNotFoundResponseText, invalidEmailResponseText, invalidVerificationCodeResponseText, invalidTokenResponseText, expiredTokenResponseText, verificationTokenExpiresIn } = require("../commons/variables");
+const { defaultPort, wrongPasswordHashResponseText, invalidInputResponseText, userNotFoundResponseText, invalidEmailResponseText, invalidVerificationCodeResponseText, invalidTokenResponseText, expiredTokenResponseText, verificationTokenExpiresIn, invalidAccessTokenResponseText } = require("../commons/variables");
 const { defaultAdmin } = require("../config.json");
 const { env } = require("../env");
 const { signUpAdminRepo } = require("../repositories/admin");
 
-const defaultAdminCredentials = {
+const adminCredentials = {
     username: defaultAdmin.username,
     passwordHash: hash(defaultAdmin.password)
 };
@@ -24,15 +24,15 @@ describe("/admin", () => {
     beforeAll(async () => {
         // @ts-ignore
         await mongoose.connect(env.DB_URL_TEST, { keepAlive: true });
-        await signUpAdminRepo({ ...defaultAdminCredentials });
-    });
-
-    afterAll(() => {
-        mongoose.connection.db.dropDatabase();
+        await signUpAdminRepo({ ...adminCredentials });
     });
 
     beforeEach(() => {
         request = supertest(makeApp(defaultPort, adminRouter, tokensRouter));
+    });
+
+    afterAll(() => {
+        mongoose.connection.db.dropDatabase();
     });
 
     describe("/sign-in POST", () => {
@@ -41,10 +41,10 @@ describe("/admin", () => {
             it("Should be successfully signed-in.", async () => {
                 const { body, statusCode } = await request.post(subPath)
                     .set("Api-Key", env.API_KEY)
-                    .send({ ...defaultAdminCredentials });
+                    .send({ ...adminCredentials });
 
                 expect(statusCode).toBe(200);
-                expect(body).toHaveProperty("admin.username", defaultAdminCredentials.username);
+                expect(body).toHaveProperty("admin.username", adminCredentials.username);
                 accessToken = body.accessToken;
             });
         });
@@ -53,7 +53,7 @@ describe("/admin", () => {
             it(`Should return 404 and ${userNotFoundResponseText}`, async () => {
                 const { body, statusCode } = await request.post(subPath)
                     .set("Api-Key", env.API_KEY)
-                    .send({ ...defaultAdminCredentials, passwordHash: "wrongPasswordHash" });
+                    .send({ ...adminCredentials, passwordHash: "wrongPasswordHash" });
 
                 expect(statusCode).toBe(404);
                 expect(body).toHaveProperty("message", userNotFoundResponseText);
@@ -64,7 +64,7 @@ describe("/admin", () => {
             it(`Should return 404 and ${userNotFoundResponseText}`, async () => {
                 const { body, statusCode } = await request.post(subPath)
                     .set("Api-Key", env.API_KEY)
-                    .send({ ...defaultAdminCredentials, username: "wrongUsername" });
+                    .send({ ...adminCredentials, username: "wrongUsername" });
 
                 expect(statusCode).toBe(404);
                 expect(body).toHaveProperty("message", userNotFoundResponseText);
@@ -86,7 +86,7 @@ describe("/admin", () => {
             it(`Should return 400 and ${invalidInputResponseText}`, async () => {
                 const { body, statusCode } = await request.post(subPath)
                     .set("Api-Key", env.API_KEY)
-                    .send({ ...defaultAdminCredentials, username: ["invalidUsernameFormat"], });
+                    .send({ ...adminCredentials, username: ["invalidUsernameFormat"], });
 
                 expect(statusCode).toBe(400);
                 expect(body).toHaveProperty("message", invalidInputResponseText);
@@ -97,7 +97,7 @@ describe("/admin", () => {
             it(`Should return 400 and ${invalidInputResponseText}`, async () => {
                 const { body, statusCode } = await request.post(subPath)
                     .set("Api-Key", env.API_KEY)
-                    .send({ username: defaultAdminCredentials.username });
+                    .send({ username: adminCredentials.username });
 
                 expect(statusCode).toBe(400);
                 expect(body).toHaveProperty("message", invalidInputResponseText);
@@ -113,7 +113,7 @@ describe("/admin", () => {
                 .set("Authorization", `Bearer ${accessToken}`);
 
             expect(statusCode).toBe(200);
-            expect(body).toHaveProperty("username", defaultAdminCredentials.username);
+            expect(body).toHaveProperty("username", adminCredentials.username);
         });
     });
 
@@ -134,7 +134,7 @@ describe("/admin", () => {
                 expect(statusCode).toBe(200);
                 expect(body).toHaveProperty("username", newUsername);
 
-                defaultAdminCredentials.username = newUsername;
+                adminCredentials.username = newUsername;
             });
         });
         describe("Given an invalid username", () => {
@@ -169,16 +169,16 @@ describe("/admin", () => {
                 let { statusCode } = await request.patch(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`)
-                    .send({ newPasswordHash, oldPasswordHash: defaultAdminCredentials.passwordHash });
+                    .send({ newPasswordHash, oldPasswordHash: adminCredentials.passwordHash });
 
                 let { body } = await request.post("/admin/sign-in")
                     .set("Api-Key", env.API_KEY)
-                    .send({ ...defaultAdminCredentials, passwordHash: newPasswordHash });
+                    .send({ ...adminCredentials, passwordHash: newPasswordHash });
 
                 expect(statusCode).toBe(200);
-                expect(body).toHaveProperty("admin.username", defaultAdminCredentials.username);
+                expect(body).toHaveProperty("admin.username", adminCredentials.username);
 
-                defaultAdminCredentials.passwordHash = newPasswordHash;
+                adminCredentials.passwordHash = newPasswordHash;
             });
         });
 
@@ -201,7 +201,7 @@ describe("/admin", () => {
                 let { statusCode, body } = await request.patch(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`)
-                    .send({ newPasswordHash, oldPasswordHash: defaultAdminCredentials.passwordHash });
+                    .send({ newPasswordHash, oldPasswordHash: adminCredentials.passwordHash });
 
                 expect(statusCode).toBe(400);
                 expect(body).toHaveProperty("message", invalidInputResponseText);
@@ -412,12 +412,12 @@ describe("/admin", () => {
 
                 let { body: admin } = await request.post("/admin/sign-in")
                     .set("Api-Key", env.API_KEY)
-                    .send({ ...defaultAdminCredentials, passwordHash: anotherNewPasswordHash });
+                    .send({ ...adminCredentials, passwordHash: anotherNewPasswordHash });
 
                 expect(statusCode).toBe(200);
-                expect(admin).toHaveProperty("admin.username", defaultAdminCredentials.username);
+                expect(admin).toHaveProperty("admin.username", adminCredentials.username);
 
-                defaultAdminCredentials.passwordHash = anotherNewPasswordHash;
+                adminCredentials.passwordHash = anotherNewPasswordHash;
             });
         });
 

@@ -9,7 +9,7 @@ const { createUserData, createAccessToken } = require("../controllers/controller
 const { env } = require("../env");
 const { signUpAdminRepo } = require("../repositories/admin");
 
-const defaultAdminCredentials = {
+const adminCredentials = {
     username: defaultAdmin.username,
     passwordHash: hash(defaultAdmin.password)
 };
@@ -21,20 +21,20 @@ describe("/tokens", () => {
     beforeAll(async () => {
         // @ts-ignore
         await mongoose.connect(env.DB_URL_TEST, { keepAlive: true });
-        await signUpAdminRepo({ ...defaultAdminCredentials });
-    });
-
-    afterAll(() => {
-        mongoose.connection.db.dropDatabase();
+        await signUpAdminRepo({ ...adminCredentials });
     });
 
     beforeEach(async () => {
         request = supertest(makeApp(defaultPort, adminRouter, tokensRouter));
         const { body } = await request.post("/admin/sign-in")
             .set("Api-Key", env.API_KEY)
-            .send({ ...defaultAdminCredentials });
+            .send({ ...adminCredentials });
         accessToken = body.accessToken;
         refreshToken = body.refreshToken;
+    });
+
+    afterAll(() => {
+        mongoose.connection.db.dropDatabase();
     });
 
     describe("/refresh", () => {

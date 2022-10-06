@@ -7,6 +7,7 @@ const rateLimit = require("express-rate-limit");
 const swaggerUi = require("swagger-ui-express");
 const { authenticateByToken, forceApiKey } = require("./controllers/middlewares");
 const { env } = require("./env");
+const { pathNotFoundResponseText, tooManyRequestsResponseText } = require("./commons/variables");
 
 exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     const app = express();
@@ -28,7 +29,7 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     const limiter = rateLimit({
         windowMs: 1 * 60 * 1000,
         max: 10,
-        message: createSingleResponse("Too_Many_Requests"),
+        message: createSingleResponse(tooManyRequestsResponseText),
         standardHeaders: true,
         legacyHeaders: false
     });
@@ -52,8 +53,8 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     app.use("/admin", adminRouter);
 
     app.use("*", (req, res) => {
-        res.status(404).json({ message: "Path_Not_Found" });
+        res.status(404).json(createSingleResponse(pathNotFoundResponseText));
     });
-    
+
     return app;
 };
