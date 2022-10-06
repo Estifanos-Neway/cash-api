@@ -540,18 +540,8 @@
       }
     },
     "parameters": {
-      "accessToken": {
-        "name": "accessToken",
-        "description": "The old access token.",
-        "in": "header",
-        "required": true,
-        "schema": {
-          "type": "string"
-        },
-        "style": "simple"
-      },
       "refreshToken": {
-        "name": "refreshToken",
+        "name": "Refresh-Token",
         "description": "The old refresh token.",
         "in": "header",
         "required": true,

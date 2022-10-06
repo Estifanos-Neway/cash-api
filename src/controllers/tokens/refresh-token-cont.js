@@ -9,7 +9,7 @@ const { invalidAccessTokenResponseText, invalidRefreshTokenResponseText, invalid
 exports.makeRefreshTokenCont = (checkJwtRefreshRepo) => {
     return async (req, res) => {
         try {
-            const refreshToken = req.get("refresh-token");
+            const refreshToken = req.get("Refresh-Token");
             const accessToken = getAccessToken(req.get("Authorization"));
             if (!hasSingleValue(refreshToken) || !hasSingleValue(accessToken)) {
                 res.status(400).json(createSingleResponse(invalidInputResponseText));
@@ -40,7 +40,7 @@ exports.makeRefreshTokenCont = (checkJwtRefreshRepo) => {
                         }
                     });
                 } else {
-                    res.status(401).json(createSingleResponse(`${invalidAccessTokenResponseText} (maybe signed out)`));
+                    res.status(401).json(createSingleResponse(`${invalidRefreshTokenResponseText} (maybe signed out)`));
                 }
             }
         } catch (error) {
