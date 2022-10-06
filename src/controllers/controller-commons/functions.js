@@ -5,10 +5,10 @@ const {
     verificationTokenExpiresIn } = require("../../commons/variables");
 const { env } = require("../../env");
 const {
-    createVerificationCode,
     sendEmail,
     encrypt,
     isNonEmptyString } = require("../../commons/functions");
+const commonFunctions = require("../../commons/functions");
 const { urls } = require("../../config.json");
 
 function createSingleResponse(response) {
@@ -43,9 +43,9 @@ function errorHandler(error, res) {
 }
 
 async function sendEmailVerificationCode({ email, subject, html }) {
-    const verificationCode = createVerificationCode();
+    const verificationCode = commonFunctions["createVerificationCode"]();
     html = html.replaceAll("__verificationCode__", verificationCode);
-    await sendEmail({ subject, html, to: email });
+    await commonFunctions["sendEmail"]({ subject, html, to: email });
     const validUntil = new Date().getTime() + verificationTokenExpiresIn * 60 * 1000;
     const verificationObject = { email, verificationCode, validUntil };
     return encrypt(verificationObject);
@@ -58,7 +58,7 @@ async function sendEmailVerification({ email, path, subject, html }) {
     const verificationToken = jwt.sign(verificationObject, env.JWT_SECRETE);
     const verificationLink = `${urls.baseUrl}${path}?t=${verificationToken}`;
     html = html.replaceAll("__verificationLink__", verificationLink);
-    await sendEmail({ subject, html, to: email });
+    await commonFunctions["sendEmail"]({ subject, html, to: email });
     console.log(verificationLink);
 }
 

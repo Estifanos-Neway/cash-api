@@ -172,6 +172,67 @@
         }
       }
     },
+    "/admin/settings": {
+      "get": {
+        "summary": "Get admin settings. [Requires_Admin_Access_Token]",
+        "tags": ["Admin"],
+        "responses": {
+          "200": {
+            "description": "Admin settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/adminSettings"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update admin settings. [Requires_Admin_Access_Token]",
+        "tags": ["Admin"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/adminSettings"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK, The new setting",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/adminSettings"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
     "/admin/email": {
       "put": {
         "tags": ["Admin"],
@@ -372,67 +433,6 @@
           },
           "408": {
             "$ref": "#/components/responses/timeOut"
-          },
-          "500": {
-            "$ref": "#/components/responses/internalError"
-          }
-        }
-      }
-    },
-    "/admin/settings": {
-      "get": {
-        "summary": "Get admin settings. [Requires_Admin_Access_Token]",
-        "tags": ["Admin"],
-        "responses": {
-          "200": {
-            "description": "Admin settings",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/adminSettings"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/notFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/internalError"
-          }
-        }
-      },
-      "patch": {
-        "summary": "Update admin settings. [Requires_Admin_Access_Token]",
-        "tags": ["Admin"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/adminSettings"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK, The new setting",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/adminSettings"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/invalidInput"
-          },
-          "401": {
-            "$ref": "#/components/responses/unauthorized"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
