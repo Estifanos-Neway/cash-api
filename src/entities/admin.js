@@ -6,7 +6,9 @@ const {
     invalidPasswordHashResponseText,
     wrongPasswordHashResponseText,
     invalidCommissionRateResponseText,
-    invalidEmailResponseText } = require("../commons/variables");
+    invalidEmailResponseText,
+    invalidUsernameResponseText,
+    invalidUserIdResponseText } = require("../commons/variables");
 
 function adaptCommissionRate(commissionRate) {
     if (!_.isNumber(commissionRate)) {
@@ -52,12 +54,43 @@ exports.makeAdmin = () => {
         get userId() { return this.#userId; }
         get settings() { return this.#settings.toJson(); }
 
+
+        set username(newUsername) {
+            if (hasValue(newUsername)) {
+                if (hasSingleValue(newUsername)) {
+                    this.#username = newUsername;
+                } else {
+                    throw new Error(invalidUsernameResponseText);
+                }
+            }
+        }
+
+        set passwordHash(newPasswordHash) {
+            if (hasValue(newPasswordHash)) {
+                if (hasSingleValue(newPasswordHash)) {
+                    this.#passwordHash = newPasswordHash;
+                } else {
+                    throw new Error(invalidPasswordHashResponseText);
+                }
+            }
+        }
+
         set email(newEmail) {
             if (hasValue(newEmail)) {
                 if (isEmail(newEmail)) {
                     this.#email = newEmail;
                 } else {
-                    throw new Error(`${invalidInput}${invalidEmailResponseText}`);
+                    throw new Error(invalidEmailResponseText);
+                }
+            }
+        }
+
+        set userId(newUserId) {
+            if (hasValue(newUserId)) {
+                if (hasSingleValue(newUserId)) {
+                    this.#userId = newUserId;
+                } else {
+                    throw new Error(invalidUserIdResponseText);
                 }
             }
         }
@@ -75,20 +108,18 @@ exports.makeAdmin = () => {
         }
 
         constructor({ username, passwordHash, email, userId, settings }) {
-            this.#username = username;
-            this.#passwordHash = passwordHash;
+            this.username = username;
+            this.passwordHash = passwordHash;
             this.email = email;
-            this.#userId = userId;
+            this.userId = userId;
             this.#settings = new AdminSettings({ ...settings });
         }
 
         changePasswordHash({ oldPasswordHash, newPasswordHash }) {
-            if (!hasSingleValue(newPasswordHash)) {
-                throw new Error(`${invalidInput}${invalidPasswordHashResponseText}`);
-            } else if (oldPasswordHash !== this.#passwordHash) {
+            if (oldPasswordHash !== this.passwordHash) {
                 throw new Error(`${invalidInput}${wrongPasswordHashResponseText}`);
             } else {
-                this.#passwordHash = newPasswordHash;
+                this.passwordHash = newPasswordHash;
             }
         }
 

@@ -12,7 +12,7 @@ const {
 const { urls } = require("../../config.json");
 
 function createSingleResponse(response) {
-    return JSON.stringify({ message: response });
+    return { message: response };
 }
 
 function createUserData(userId, userType) {
@@ -35,10 +35,10 @@ function getAccessToken(authHeader) {
 function errorHandler(error, res) {
     const errorMessage = error.message;
     if (errorMessage.startsWith(invalidInput)) {
-        res.status(400).end(createSingleResponse(errorMessage.slice(invalidInput.length)));
+        res.status(400).json(createSingleResponse(errorMessage.slice(invalidInput.length)));
     } else {
         console.dir(error, { depth: null });
-        res.status(500).end(createSingleResponse(internalErrorResponseText));
+        res.status(500).json(createSingleResponse(internalErrorResponseText));
     }
 }
 

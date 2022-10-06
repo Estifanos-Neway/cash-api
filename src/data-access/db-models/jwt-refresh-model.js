@@ -5,8 +5,7 @@ const { env } = require("../../env");
 const jwtRefreshSchema = new Schema({
     token: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     userId: {
         type: Schema.Types.ObjectId,

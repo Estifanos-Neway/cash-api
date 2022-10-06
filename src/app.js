@@ -20,7 +20,7 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
         // explorer: true,
         customCssUrl: "/swagger.css"
     };
-    
+
     app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, swaggerOptions));
     // Security
     app.set("trust proxy", 1);
@@ -52,7 +52,8 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     app.use("/admin", adminRouter);
 
     app.use("*", (req, res) => {
-        res.status(404).end(JSON.stringify({ message: "Path_Not_Found" }));
+        res.status(404).json({ message: "Path_Not_Found" });
     });
+    
     return app;
 };

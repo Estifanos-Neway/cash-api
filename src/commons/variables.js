@@ -8,6 +8,7 @@ const invalidRefreshTokenResponseText = "Invalid_Refresh_Token";
 const invalidCommissionRateResponseText = "Invalid_Commission_Rate";
 const invalidPasswordHashResponseText = "Invalid_Password_Hash";
 const invalidUsernameResponseText = "Invalid_Username";
+const invalidUserIdResponseText = "Invalid_User_Id";
 const invalidVerificationCodeResponseText = "Invalid_Verification_Code";
 const invalidTokenResponseText = "Invalid_Token";
 const invalidEmailResponseText = "Invalid_Email";
@@ -34,6 +35,7 @@ module.exports = {
     invalidRefreshTokenResponseText,
     invalidPasswordHashResponseText,
     invalidUsernameResponseText,
+    invalidUserIdResponseText,
     invalidCommissionRateResponseText,
     invalidEmailResponseText,
     invalidVerificationCodeResponseText,

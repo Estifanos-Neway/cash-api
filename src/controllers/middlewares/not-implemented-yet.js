@@ -3,6 +3,6 @@ const { createSingleResponse } = require("../controller-commons/functions");
 
 exports.makeNotImplementedYet = () => {
     return (req, res) => {
-        res.end(createSingleResponse(notImplementedYetResponseText));
+        res.json(createSingleResponse(notImplementedYetResponseText));
     };
 };

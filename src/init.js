@@ -1,14 +1,15 @@
-const { createHash } = require("crypto");
 const { adminsDb } = require("./data-access");
 const { signUpAdminRepo } = require("./repositories/admin");
 const { defaultAdmin } = require("./config.json");
-const { errorLog } = require("./commons/functions");
+const {
+    errorLog,
+    hash } = require("./commons/functions");
 
 async function init() {
     // Adding the default admin
     const adminsCount = await adminsDb.count();
     if (adminsCount === 0) {
-        const passwordHash = createHash("sha256").update(defaultAdmin.password).digest("hex");
+        const passwordHash = hash(defaultAdmin.password);
         try {
             await signUpAdminRepo({ username: defaultAdmin.username, passwordHash });
             console.log("Default admin created successfully.");

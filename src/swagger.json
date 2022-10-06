@@ -16,30 +16,6 @@
     }
   ],
   "paths": {
-    "/admin": {
-      "get": {
-        "tags": ["Admin"],
-        "summary": "Get admin data. [Requires_Admin_Access_Token]",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/adminData"
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/notFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/internalError"
-          }
-        }
-      }
-    },
     "/admin/sign-in": {
       "post": {
         "tags": ["Admin"],
@@ -97,6 +73,30 @@
         }
       }
     },
+    "/admin": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get admin data. [Requires_Admin_Access_Token]",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/adminData"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
     "/admin/username": {
       "patch": {
         "summary": "Change admins username. [Requires_Admin_Access_Token]",
@@ -110,6 +110,45 @@
                 "required": ["newUsername"],
                 "properties": {
                   "newUsername": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/success"
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/admin/password-hash": {
+      "patch": {
+        "summary": "Change admins password hash. [Requires_Admin_Access_Token]",
+        "tags": ["Admin"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["oldPasswordHash", "newPasswordHash"],
+                "properties": {
+                  "oldPasswordHash": {
+                    "type": "string"
+                  },
+                  "newPasswordHash": {
                     "type": "string"
                   }
                 }
@@ -333,45 +372,6 @@
           },
           "408": {
             "$ref": "#/components/responses/timeOut"
-          },
-          "500": {
-            "$ref": "#/components/responses/internalError"
-          }
-        }
-      }
-    },
-    "/admin/password-hash": {
-      "patch": {
-        "summary": "Change admins password hash. [Requires_Admin_Access_Token]",
-        "tags": ["Admin"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["oldPasswordHash", "newPasswordHash"],
-                "properties": {
-                  "oldPasswordHash": {
-                    "type": "string"
-                  },
-                  "newPasswordHash": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/success"
-          },
-          "400": {
-            "$ref": "#/components/responses/invalidInput"
-          },
-          "401": {
-            "$ref": "#/components/responses/unauthorized"
           },
           "500": {
             "$ref": "#/components/responses/internalError"

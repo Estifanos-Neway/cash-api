@@ -10,7 +10,7 @@ exports.makeForceAccessToken = () => {
             if (_.isPlainObject(user) && (_.isEmpty(allowedUsers) || allowedUsers.includes(user.userType))) {
                 next();
             } else {
-                res.status(401).end(createSingleResponse(invalidAccessTokenResponseText));
+                res.status(401).json(createSingleResponse(invalidAccessTokenResponseText));
             }
         };
     };

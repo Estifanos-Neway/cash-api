@@ -1,3 +1,4 @@
+const { createHash } = require("crypto");
 const validator = require("validator");
 const cryptoJS = require("crypto-js");
 const shortUniqueId = require("short-unique-id");
@@ -62,6 +63,9 @@ function decrypt(encrypted) {
     return cryptoJS.AES.decrypt(encrypted, env.PRIVATE_KEY).toString(cryptoJS.enc.Utf8);
 }
 
+function hash(string){
+    return createHash("sha256").update(string).digest("hex");
+}
 module.exports = {
     errorLog,
     hasValue,
@@ -72,5 +76,6 @@ module.exports = {
     sendEmail,
     encrypt,
     decrypt,
-    isEmail
+    isEmail,
+    hash
 };
