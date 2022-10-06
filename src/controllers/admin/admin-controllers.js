@@ -192,7 +192,7 @@ exports.makeVerifyAdminEmailCont = () => {
                     return;
                 }
                 if (new Date().getTime() > verificationObject.validUntil) {
-                    res.status(400).json(createSingleResponse(expiredTokenResponseText));
+                    res.status(408).json(createSingleResponse(expiredTokenResponseText));
                 } else if (verificationCode !== verificationObject.verificationCode) {
                     res.status(400).json(createSingleResponse(invalidVerificationCodeResponseText));
                     // @ts-ignore
@@ -264,7 +264,7 @@ exports.makeRecoverAdminPasswordCont = ({ getAdminRepo, recoverAdminPasswordHash
                         return;
                     }
                     if (new Date().getTime() > recoveryObject.validUntil) {
-                        res.status(400).json(createSingleResponse(expiredTokenResponseText));
+                        res.status(408).json(createSingleResponse(expiredTokenResponseText));
                     } else {
                         const emailFrom = recoveryObject.email;
                         const adminEmail = adminInfo.email;

@@ -12,6 +12,7 @@ const invalidUserIdResponseText = "Invalid_User_Id";
 const invalidVerificationCodeResponseText = "Invalid_Verification_Code";
 const invalidTokenResponseText = "Invalid_Token";
 const invalidEmailResponseText = "Invalid_Email";
+const noneMatchingTokensResponseText = "None_Matching_Tokens";
 const cantFindValidEmailResponseText = "Can_Not_Find_Valid_Recovery_Email";
 const expiredTokenResponseText = "Expired_Token";
 const requiredParamsNotFoundResponseText = "Required_Params_Not_Found";
@@ -40,6 +41,7 @@ module.exports = {
     invalidEmailResponseText,
     invalidVerificationCodeResponseText,
     invalidTokenResponseText,
+    noneMatchingTokensResponseText,
     cantFindValidEmailResponseText,
     expiredTokenResponseText,
     notImplementedYetResponseText,

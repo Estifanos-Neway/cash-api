@@ -7,7 +7,8 @@ const {
     invalidAccessTokenResponseText,
     invalidRefreshTokenResponseText,
     invalidInputResponseText,
-    successResponseText } = require("../../commons/variables");
+    successResponseText, 
+    noneMatchingTokensResponseText} = require("../../commons/variables");
 
 exports.makeSignOutCont = (deleteJwtRefreshRepo) => {
     return async (req, res) => {
@@ -32,7 +33,7 @@ exports.makeSignOutCont = (deleteJwtRefreshRepo) => {
                                     await deleteJwtRefreshRepo(refreshToken);
                                     res.json(createSingleResponse(successResponseText));
                                 } else {
-                                    res.status(401).json(createSingleResponse("None_Matching_Tokens"));
+                                    res.status(401).json(createSingleResponse(noneMatchingTokensResponseText));
                                 }
                             }
                         });

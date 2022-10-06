@@ -5,7 +5,7 @@ const {
     verificationTokenExpiresIn } = require("../../commons/variables");
 const { env } = require("../../env");
 const {
-    sendEmail,
+    errorLog,
     encrypt,
     isNonEmptyString } = require("../../commons/functions");
 const commonFunctions = require("../../commons/functions");
@@ -16,7 +16,7 @@ function createSingleResponse(response) {
 }
 
 function createUserData(userId, userType) {
-    return { userId, userType };
+    return { userId, userType, rand:Math.random() };
 }
 
 function createAccessToken(userData, expiresIn = "10m") {
@@ -37,7 +37,7 @@ function errorHandler(error, res) {
     if (errorMessage.startsWith(invalidInput)) {
         res.status(400).json(createSingleResponse(errorMessage.slice(invalidInput.length)));
     } else {
-        console.dir(error, { depth: null });
+        errorLog("Internal_Error",error);
         res.status(500).json(createSingleResponse(internalErrorResponseText));
     }
 }
@@ -59,7 +59,6 @@ async function sendEmailVerification({ email, path, subject, html }) {
     const verificationLink = `${urls.baseUrl}${path}?t=${verificationToken}`;
     html = html.replaceAll("__verificationLink__", verificationLink);
     await commonFunctions["sendEmail"]({ subject, html, to: email });
-    console.log(verificationLink);
 }
 
 module.exports = {

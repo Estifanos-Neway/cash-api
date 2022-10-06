@@ -453,7 +453,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "accessToken": {
+                    "newAccessToken": {
                       "type": "string"
                     }
                   }

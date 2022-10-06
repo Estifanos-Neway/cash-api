@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const { env } = require("../../env");
 const { errorHandler } = require("../controller-commons/functions");
 const { createAccessToken, createSingleResponse } = require("../controller-commons/functions");
-const { invalidAccessTokenResponseText, invalidRefreshTokenResponseText, invalidInputResponseText } = require("../../commons/variables");
+const { invalidAccessTokenResponseText, invalidRefreshTokenResponseText, invalidInputResponseText, noneMatchingTokensResponseText } = require("../../commons/variables");
 
 exports.makeRefreshTokenCont = (checkJwtRefreshRepo) => {
     return async (req, res) => {
@@ -33,14 +33,14 @@ exports.makeRefreshTokenCont = (checkJwtRefreshRepo) => {
                                         const newAccessToken = createAccessToken(userData);
                                         res.json({ newAccessToken });
                                     } else {
-                                        res.status(401).json(createSingleResponse("None_Matching_Tokens"));
+                                        res.status(401).json(createSingleResponse(noneMatchingTokensResponseText));
                                     }
                                 }
                             });
                         }
                     });
                 } else {
-                    res.status(401).json(createSingleResponse(`${invalidRefreshTokenResponseText} (maybe signed out)`));
+                    res.status(401).json(createSingleResponse(`${invalidRefreshTokenResponseText}`));
                 }
             }
         } catch (error) {
