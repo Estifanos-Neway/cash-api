@@ -9,6 +9,7 @@ const { authenticateByToken, forceApiKey } = require("./controllers/middlewares"
 const { env } = require("./env");
 const { pathNotFoundResponseText, tooManyRequestsResponseText } = require("./commons/response-texts");
 const { numberOfMaxApiRequestsPerMin } = require("./commons/variables");
+const { Responses } = require("./api-docs/responses.doc");
 
 exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     const app = express();
@@ -16,13 +17,16 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
 
     app.use(express.static("src/public"));
     // swagger
-    const swaggerDoc = require("./swagger.json");
+    const swaggerDoc = require("./api-docs/swagger.json");
     const { createSingleResponse } = require("./controllers/controller-commons/functions");
     const swaggerOptions = {
         // explorer: true,
         customCssUrl: "/swagger.css"
     };
 
+    app.get("/docs/responses",(req,res)=>{
+        res.json(Responses);
+    });
     app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, swaggerOptions));
     // Security
     app.set("trust proxy", 1);

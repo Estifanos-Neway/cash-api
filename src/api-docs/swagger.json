@@ -127,6 +127,9 @@
           "401": {
             "$ref": "#/components/responses/unauthorized"
           },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
           "500": {
             "$ref": "#/components/responses/internalError"
           }
@@ -165,6 +168,9 @@
           },
           "401": {
             "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -275,6 +281,9 @@
           },
           "401": {
             "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -430,6 +439,9 @@
           },
           "401": {
             "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
           },
           "408": {
             "$ref": "#/components/responses/timeOut"

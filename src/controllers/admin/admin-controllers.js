@@ -103,7 +103,7 @@ exports.makeChangeAdminPasswordHashCont = ({ changeAdminPasswordHashRepo }) => {
                 if (result.success) {
                     res.json(createSingleResponse(successResponseText));
                 } else {
-                    res.status(400).json(createSingleResponse(result.result));
+                    res.status(404).json(createSingleResponse(result.result));
                 }
             }
         } catch (error) {
@@ -124,7 +124,7 @@ exports.makeChangeAdminUsernameCont = ({ changeAdminUsernameRepo }) => {
                 if (result.success) {
                     res.json(createSingleResponse(successResponseText));
                 } else {
-                    res.status(400).json(createSingleResponse(result.result));
+                    res.status(404).json(createSingleResponse(result.result));
                 }
             }
         } catch (error) {
@@ -145,7 +145,7 @@ exports.makeUpdateAdminSettingsCont = ({ updateAdminSettingsRepo }) => {
                 if (result.success) {
                     res.json(result.result);
                 } else {
-                    res.status(400).json(createSingleResponse(result.result));
+                    res.status(404).json(createSingleResponse(result.result));
                 }
             }
         } catch (error) {
@@ -203,7 +203,7 @@ exports.makeVerifyAdminEmailCont = () => {
                     if (result.success) {
                         res.json({ newEmail: result.result });
                     } else {
-                        res.status(400).json(createSingleResponse(result.result));
+                        res.status(404).json(createSingleResponse(result.result));
                     }
                 }
             }
@@ -275,7 +275,7 @@ exports.makeRecoverAdminPasswordCont = ({ getAdminRepo, recoverAdminPasswordHash
                             if (result.success) {
                                 res.json(createSingleResponse(successResponseText));
                             } else {
-                                res.status(400).json(createSingleResponse(result.result));
+                                res.status(404).json(createSingleResponse(result.result));
                             }
                         }
                     }

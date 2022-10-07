@@ -1,8 +1,8 @@
 const { refreshTokenCont } = require("../controllers/tokens");
 const { signOutCont } = require("../controllers/tokens");
 const { changeAdminUsernameCont } = require("../controllers/admin");
-const { makeAdminRouter } = require("./admin-router");
-const { makeTokensRouter } = require("./tokens-router");
+const { makeAdminRouter } = require("./admin.router");
+const { makeTokensRouter } = require("./tokens.router");
 const {
     signInAdminCont,
     changeAdminPasswordHashCont,
@@ -13,6 +13,7 @@ const {
     verifyAdminEmailCont,
     sendAdminPasswordRecoveryEmailCont,
     recoverAdminPasswordCont } = require("../controllers/admin");
+const { makeDocsRouter } = require("./docs.router");
 
 module.exports = {
     adminRouter: makeAdminRouter({
@@ -27,5 +28,6 @@ module.exports = {
         sendAdminPasswordRecoveryEmailCont,
         recoverAdminPasswordCont
     }),
-    tokensRouter: makeTokensRouter(refreshTokenCont, signOutCont)
+    tokensRouter: makeTokensRouter(refreshTokenCont, signOutCont),
+    docsRouter: makeDocsRouter()
 };
