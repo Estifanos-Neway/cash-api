@@ -595,7 +595,7 @@
         }
       },
       "notFound": {
-        "description": "The requested content not found.",
+        "description": "Data necessary to process this request is not found in the server.",
         "content": {
           "application/json": {
             "schema": {
