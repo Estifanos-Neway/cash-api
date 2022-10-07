@@ -5,7 +5,18 @@ const { adminRouter, tokensRouter } = require(".");
 const { makeApp } = require("../app");
 const commonFunctions = require("../commons/functions");
 const { hash, encrypt } = require("../commons/functions");
-const { defaultPort, wrongPasswordHashResponseText, invalidInputResponseText, userNotFoundResponseText, invalidEmailResponseText, invalidVerificationCodeResponseText, invalidTokenResponseText, expiredTokenResponseText, verificationTokenExpiresIn, invalidAccessTokenResponseText } = require("../commons/variables");
+const {
+    wrongPasswordHashResponseText,
+    invalidInputResponseText,
+    userNotFoundResponseText,
+    invalidEmailResponseText,
+    invalidVerificationCodeResponseText,
+    invalidTokenResponseText,
+    expiredTokenResponseText, } = require("../commons/response-texts");
+const {
+    defaultPort,verificationTokenExpiresIn } = require("../commons/variables");
+
+
 const { defaultAdmin } = require("../config.json");
 const { env } = require("../env");
 const { signUpAdminRepo } = require("../repositories/admin");
@@ -232,7 +243,7 @@ describe("/admin", () => {
         });
     });
 
-    describe("/email", () => {
+    describe("/email PUT", () => {
         const subPath = `${mainPath}/email`;
         describe("Given a valid email", () => {
             it("Should send a verification code to the admins email", async () => {
@@ -252,8 +263,6 @@ describe("/admin", () => {
                 emailVerificationToken = body["verificationToken"];
             });
         });
-        const sendEmailMock = jest.spyOn(commonFunctions, "sendEmail").mockReturnValue(Promise.resolve(true));
-        const createVerificationCodeMock = jest.spyOn(commonFunctions, "createVerificationCode").mockReturnValue(emailVerificationCode);
 
         describe("Given an invalid email format", () => {
             it(`Should return 400 and ${invalidEmailResponseText}`, async () => {
@@ -291,7 +300,7 @@ describe("/admin", () => {
         });
     });
 
-    describe("/verify-email", () => {
+    describe("/verify-email PUT", () => {
         const subPath = `${mainPath}/verify-email`;
         describe("Given valid verificationCode and verificationToken", () => {
             it("Should update the admins email", async () => {
@@ -380,7 +389,7 @@ describe("/admin", () => {
         });
     });
 
-    describe("/forgot-password", () => {
+    describe("/forgot-password PUT", () => {
         const subPath = `${mainPath}/forgot-password`;
         it("Should send a recovery link to the admins email", async () => {
             const sendEmailMock = jest.spyOn(commonFunctions, "sendEmail").mockReturnValue(Promise.resolve(true));
@@ -394,7 +403,7 @@ describe("/admin", () => {
         });
     });
 
-    describe("/recover-password", () => {
+    describe("/recover-password PUT", () => {
         const subPath = `${mainPath}/recover-password`;
         describe("Given valid recovery token and new password hash", () => {
             it("Should update the admins password hash", async () => {

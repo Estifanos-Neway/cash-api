@@ -8,7 +8,7 @@ const {
     invalidRefreshTokenResponseText,
     invalidInputResponseText,
     successResponseText, 
-    noneMatchingTokensResponseText} = require("../../commons/variables");
+    noneMatchingTokensResponseText} = require("../../commons/response-texts");
 
 exports.makeSignOutCont = (deleteJwtRefreshRepo) => {
     return async (req, res) => {

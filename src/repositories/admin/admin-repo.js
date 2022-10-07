@@ -1,5 +1,5 @@
 const { createResult } = require("../../commons/functions");
-const { adminNotFoundResponseText } = require("../../commons/variables");
+const { userNotFoundResponseText } = require("../../commons/response-texts");
 
 function createAdminInfo(admin) {
     return Object.freeze({
@@ -59,7 +59,7 @@ exports.makeChangeAdminUsernameRepo = ({ adminsDb }) => {
             await adminsDb.updateOne({ id: userId }, { username: admin.username });
             return createResult(true);
         } else {
-            return createResult(false, adminNotFoundResponseText);
+            return createResult(false, userNotFoundResponseText);
         }
     };
 };
@@ -72,7 +72,7 @@ exports.makeChangeAdminPasswordHashRepo = ({ adminsDb }) => {
             await adminsDb.updateOne({ id: userId }, { passwordHash: admin.passwordHash });
             return createResult(true);
         } else {
-            return createResult(false, adminNotFoundResponseText);
+            return createResult(false, userNotFoundResponseText);
         }
     };
 };
@@ -85,7 +85,7 @@ exports.makeRecoverAdminPasswordHashRepo = ({ adminsDb }) => {
             await adminsDb.updateOne({ id: userId }, { passwordHash: admin.passwordHash });
             return createResult(true);
         } else {
-            return createResult(false, adminNotFoundResponseText);
+            return createResult(false, userNotFoundResponseText);
         }
     };
 };
@@ -98,7 +98,7 @@ exports.makeUpdateAdminSettingsRepo = ({ adminsDb }) => {
             const result = await adminsDb.updateOne({ id: userId }, { settings: admin.settings });
             return createResult(true, result.settings);
         } else {
-            return createResult(false, adminNotFoundResponseText);
+            return createResult(false, userNotFoundResponseText);
         }
     };
 };
@@ -111,7 +111,7 @@ exports.makeUpdateAdminEmailRepo = ({ adminsDb }) => {
             const result = await adminsDb.updateOne({ id: userId }, { email: admin.email });
             return createResult(true, result.email);
         } else {
-            return createResult(false, adminNotFoundResponseText);
+            return createResult(false, userNotFoundResponseText);
         }
     };
 };

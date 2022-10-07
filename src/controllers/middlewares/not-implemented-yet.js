@@ -1,4 +1,4 @@
-const { notImplementedYetResponseText } = require("../../commons/variables");
+const { notImplementedYetResponseText } = require("../../commons/response-texts");
 const { createSingleResponse } = require("../controller-commons/functions");
 
 exports.makeNotImplementedYet = () => {

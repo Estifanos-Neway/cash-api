@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const { invalidAccessTokenResponseText } = require("../../commons/variables");
+const { invalidAccessTokenResponseText } = require("../../commons/response-texts");
 const { createSingleResponse } = require("../controller-commons/functions");
 
 exports.makeForceAccessToken = () => {

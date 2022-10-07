@@ -77,16 +77,3 @@ const dataModelSummery = {
         }
     }
 };
-
-/**
- * Name
-Image
-More images
-Price
-Description
-Publish or not option
-Feature or not
-Commission (prefilled using the commission rate from the setting)
-Others
-
- */

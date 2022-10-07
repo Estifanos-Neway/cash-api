@@ -7,7 +7,8 @@ const rateLimit = require("express-rate-limit");
 const swaggerUi = require("swagger-ui-express");
 const { authenticateByToken, forceApiKey } = require("./controllers/middlewares");
 const { env } = require("./env");
-const { pathNotFoundResponseText, tooManyRequestsResponseText } = require("./commons/variables");
+const { pathNotFoundResponseText, tooManyRequestsResponseText } = require("./commons/response-texts");
+const { numberOfMaxApiRequestsPerMin } = require("./commons/variables");
 
 exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     const app = express();
@@ -28,7 +29,7 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
     // @ts-ignore
     const limiter = rateLimit({
         windowMs: 1 * 60 * 1000,
-        max: 10,
+        max: numberOfMaxApiRequestsPerMin,
         message: createSingleResponse(tooManyRequestsResponseText),
         standardHeaders: true,
         legacyHeaders: false

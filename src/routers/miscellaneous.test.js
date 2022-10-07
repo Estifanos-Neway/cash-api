@@ -2,15 +2,20 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const { adminRouter, tokensRouter } = require(".");
 const { makeApp } = require("../app");
-const { defaultPort, pathNotFoundResponseText, invalidApiKeyResponseText, invalidAccessTokenResponseText } = require("../commons/variables");
+const {
+    pathNotFoundResponseText,
+    invalidApiKeyResponseText,
+    invalidAccessTokenResponseText } = require("../commons/response-texts");
+const { defaultPort } = require("../commons/variables");
+
 const { createUserData, createAccessToken } = require("../controllers/controller-commons/functions");
 const { env } = require("../env");
 
-
 describe("Miscellaneous", () => {
-
     let request;
+    const adminsPath = "/admin";
     const somePath = "/some-path";
+    const unknownPath = "/unknown-path";
 
     beforeAll(async () => {
         // @ts-ignore
@@ -25,7 +30,7 @@ describe("Miscellaneous", () => {
         mongoose.connection.db.dropDatabase();
     });
 
-    describe("Given no api key", () => {
+    describe(`Given no api key: ${somePath} GET`, () => {
         it(`Should return 401 and ${invalidApiKeyResponseText}`, async () => {
             const { body, statusCode } = await request.get(somePath);
 
@@ -35,8 +40,7 @@ describe("Miscellaneous", () => {
     });
 
 
-    describe("Given unknown path", () => {
-        const unknownPath = "/unknown-path";
+    describe(`Given unknown path ${unknownPath} GET`, () => {
         it(`Should return 404 and ${pathNotFoundResponseText}`, async () => {
             const { body, statusCode } = await request.get(unknownPath)
                 .set("Api-Key", env.API_KEY);
@@ -47,11 +51,10 @@ describe("Miscellaneous", () => {
     });
 
 
-    describe("Forcing Access Token", () => {
-        const subPath = "/admin";
+    describe(`Forcing Access Token: ${adminsPath} GET`, () => {
         describe("Given no access token", () => {
             it(`Should return 401 and ${invalidAccessTokenResponseText}`, async () => {
-                const { body, statusCode } = await request.get(subPath)
+                const { body, statusCode } = await request.get(adminsPath)
                     .set("Api-Key", env.API_KEY);
 
                 expect(statusCode).toBe(401);
@@ -61,7 +64,7 @@ describe("Miscellaneous", () => {
 
         describe("Given invalid access token (format)", () => {
             it(`Should return 401 and ${invalidAccessTokenResponseText}`, async () => {
-                const { body, statusCode } = await request.get(subPath)
+                const { body, statusCode } = await request.get(adminsPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", "Bearer invalidAccessToken");
 
@@ -74,7 +77,7 @@ describe("Miscellaneous", () => {
             it(`Should return 401 and ${invalidAccessTokenResponseText}`, async () => {
                 const invalidUserData = createUserData("invalidUserId", "notAdmin");
                 const invalidAccessToken = createAccessToken(invalidUserData);
-                const { body, statusCode } = await request.get(subPath)
+                const { body, statusCode } = await request.get(adminsPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${invalidAccessToken}`);
 

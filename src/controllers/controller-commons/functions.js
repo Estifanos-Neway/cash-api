@@ -1,8 +1,7 @@
 const jwt = require("jsonwebtoken");
 const {
     invalidInput,
-    internalErrorResponseText,
-    verificationTokenExpiresIn } = require("../../commons/variables");
+    internalErrorResponseText } = require("../../commons/response-texts");
 const { env } = require("../../env");
 const {
     errorLog,
@@ -10,16 +9,17 @@ const {
     isNonEmptyString } = require("../../commons/functions");
 const commonFunctions = require("../../commons/functions");
 const { urls } = require("../../config.json");
+const { accessTokenExpiresIn, verificationTokenExpiresIn } = require("../../commons/variables");
 
 function createSingleResponse(response) {
     return { message: response };
 }
 
 function createUserData(userId, userType) {
-    return { userId, userType, rand:Math.random() };
+    return { userId, userType, rand: Math.random() };
 }
 
-function createAccessToken(userData, expiresIn = "10m") {
+function createAccessToken(userData, expiresIn = `${accessTokenExpiresIn}m`) {
     // @ts-ignore
     return jwt.sign(userData, env.JWT_SECRETE, { expiresIn });
 }
@@ -37,7 +37,7 @@ function errorHandler(error, res) {
     if (errorMessage.startsWith(invalidInput)) {
         res.status(400).json(createSingleResponse(errorMessage.slice(invalidInput.length)));
     } else {
-        errorLog("Internal_Error",error);
+        errorLog("Internal_Error", error);
         res.status(500).json(createSingleResponse(internalErrorResponseText));
     }
 }

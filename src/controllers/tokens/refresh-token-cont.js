@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const { env } = require("../../env");
 const { errorHandler } = require("../controller-commons/functions");
 const { createAccessToken, createSingleResponse } = require("../controller-commons/functions");
-const { invalidAccessTokenResponseText, invalidRefreshTokenResponseText, invalidInputResponseText, noneMatchingTokensResponseText } = require("../../commons/variables");
+const { invalidAccessTokenResponseText, invalidRefreshTokenResponseText, invalidInputResponseText, noneMatchingTokensResponseText } = require("../../commons/response-texts");
 
 exports.makeRefreshTokenCont = (checkJwtRefreshRepo) => {
     return async (req, res) => {

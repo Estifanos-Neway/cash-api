@@ -3,7 +3,13 @@ const supertest = require("supertest");
 const { adminRouter, tokensRouter } = require(".");
 const { makeApp } = require("../app");
 const { hash } = require("../commons/functions");
-const { defaultPort, invalidRefreshTokenResponseText, noneMatchingTokensResponseText, invalidInputResponseText, invalidAccessTokenResponseText } = require("../commons/variables");
+const {
+    invalidRefreshTokenResponseText,
+    noneMatchingTokensResponseText,
+    invalidInputResponseText,
+    invalidAccessTokenResponseText } = require("../commons/response-texts");
+const { defaultPort } = require("../commons/variables");
+
 const { defaultAdmin } = require("../config.json");
 const { createUserData, createAccessToken } = require("../controllers/controller-commons/functions");
 const { env } = require("../env");
@@ -37,7 +43,7 @@ describe("/tokens", () => {
         mongoose.connection.db.dropDatabase();
     });
 
-    describe("/refresh", () => {
+    describe("/refresh GET", () => {
         const subPath = `${mainPath}/refresh`;
         describe("Given valid refresh token", () => {
             it("Should return an access token", async () => {
@@ -101,7 +107,7 @@ describe("/tokens", () => {
         });
     });
 
-    describe("/sign-out", () => {
+    describe("/sign-out DELETE", () => {
         const subPath = `${mainPath}/sign-out`;
         describe("Given valid refresh token", () => {
             it("Should invalidate the refresh token", async () => {

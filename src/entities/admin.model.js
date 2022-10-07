@@ -8,7 +8,7 @@ const {
     invalidCommissionRateResponseText,
     invalidEmailResponseText,
     invalidUsernameResponseText,
-    invalidUserIdResponseText } = require("../commons/variables");
+    invalidUserIdResponseText } = require("../commons/response-texts");
 
 function adaptCommissionRate(commissionRate) {
     if (!_.isNumber(commissionRate)) {
@@ -95,6 +95,14 @@ exports.makeAdmin = () => {
             }
         }
 
+        constructor({ username, passwordHash, email, userId, settings }) {
+            this.username = username;
+            this.passwordHash = passwordHash;
+            this.email = email;
+            this.userId = userId;
+            this.#settings = new AdminSettings({ ...settings });
+        }
+
         toJson() {
             return Object.freeze(
                 {
@@ -105,14 +113,6 @@ exports.makeAdmin = () => {
                     settings: this.settings
                 }
             );
-        }
-
-        constructor({ username, passwordHash, email, userId, settings }) {
-            this.username = username;
-            this.passwordHash = passwordHash;
-            this.email = email;
-            this.userId = userId;
-            this.#settings = new AdminSettings({ ...settings });
         }
 
         changePasswordHash({ oldPasswordHash, newPasswordHash }) {

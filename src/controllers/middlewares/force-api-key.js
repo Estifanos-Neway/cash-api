@@ -1,5 +1,5 @@
 const { hasSingleValue } = require("../../commons/functions");
-const { invalidApiKeyResponseText } = require("../../commons/variables");
+const { invalidApiKeyResponseText } = require("../../commons/response-texts");
 const { env } = require("../../env");
 const { createSingleResponse } = require("../controller-commons/functions");
 exports.makeForceApiKey = () => {

@@ -1,3 +1,3 @@
-const { makeAdmin } = require("./admin");
+const { makeAdmin } = require("./admin.model");
 
 exports.Admin = makeAdmin();

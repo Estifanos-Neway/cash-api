@@ -13,7 +13,7 @@ const {
     cantFindValidEmailResponseText,
     successResponseText,
     userNotFoundResponseText,
-    invalidInputResponseText } = require("../../commons/variables");
+    invalidInputResponseText } = require("../../commons/response-texts");
 const {
     errorHandler,
     createUserData,

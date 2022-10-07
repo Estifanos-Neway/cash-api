@@ -6,7 +6,7 @@ const nodemailer = require("nodemailer");
 const color = require("cli-color");
 const _ = require("lodash");
 const { env } = require("../env");
-const { requiredParamsNotFoundResponseText } = require("./variables");
+const { requiredParamsNotFoundResponseText } = require("./response-texts");
 
 function errorLog(errorMessage, error) {
     console.error(color.red(errorMessage), color.red("\n[\n"), error, color.red("\n]"));
