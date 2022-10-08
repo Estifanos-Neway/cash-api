@@ -18,8 +18,8 @@ exports.signUpAdminRepo = async ({ username, passwordHash }) => {
     await adminsDb.create(adminToSignUp);
 };
 
-exports.getAdminRepo = async ({ userId }) => {
-    const admin = await adminsDb.findOne({ userId });
+exports.getAdminRepo = async () => {
+    const admin = await adminsDb.findOne();
     if (admin) {
         return createAdminInfo(admin);
     } else {
@@ -27,8 +27,8 @@ exports.getAdminRepo = async ({ userId }) => {
     }
 };
 
-exports.getAdminSettingsRepo = async ({ userId }) => {
-    const admin = await adminsDb.findOne({ userId }, ["settings"]);
+exports.getAdminSettingsRepo = async () => {
+    const admin = await adminsDb.findOne({}, ["settings"]);
     if (admin) {
         return admin.settings;
     } else {
@@ -69,11 +69,11 @@ exports.changeAdminPasswordHashRepo = async ({ userId, oldPasswordHash, newPassw
     }
 };
 
-exports.recoverAdminPasswordHashRepo = async ({ userId, newPasswordHash }) => {
-    const admin = await adminsDb.findOne({ id: userId });
+exports.recoverAdminPasswordHashRepo = async ({ email, newPasswordHash }) => {
+    const admin = await adminsDb.findOne({ email });
     if (admin) {
         admin.changePasswordHash({ oldPasswordHash: admin.passwordHash, newPasswordHash });
-        await adminsDb.updateOne({ id: userId }, { passwordHash: admin.passwordHash });
+        await adminsDb.updateOne({ email }, { passwordHash: admin.passwordHash });
         return createResult(true);
     } else {
         return createResult(false, userNotFoundResponseText);

@@ -14,6 +14,8 @@ const {
 
 const adminRouter = express.Router();
 adminRouter.post("/sign-in", signInAdminCont);
+adminRouter.put("/forgot-password", sendAdminPasswordRecoveryEmailCont);
+adminRouter.put("/recover-password", recoverAdminPasswordCont);
 adminRouter.use(forceAccessToken(["admin"]));
 adminRouter.get("/", getAdminCont);
 adminRouter.patch("/username", changeAdminUsernameCont);
@@ -22,6 +24,4 @@ adminRouter.get("/settings", getAdminSettingsCont);
 adminRouter.patch("/settings", updateAdminSettingsCont);
 adminRouter.put("/email", sendAdminEmailVerificationCont);
 adminRouter.put("/verify-email", verifyAdminEmailCont);
-adminRouter.put("/forgot-password", sendAdminPasswordRecoveryEmailCont);
-adminRouter.put("/recover-password", recoverAdminPasswordCont);
 module.exports = adminRouter;

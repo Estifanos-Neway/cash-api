@@ -7,7 +7,8 @@ const { urls } = require("../config.json");
 const {
     decrypt,
     isEmail,
-    hasSingleValue } = require("../commons/functions");
+    hasSingleValue,
+    hasValue } = require("../commons/functions");
 const {
     invalidEmailResponseText,
     invalidVerificationCodeResponseText,
@@ -16,7 +17,8 @@ const {
     cantFindValidEmailResponseText,
     successResponseText,
     userNotFoundResponseText,
-    invalidInputResponseText } = require("../commons/response-texts");
+    invalidInputResponseText, 
+    invalidInput} = require("../commons/response-texts");
 const {
     errorHandler,
     createUserData,
@@ -68,8 +70,7 @@ exports.signInAdminCont = async (req, res) => {
 
 exports.getAdminCont = async (req, res) => {
     try {
-        const userId = req.user.userId;
-        const adminInfo = await getAdminRepo({ userId });
+        const adminInfo = await getAdminRepo();
         if (adminInfo) {
             res.json(adminInfo);
         } else {
@@ -82,8 +83,7 @@ exports.getAdminCont = async (req, res) => {
 
 exports.getAdminSettingsCont = async (req, res) => {
     try {
-        const userId = req.user.userId;
-        const adminSettings = await getAdminSettingsRepo({ userId });
+        const adminSettings = await getAdminSettingsRepo();
         if (adminSettings) {
             res.json(adminSettings);
         } else {
@@ -213,20 +213,28 @@ exports.verifyAdminEmailCont = async (req, res) => {
 
 exports.sendAdminPasswordRecoveryEmailCont = async (req, res) => {
     try {
-        const userId = req.user.userId;
-        const adminInfo = await getAdminRepo({ userId });
-        if (!adminInfo) {
-            res.status(404).json(createSingleResponse(userNotFoundResponseText));
+        const { email } = req.body;
+        if (!hasValue(email)) {
+            res.status(400).json(createSingleResponse(invalidInput));
+        } else if (!isEmail(email)) {
+            res.status(400).json(createSingleResponse(invalidEmailResponseText));
         } else {
-            const email = adminInfo.email;
-            if (!isEmail(email)) {
-                res.status(404).json(createSingleResponse(cantFindValidEmailResponseText));
+            const adminInfo = await getAdminRepo();
+            if (!adminInfo) {
+                res.status(404).json(createSingleResponse(userNotFoundResponseText));
             } else {
-                const path = urls.passwordRecoveryPath;
-                const subject = "Password recovery";
-                const html = passwordRecoveryEmail;
-                await sendEmailVerification({ email, path, subject, html });
-                res.json(createSingleResponse(successResponseText));
+                const adminEmail = adminInfo.email;
+                if (email !== adminEmail) {
+                    res.status(400).json(createSingleResponse(invalidEmailResponseText));
+                } else if (!isEmail(adminEmail)) {
+                    res.status(404).json(createSingleResponse(cantFindValidEmailResponseText));
+                } else {
+                    const path = urls.passwordRecoveryPath;
+                    const subject = "Password recovery";
+                    const html = passwordRecoveryEmail;
+                    await sendEmailVerification({ email: adminEmail, path, subject, html });
+                    res.json(createSingleResponse(successResponseText));
+                }
             }
         }
     } catch (error) {
@@ -236,12 +244,11 @@ exports.sendAdminPasswordRecoveryEmailCont = async (req, res) => {
 
 exports.recoverAdminPasswordCont = async (req, res) => {
     try {
-        const userId = req.user.userId;
         const { recoveryToken, newPasswordHash } = req.body;
         if (!hasSingleValue(recoveryToken) || !hasSingleValue(newPasswordHash)) {
             res.status(400).json(createSingleResponse(invalidInputResponseText));
         } else {
-            const adminInfo = await getAdminRepo({ userId });
+            const adminInfo = await getAdminRepo();
             if (!adminInfo) {
                 res.status(404).json(createSingleResponse(userNotFoundResponseText));
             } else {
@@ -250,8 +257,7 @@ exports.recoverAdminPasswordCont = async (req, res) => {
                     // @ts-ignore
                     recoveryObject = jwt.verify(recoveryToken, env.JWT_SECRETE);
                 } catch (error) {
-                    res.status(400).json(createSingleResponse(invalidTokenResponseText));
-                    return;
+                    return res.status(400).json(createSingleResponse(invalidTokenResponseText));
                 }
                 if (new Date().getTime() > recoveryObject.validUntil) {
                     res.status(408).json(createSingleResponse(expiredTokenResponseText));
@@ -261,7 +267,7 @@ exports.recoverAdminPasswordCont = async (req, res) => {
                     if (emailFrom !== adminEmail) {
                         res.status(400).json(createSingleResponse(invalidTokenResponseText));
                     } else {
-                        const result = await recoverAdminPasswordHashRepo({ userId, newPasswordHash });
+                        const result = await recoverAdminPasswordHashRepo({ email: adminEmail, newPasswordHash });
                         if (result.success) {
                             res.json(createSingleResponse(successResponseText));
                         } else {

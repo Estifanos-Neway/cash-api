@@ -4,12 +4,12 @@ const { productsDb } = require("../database");
 const Product = require("../entities/product.model");
 const { getAdminSettingsRepo } = require("./admin-repositories");
 
-exports.createProductRepo = async ({ userId, jsonProduct }) => {
+exports.createProductRepo = async ({ jsonProduct }) => {
     if (_.isUndefined(jsonProduct.commissionRate)) {
-        const adminSetting = await getAdminSettingsRepo({userId});
-        if (adminSetting){
+        const adminSetting = await getAdminSettingsRepo();
+        if (adminSetting) {
             jsonProduct.commissionRate = jsonProduct.price * (adminSetting.commissionRate / 100);
-        } else{
+        } else {
             throw new Error(userNotFoundResponseText);
         }
     }

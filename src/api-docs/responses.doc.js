@@ -83,6 +83,10 @@ exports.Responses = {
     },
     "/admin/forgot-password PUT": {
         200: [createSingleResponse(successResponseText)],
+        400: [
+            createSingleResponse(invalidEmailResponseText),
+            createSingleResponse(invalidInputResponseText)
+        ],
         404: [
             createSingleResponse(userNotFoundResponseText),
             createSingleResponse(cantFindValidEmailResponseText)

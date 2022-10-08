@@ -11,7 +11,8 @@ const {
     invalidEmailResponseText,
     invalidVerificationCodeResponseText,
     invalidTokenResponseText,
-    expiredTokenResponseText, } = require("../commons/response-texts");
+    expiredTokenResponseText,
+    invalidInput, } = require("../commons/response-texts");
 const { verificationTokenExpiresIn } = require("../commons/variables");
 const { defaultAdmin } = require("../config.json");
 const { env } = require("../env");
@@ -387,15 +388,46 @@ describe("/admin", () => {
 
     describe("/forgot-password PUT", () => {
         const subPath = `${mainPath}/forgot-password`;
-        it("Should send a recovery link to the admins email", async () => {
-            const sendEmailMock = jest.spyOn(commonFunctions, "sendEmail").mockReturnValue(Promise.resolve(true));
-            const { statusCode } = await request.put(subPath)
-                .set("Api-Key", env.API_KEY)
-                .set("Authorization", `Bearer ${accessToken}`);
-            expect(statusCode).toBe(200);
-            expect(sendEmailMock).toHaveBeenCalledTimes(1);
-            expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Password recovery", html: expect.any(String), to: newEmail });
-
+        describe("Given a valid email", () => {
+            it("Should send a recovery link to the admins email", async () => {
+                const sendEmailMock = jest.spyOn(commonFunctions, "sendEmail").mockReturnValue(Promise.resolve(true));
+                const { statusCode } = await request.put(subPath)
+                    .set("Api-Key", env.API_KEY)
+                    .set("Authorization", `Bearer ${accessToken}`).
+                    send({ email: newEmail });
+                expect(statusCode).toBe(200);
+                expect(sendEmailMock).toHaveBeenCalledTimes(1);
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Password recovery", html: expect.any(String), to: newEmail });
+            });
+        });
+        describe("Given an invalid email (non-matching)", () => {
+            it("Should send a recovery link to the admins email", async () => {
+                const { statusCode, body } = await request.put(subPath)
+                    .set("Api-Key", env.API_KEY)
+                    .set("Authorization", `Bearer ${accessToken}`).
+                    send({ email: "nottheadmins@example.come" });
+                expect(statusCode).toBe(400);
+                expect(body).toHaveProperty("message", invalidEmailResponseText);
+            });
+        });
+        describe("Given an invalid email (invalid email)", () => {
+            it("Should send a recovery link to the admins email", async () => {
+                const { statusCode, body } = await request.put(subPath)
+                    .set("Api-Key", env.API_KEY)
+                    .set("Authorization", `Bearer ${accessToken}`).
+                    send({ email: [newEmail] });
+                expect(statusCode).toBe(400);
+                expect(body).toHaveProperty("message", invalidEmailResponseText);
+            });
+        });
+        describe("Given no email", () => {
+            it("Should send a recovery link to the admins email", async () => {
+                const { statusCode, body } = await request.put(subPath)
+                    .set("Api-Key", env.API_KEY)
+                    .set("Authorization", `Bearer ${accessToken}`);
+                expect(statusCode).toBe(400);
+                expect(body).toHaveProperty("message", invalidInput);
+            });
         });
     });
 

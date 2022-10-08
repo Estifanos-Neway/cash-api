@@ -351,6 +351,22 @@
       "put": {
         "tags": ["Admin"],
         "summary": "Send password recovery link to the admins email. [Requires_Admin_Access_Token]",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK - A password recovery link is sent to the admins email. (it expires in 5 minutes)",
@@ -367,6 +383,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
           },
           "401": {
             "$ref": "#/components/responses/unauthorized"
