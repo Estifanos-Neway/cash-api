@@ -1,3 +1,2 @@
-const { makeAdmin } = require("./admin.model");
-
-exports.Admin = makeAdmin();
+exports.Admin = require("./admin.model");
+exports.Product = require("./product.model");

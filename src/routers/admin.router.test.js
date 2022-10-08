@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
-const { adminRouter, tokensRouter } = require(".");
 const { makeApp } = require("../app");
 const commonFunctions = require("../commons/functions");
 const { hash, encrypt } = require("../commons/functions");
@@ -13,13 +12,10 @@ const {
     invalidVerificationCodeResponseText,
     invalidTokenResponseText,
     expiredTokenResponseText, } = require("../commons/response-texts");
-const {
-    defaultPort,verificationTokenExpiresIn } = require("../commons/variables");
-
-
+const { verificationTokenExpiresIn } = require("../commons/variables");
 const { defaultAdmin } = require("../config.json");
 const { env } = require("../env");
-const { signUpAdminRepo } = require("../repositories/admin");
+const { signUpAdminRepo } = require("../repositories/admin-repositories");
 
 const adminCredentials = {
     username: defaultAdmin.username,
@@ -39,7 +35,7 @@ describe("/admin", () => {
     });
 
     beforeEach(() => {
-        request = supertest(makeApp(defaultPort, adminRouter, tokensRouter));
+        request = supertest(makeApp());
     });
 
     afterAll(() => {

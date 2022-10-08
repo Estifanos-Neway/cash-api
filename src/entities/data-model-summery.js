@@ -59,9 +59,15 @@ const dataModelSummery = {
             type: "Double",
             required
         },
-        commission: {
+        commissionRate: {
             type: "Double",
             required
+        },
+        categories:{
+            type:"array",
+            elements:{
+                type:"String"
+            }
         },
         published: {
             type: "Boolean",

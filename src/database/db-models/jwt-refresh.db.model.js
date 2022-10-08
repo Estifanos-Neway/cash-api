@@ -26,4 +26,4 @@ const jwtRefreshSchema = new Schema({
     }
 });
 
-module.exports = model("jwtRefresh", jwtRefreshSchema);
+module.exports = model("jwtRefresh", jwtRefreshSchema, "jwt_refreshes");

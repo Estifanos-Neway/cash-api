@@ -1,13 +1,10 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
-const { adminRouter, tokensRouter } = require(".");
 const { makeApp } = require("../app");
 const {
     pathNotFoundResponseText,
     invalidApiKeyResponseText,
     invalidAccessTokenResponseText } = require("../commons/response-texts");
-const { defaultPort } = require("../commons/variables");
-
 const { createUserData, createAccessToken } = require("../controllers/controller-commons/functions");
 const { env } = require("../env");
 
@@ -23,7 +20,7 @@ describe("Miscellaneous", () => {
     });
 
     beforeEach(async () => {
-        request = supertest(makeApp(defaultPort, adminRouter, tokensRouter));
+        request = supertest(makeApp());
     });
 
     afterAll(() => {

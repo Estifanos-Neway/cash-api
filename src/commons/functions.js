@@ -22,10 +22,17 @@ function hasSingleValue(object) {
     return _.isNumber(object) || (_.isString(object) && !_.isEmpty(object));
 }
 
+function hasMultiValue(object) {
+    return hasValue(object) && !hasSingleValue(object);
+}
+
 function isNonEmptyString(object) {
     return _.isString(object) && !_.isEmpty(object);
 }
 
+function isPositiveNumber(object) {
+    return _.isNumber(object) && object >= 0;
+}
 function isEmail(email) {
     // @ts-ignore
     return _.isString(email) && validator.isEmail(email);
@@ -63,13 +70,14 @@ function decrypt(encrypted) {
     return cryptoJS.AES.decrypt(encrypted, env.PRIVATE_KEY).toString(cryptoJS.enc.Utf8);
 }
 
-function hash(string){
+function hash(string) {
     return createHash("sha256").update(string).digest("hex");
 }
 module.exports = {
     errorLog,
     hasValue,
     hasSingleValue,
+    hasMultiValue,
     isNonEmptyString,
     createResult,
     createVerificationCode,
@@ -77,5 +85,6 @@ module.exports = {
     encrypt,
     decrypt,
     isEmail,
-    hash
+    hash,
+    isPositiveNumber
 };

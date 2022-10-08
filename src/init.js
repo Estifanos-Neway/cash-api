@@ -1,11 +1,15 @@
-const { adminsDb } = require("./data-access");
-const { signUpAdminRepo } = require("./repositories/admin");
+const mongoose = require("mongoose");
+const { adminsDb } = require("./database");
+const { signUpAdminRepo } = require("./repositories/admin-repositories");
 const { defaultAdmin } = require("./config.json");
 const {
     errorLog,
     hash } = require("./commons/functions");
+const { env } = require("./env");
 
 async function init() {
+    // @ts-ignore
+    await mongoose.connect(env.DB_URL);
     // Adding the default admin
     const adminsCount = await adminsDb.count();
     if (adminsCount === 0) {

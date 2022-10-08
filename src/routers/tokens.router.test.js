@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
-const { adminRouter, tokensRouter } = require(".");
 const { makeApp } = require("../app");
 const { hash } = require("../commons/functions");
 const {
@@ -8,12 +7,10 @@ const {
     noneMatchingTokensResponseText,
     invalidInputResponseText,
     invalidAccessTokenResponseText } = require("../commons/response-texts");
-const { defaultPort } = require("../commons/variables");
-
 const { defaultAdmin } = require("../config.json");
 const { createUserData, createAccessToken } = require("../controllers/controller-commons/functions");
 const { env } = require("../env");
-const { signUpAdminRepo } = require("../repositories/admin");
+const { signUpAdminRepo } = require("../repositories/admin-repositories");
 
 const adminCredentials = {
     username: defaultAdmin.username,
@@ -31,7 +28,8 @@ describe("/tokens", () => {
     });
 
     beforeEach(async () => {
-        request = supertest(makeApp(defaultPort, adminRouter, tokensRouter));
+        request = supertest(makeApp());
+        // @ts-ignore
         const { body } = await request.post("/admin/sign-in")
             .set("Api-Key", env.API_KEY)
             .send({ ...adminCredentials });

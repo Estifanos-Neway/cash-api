@@ -5,13 +5,20 @@ const helmet = require("helmet");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const swaggerUi = require("swagger-ui-express");
-const { authenticateByToken, forceApiKey } = require("./controllers/middlewares");
+const {
+    authenticateByToken,
+    forceApiKey } = require("./controllers/middlewares");
 const { env } = require("./env");
-const { pathNotFoundResponseText, tooManyRequestsResponseText } = require("./commons/response-texts");
-const { numberOfMaxApiRequestsPerMin } = require("./commons/variables");
+const {
+    pathNotFoundResponseText,
+    tooManyRequestsResponseText } = require("./commons/response-texts");
+const {
+    defaultPort,
+    numberOfMaxApiRequestsPerMin } = require("./commons/variables");
 const { Responses } = require("./api-docs/responses.doc");
+const { adminRouter, tokensRouter } = require("./routers");
 
-exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
+exports.makeApp = () => {
     const app = express();
     app.set("port", env.PORT || defaultPort);
 
@@ -24,7 +31,7 @@ exports.makeApp = (defaultPort, adminRouter, tokensRouter) => {
         customCssUrl: "/swagger.css"
     };
 
-    app.get("/docs/responses",(req,res)=>{
+    app.get("/docs/responses", (req, res) => {
         res.json(Responses);
     });
     app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, swaggerOptions));
