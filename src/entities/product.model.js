@@ -1,16 +1,18 @@
+const _ = require("lodash");
 const Image = require("./entity-commons/image.model");
 const { hasValue } = require("../commons/functions");
 
 module.exports = class Product {
+    productId;
     productName;
     #mainImage;
-    #moreImages = [];
+    #moreImages;
     price;
     commissionRate;
-    categories = [];
-    published = false;
-    featured = false;
-    viewCount = 0;
+    categories;
+    published;
+    featured;
+    viewCount;
 
     set mainImage(jsonImage) {
         if (hasValue(jsonImage)) {
@@ -23,7 +25,7 @@ module.exports = class Product {
     }
 
     set moreImages(jsonImageArray) {
-        if (hasValue(jsonImageArray)) {
+        if (_.isArray(jsonImageArray)) {
             this.#moreImages = [];
             for (let jsonImage of jsonImageArray) {
                 this.#moreImages.push(new Image({ ...jsonImage }));
@@ -40,28 +42,31 @@ module.exports = class Product {
     }
 
     constructor({
+        productId,
         productName,
         mainImage,
-        moreImages,
+        moreImages = [],
         price,
         commissionRate,
-        categories,
-        published,
-        featured,
-        viewCount }) {
+        categories = [],
+        published = false,
+        featured = false,
+        viewCount = 0 }) {
+        this.productId = productId;
         this.productName = productName;
+        this.mainImage = mainImage;
+        this.moreImages = moreImages;
         this.price = price;
         this.commissionRate = commissionRate;
         this.categories = categories;
         this.published = published;
         this.featured = featured;
         this.viewCount = viewCount;
-        this.mainImage = mainImage;
-        this.moreImages = moreImages;
     }
 
     toJson() {
         return {
+            productId: this.productId,
             productName: this.productName,
             mainImage: this.mainImage,
             moreImages: this.moreImages,

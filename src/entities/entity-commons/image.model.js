@@ -1,12 +1,12 @@
 module.exports = class Image {
-    url;
-    constructor({ url }) {
-        this.url = url;
+    path;
+    constructor({ path }) {
+        this.path = path;
     }
 
     toJson() {
         return {
-            url: this.url
+            path: this.path
         };
     }
 };

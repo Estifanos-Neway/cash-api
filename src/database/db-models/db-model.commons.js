@@ -1,13 +1,14 @@
+const mongoose = require("mongoose");
 const { invalidCommissionRateResponseText } = require("../../commons/response-texts");
 
 const required = true;
 
-const imageJson = {
-    url: {
+const imageJsonSchema = new mongoose.Schema({
+    path: {
         type: String,
         required
     }
-};
+});
 
 const commissionRate = {
     type: Number,
@@ -19,6 +20,6 @@ const commissionRate = {
 };
 
 module.exports = {
-    imageJson,
+    imageJsonSchema,
     commissionRate
 };

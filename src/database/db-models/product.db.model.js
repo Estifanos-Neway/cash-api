@@ -4,7 +4,7 @@ const {
     invalidPriceResponseText,
     invalidViewCountResponseText } = require("../../commons/response-texts");
 const {
-    imageJson,
+    imageJsonSchema,
     commissionRate } = require("./db-model.commons");
 
 const required = true;
@@ -16,12 +16,8 @@ const productSchema = new mongoose.Schema(
             required,
             unique: true
         },
-        mainImage: {
-            ...imageJson
-        },
-        moreImages: [{
-            ...imageJson
-        }],
+        mainImage: imageJsonSchema,
+        moreImages: [imageJsonSchema],
         price: {
             type: Number,
             validate: {

@@ -1,6 +1,6 @@
 const required = true;
 const image = {
-    url: {
+    path: {
         type: "String",
         required
     }

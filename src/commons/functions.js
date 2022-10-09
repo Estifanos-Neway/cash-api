@@ -5,6 +5,8 @@ const shortUniqueId = require("short-unique-id");
 const nodemailer = require("nodemailer");
 const color = require("cli-color");
 const _ = require("lodash");
+const mimeTypes = require("mime-types");
+const isImage = require("is-image");
 const { env } = require("../env");
 const { requiredParamsNotFoundResponseText } = require("./response-texts");
 
@@ -42,6 +44,12 @@ function createResult(success, result) {
     return { success, result: _.isUndefined(result) ? null : result };
 }
 
+function createUid(length = 32) {
+    // @ts-ignore
+    const uid = new shortUniqueId({ length });
+    return uid();
+}
+
 function createVerificationCode(length = 6) {
     // @ts-ignore
     const uid = new shortUniqueId({ length, dictionary: "alpha_upper" });
@@ -73,6 +81,7 @@ function decrypt(encrypted) {
 function hash(string) {
     return createHash("sha256").update(string).digest("hex");
 }
+
 async function pipe(readable, writable) {
     return new Promise((resolve, reject) => {
         function handleError(error) {
@@ -86,6 +95,9 @@ async function pipe(readable, writable) {
     });
 }
 
+function isImageMime(mime) {
+    return isImage(`sudo.${mimeTypes.extension(mime)}`);
+}
 module.exports = {
     errorLog,
     hasValue,
@@ -93,6 +105,7 @@ module.exports = {
     hasMultiValue,
     isNonEmptyString,
     createResult,
+    createUid,
     createVerificationCode,
     sendEmail,
     encrypt,
@@ -100,5 +113,6 @@ module.exports = {
     isEmail,
     hash,
     isPositiveNumber,
-    pipe
+    pipe,
+    isImageMime
 };

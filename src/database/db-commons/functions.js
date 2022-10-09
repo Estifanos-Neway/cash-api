@@ -1,5 +1,11 @@
 async function exists(model, condition) {
-    return await model.exists(condition);
+    const documentFound = await model.exists(condition);
+    if (documentFound) {
+        documentFound.id = documentFound._id.toString();
+        return documentFound;
+    } else {
+        return false;
+    }
 }
 
 async function count(model) {

@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const {
     invalidInput,
-    internalErrorResponseText } = require("../../commons/response-texts");
+    internalErrorResponseText,
+    invalidInputResponseText } = require("../../commons/response-texts");
 const { env } = require("../../env");
 const {
     errorLog,
@@ -32,6 +33,14 @@ function getAccessToken(authHeader) {
     }
 }
 
+function sendInvalidInputResponse(res) {
+    res.status(400).json(createSingleResponse(invalidInputResponseText));
+}
+
+function sendInternalError(error, res) {
+    errorLog("Internal_Error", error);
+    res.status(500).json(createSingleResponse(internalErrorResponseText));
+}
 function errorHandler(error, res) {
     const errorMessage = error.message;
     if (errorMessage.startsWith(invalidInput)) {
@@ -66,7 +75,9 @@ module.exports = {
     createAccessToken,
     createUserData,
     getAccessToken,
+    sendInvalidInputResponse,
     errorHandler,
     sendEmailVerificationCode,
-    sendEmailVerification
+    sendEmailVerification,
+    sendInternalError
 };
