@@ -15,6 +15,7 @@ const invalidPriceResponseText = "Invalid_Price";
 const invalidViewCountResponseText = "Invalid_View_Count";
 
 const productNameAlreadyExistResponseText = "Product_Name_Already_Exist";
+const productNotFoundResponseText = "Product_Not_Found";
 const noneMatchingTokensResponseText = "None_Matching_Tokens";
 const cantFindValidEmailResponseText = "Can_Not_Find_Valid_Recovery_Email";
 const expiredTokenResponseText = "Expired_Token";
@@ -59,6 +60,7 @@ module.exports = {
     pathNotFoundResponseText,
     tooManyRequestsResponseText,
     productNameAlreadyExistResponseText,
+    productNotFoundResponseText,
     invalidPriceResponseText,
     invalidViewCountResponseText,
     fileNotFoundResponseText

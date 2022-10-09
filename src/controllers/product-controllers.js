@@ -2,10 +2,10 @@ const _ = require("lodash");
 const multer = require("multer");
 const streamifier = require("streamifier");
 const { hasSingleValue, isPositiveNumber, isNonEmptyString, createUid, isImageMime } = require("../commons/functions");
-const { productNameAlreadyExistResponseText, requiredParamsNotFoundResponseText } = require("../commons/response-texts");
+const { productNameAlreadyExistResponseText, requiredParamsNotFoundResponseText, productNotFoundResponseText } = require("../commons/response-texts");
 const { commissionRate } = require("../database/db-models/db-model.commons");
 const { uploadProductImagesRepo } = require("../repositories/file-repositories");
-const { isUniqueProductName, createProductRepo } = require("../repositories/product.repo");
+const { isUniqueProductName, createProductRepo, getProductsRepo, getProductRepo } = require("../repositories/product.repo");
 const { createSingleResponse, sendInvalidInputResponse, sendInternalError } = require("./controller-commons/functions");
 
 const mainImageName = "mainImage";
@@ -124,6 +124,34 @@ exports.createProductCont = async (req, res) => {
                 });
             }
         });
+    } catch (error) {
+        sendInternalError(error, res);
+    }
+};
+
+exports.getProductsCont = async (req, res) => {
+    try {
+        const skip = Number.parseInt(req.query.skip) || 0;
+        const products = await getProductsRepo({ skip });
+        const jsonProducts = [];
+        for (let product of products) {
+            jsonProducts.push(product.toJson());
+        }
+        res.json(jsonProducts);
+    } catch (error) {
+        sendInternalError(error, res);
+    }
+};
+
+exports.getProductCont = async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const product = await getProductRepo(productId);
+        if (product === null) {
+            res.status(404).json(createSingleResponse(productNotFoundResponseText));
+        } else {
+            res.json(product.toJson());
+        }
     } catch (error) {
         sendInternalError(error, res);
     }

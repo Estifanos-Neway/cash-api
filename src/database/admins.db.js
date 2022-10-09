@@ -5,7 +5,7 @@ const { exists, create, findOne, count, updateOne, adaptEntity } = require("./db
 const idName = "userId";
 
 module.exports = Object.freeze({
-    exists: (condition) => exists(adminDbModel, condition),
+    exists: (conditions) => exists(adminDbModel, conditions),
     count: () => count(adminDbModel),
     create: async (admin) => {
         let result = await create(adminDbModel, admin.toJson());
@@ -15,16 +15,16 @@ module.exports = Object.freeze({
             return null;
         }
     },
-    findOne: async (condition, selection) => {
-        let result = await findOne(adminDbModel, condition, selection);
+    findOne: async (conditions, selection) => {
+        let result = await findOne(adminDbModel, conditions, selection);
         if (result) {
             return adaptEntity(Admin, result, idName);
         } else {
             return null;
         }
     },
-    updateOne: async (condition, updates) => {
-        let result = await updateOne(adminDbModel, condition, updates);
+    updateOne: async (conditions, updates) => {
+        let result = await updateOne(adminDbModel, conditions, updates);
         if (result) {
             return adaptEntity(Admin, result, idName);
         } else {

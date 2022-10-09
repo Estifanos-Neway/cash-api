@@ -14,7 +14,7 @@ const { productDbModel } = require("./db-models");
 const idName = "productId";
 
 module.exports = Object.freeze({
-    exists: (condition) => exists(productDbModel, condition),
+    exists: (conditions) => exists(productDbModel, conditions),
     count: () => count(productDbModel),
     create: async (product) => {
         try {
@@ -28,21 +28,28 @@ module.exports = Object.freeze({
             }
         }
     },
-    findOne: async (condition, selection) => {
-        const productDoc = await findOne(productDbModel, condition, selection);
-        return adaptEntity(Product, productDoc, idName);
+
+    findOne: async (conditions, selection) => {
+        const productDoc = await findOne(productDbModel, conditions, selection);
+        if (productDoc) {
+            return adaptEntity(Product, productDoc, idName);
+        } else {
+            return null;
+        }
     },
-    findMany: async ({ condition, selection, sort }) => {
-        const productDocList = await findMany({ model: productDbModel, condition, selection, sort });
+
+    findMany: async ({ conditions, selection, skip, sort }) => {
+        const productDocList = await findMany({ model: productDbModel, conditions, skip, selection, sort });
         const productList = [];
         for (const productDoc of productDocList) {
             productList.push(adaptEntity(Product, productDoc, idName));
         }
         return productList;
     },
-    updateOne: async (condition, updates) => {
-        const productDoc = await updateOne(productDbModel, condition, updates);
+    updateOne: async (conditions, updates) => {
+        const productDoc = await updateOne(productDbModel, conditions, updates);
         return adaptEntity(Product, productDoc, idName);
     },
-    deleteOne: (condition) => deleteOne(productDbModel, condition)
+
+    deleteOne: (conditions) => deleteOne(productDbModel, conditions)
 });

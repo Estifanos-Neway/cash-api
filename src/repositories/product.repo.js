@@ -6,6 +6,14 @@ exports.createProductRepo = async (jsonProduct) => {
     return await productsDb.create(product);
 };
 
+exports.getProductsRepo = async ({ skip }) => {
+    return await productsDb.findMany({ conditions: {}, skip });
+};
+
+exports.getProductRepo = async (productId) => {
+    return await productsDb.findOne({ id: productId });
+};
+
 exports.isUniqueProductName = async (productName, productId) => {
     const productFound = await productsDb.exists({ productName });
     if (productFound) {

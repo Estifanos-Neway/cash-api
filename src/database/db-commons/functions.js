@@ -1,5 +1,19 @@
-async function exists(model, condition) {
-    const documentFound = await model.exists(condition);
+const mongoose = require("mongoose");
+const { findManyDefaultLimit } = require("../../commons/variables");
+
+function adaptConditions(conditions) {
+    if ("id" in conditions) {
+        if (mongoose.Types.ObjectId.isValid(conditions.id)) {
+            conditions._id = conditions.id;
+        } else {
+            conditions._id = new mongoose.Types.ObjectId();
+        }
+        delete conditions.id;
+    }
+}
+
+async function exists(model, conditions) {
+    const documentFound = await model.exists(conditions);
     if (documentFound) {
         documentFound.id = documentFound._id.toString();
         return documentFound;
@@ -16,20 +30,24 @@ async function create(model, doc) {
     return await model.create(doc);
 }
 
-async function findOne(model, condition, selection) {
-    return await model.findOne(condition).select(selection).exec();
+async function findOne(model, conditions, selection) {
+    adaptConditions(conditions);
+    return await model.findOne().where(conditions).select(selection).exec();
 }
 
-async function findMany({ model, condition, selection, sort }) {
-    return await model.find(condition).select(selection).sort(sort).exec();
+async function findMany({ model, conditions, selection, skip = 0, limit = findManyDefaultLimit, sort }) {
+    adaptConditions(conditions);
+    return await model.find(conditions).select(selection).skip(skip).limit(limit).sort(sort).exec();
 }
 
-async function deleteOne(model, condition) {
-    return await model.deleteOne(condition);
+async function deleteOne(model, conditions) {
+    adaptConditions(conditions);
+    return await model.deleteOne(conditions);
 }
 
-async function updateOne(model, condition, updates) {
-    let doc = await model.findOne(condition);
+async function updateOne(model, conditions, updates) {
+    adaptConditions(conditions);
+    let doc = await model.findOne(conditions);
     Object.entries(updates).forEach(update => {
         if (update[0] in doc) {
             doc[update[0]] = update[1];
@@ -37,7 +55,6 @@ async function updateOne(model, condition, updates) {
     });
     return await doc.save();
 }
-
 
 function adaptEntity(Entity, dbDoc, idName = "id") {
     dbDoc = dbDoc.toJSON();
