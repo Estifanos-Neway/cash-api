@@ -1,10 +1,9 @@
-const { defaultProductImageUrl } = require("../commons/variables");
 const Image = require("./entity-commons/image.model");
 const { hasValue } = require("../commons/functions");
 
 module.exports = class Product {
     productName;
-    #mainImage = new Image({ url: defaultProductImageUrl });
+    #mainImage;
     #moreImages = [];
     price;
     commissionRate;
@@ -20,7 +19,7 @@ module.exports = class Product {
     }
 
     get mainImage() {
-        return this.#mainImage.toJson();
+        return this.#mainImage?.toJson();
     }
 
     set moreImages(jsonImageArray) {

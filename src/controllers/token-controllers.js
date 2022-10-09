@@ -46,7 +46,7 @@ exports.refreshTokenCont = async (req, res) => {
                     }
                 });
             } else {
-                res.status(401).json(createSingleResponse(`${invalidRefreshTokenResponseText}`));
+                res.status(401).json(createSingleResponse(invalidRefreshTokenResponseText));
             }
         }
     } catch (error) {

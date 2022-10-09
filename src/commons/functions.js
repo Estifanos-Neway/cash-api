@@ -73,6 +73,19 @@ function decrypt(encrypted) {
 function hash(string) {
     return createHash("sha256").update(string).digest("hex");
 }
+async function pipe(readable, writable) {
+    return new Promise((resolve, reject) => {
+        function handleError(error) {
+            reject(error);
+        }
+        readable
+            .on("error", handleError)
+            .pipe(writable)
+            .on("error", handleError)
+            .on("finish", () => resolve(null));
+    });
+}
+
 module.exports = {
     errorLog,
     hasValue,
@@ -86,5 +99,6 @@ module.exports = {
     decrypt,
     isEmail,
     hash,
-    isPositiveNumber
+    isPositiveNumber,
+    pipe
 };

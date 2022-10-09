@@ -23,6 +23,7 @@ const notImplementedYetResponseText = "Not_Implemented_Yet";
 const wrongPasswordHashResponseText = "Wrong_Password_Hash";
 const unknownSettingResponseText = "Unknown_Setting";
 const missingApiKeyResponseText = "Api_Key_Is_Required";
+const fileNotFoundResponseText = "File_Not_Found";
 
 const successResponseText = "OK";
 const pathNotFoundResponseText = "Path_Not_Found";
@@ -59,5 +60,6 @@ module.exports = {
     tooManyRequestsResponseText,
     productNameAlreadyExistResponseText,
     invalidPriceResponseText,
-    invalidViewCountResponseText
+    invalidViewCountResponseText,
+    fileNotFoundResponseText
 };

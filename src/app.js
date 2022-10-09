@@ -16,7 +16,7 @@ const {
     defaultPort,
     numberOfMaxApiRequestsPerMin } = require("./commons/variables");
 const { Responses } = require("./api-docs/responses.doc");
-const { adminRouter, tokensRouter } = require("./routers");
+const { adminRouter, tokensRouter, productsRouter, imagesRouter } = require("./routers");
 
 exports.makeApp = () => {
     const app = express();
@@ -59,10 +59,12 @@ exports.makeApp = () => {
     app.use(express.json());
 
     // Routes
-    app.use(forceApiKey);
+    // app.use(forceApiKey);
     app.use(authenticateByToken);
     app.use("/tokens", tokensRouter);
     app.use("/admin", adminRouter);
+    app.use("/products", productsRouter);
+    app.use("/images", imagesRouter);
 
     app.use("*", (req, res) => {
         res.status(404).json(createSingleResponse(pathNotFoundResponseText));
