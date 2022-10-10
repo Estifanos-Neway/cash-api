@@ -13,6 +13,7 @@ const invalidEmailResponseText = "Invalid_Email";
 const invalidApiKeyResponseText = "Invalid_Api_Key";
 const invalidPriceResponseText = "Invalid_Price";
 const invalidViewCountResponseText = "Invalid_View_Count";
+const invalidJsonStringResponseText = "Invalid_Json_String";
 
 const invalidSearchQueryResponseText = "Invalid_Search_Query";
 const invalidFilterQueryResponseText = "Invalid_Filter_Query";
@@ -61,6 +62,7 @@ module.exports = {
     invalidSearchQueryResponseText,
     invalidSortQueryResponseText,
     invalidCategoriesQueryResponseText,
+    invalidJsonStringResponseText,
     noneMatchingTokensResponseText,
     cantFindValidEmailResponseText,
     expiredTokenResponseText,

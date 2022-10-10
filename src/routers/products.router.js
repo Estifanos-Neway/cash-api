@@ -1,14 +1,12 @@
 const express = require("express");
 const { forceAccessToken } = require("../controllers/middlewares");
-const {
-    createProductCont,
-    getProductsCont,
-    getProductCont } = require("../controllers/product-controllers");
+const { productsCont } = require("../controllers");
 
 const productsRouter = express.Router();
-productsRouter.get("/", getProductsCont);
-productsRouter.get("/:productId", getProductCont);
+productsRouter.get("/", productsCont.getProducts);
+productsRouter.get("/:productId", productsCont.getProduct);
 productsRouter.use(forceAccessToken(["admin"]));
-productsRouter.post("/", createProductCont);
+productsRouter.post("/", productsCont.createProduct);
+productsRouter.patch("/:productId", productsCont.updateProduct);
 
 module.exports = productsRouter;

@@ -2,10 +2,10 @@ const _ = require("lodash");
 const multer = require("multer");
 const streamifier = require("streamifier");
 const { hasSingleValue, isPositiveNumber, isNonEmptyString, createUid, isImageMime } = require("../commons/functions");
-const { productNameAlreadyExistResponseText, requiredParamsNotFoundResponseText, productNotFoundResponseText, invalidFilterQueryResponseText, invalidSearchQueryResponseText, invalidSortQueryResponseText, invalidSkipQueryResponseText, invalidLimitQueryResponseText, invalidCategoriesQueryResponseText } = require("../commons/response-texts");
+const { productNameAlreadyExistResponseText, requiredParamsNotFoundResponseText, productNotFoundResponseText, invalidFilterQueryResponseText, invalidSearchQueryResponseText, invalidSortQueryResponseText, invalidSkipQueryResponseText, invalidLimitQueryResponseText, invalidCategoriesQueryResponseText, invalidJsonStringResponseText } = require("../commons/response-texts");
 const { commissionRate } = require("../database/db-models/db-model.commons");
 const { uploadProductImagesRepo } = require("../repositories/file-repositories");
-const { isUniqueProductName, createProductRepo, getProductsRepo, getProductRepo } = require("../repositories/product.repo");
+const { productsRepo } = require("../repositories");
 const { createSingleResponse, sendInvalidInputResponse, sendInternalError } = require("./controller-commons/functions");
 
 const mainImageName = "mainImage";
@@ -74,7 +74,7 @@ function validateProductMid(req, res, next) {
             try {
                 req.body = JSON.parse(req.body.productDetails);
             } catch (error) {
-                res.status(400).json(createSingleResponse("Invalid_Json"));
+                res.status(400).json(createSingleResponse(invalidJsonStringResponseText));
                 return res.end();
             }
             const {
@@ -93,11 +93,11 @@ function validateProductMid(req, res, next) {
                 !isValidCategoryList(categories) ||
                 (!_.isUndefined(published) && !_.isBoolean(published)) ||
                 (!_.isUndefined(featured) && !_.isBoolean(featured)) ||
-                (!_.isUndefined(featured) && !isPositiveNumber(viewCount))) {
+                (!_.isUndefined(viewCount) && !isPositiveNumber(viewCount))) {
                 sendInvalidInputResponse(res);
                 res.end();
             } else {
-                const uniqueProductName = await isUniqueProductName(productName, req.params.productId);
+                const uniqueProductName = await productsRepo.isUniqueProductName(productName, req.params.productId);
                 if (!uniqueProductName) {
                     res.status(400).json(createSingleResponse(productNameAlreadyExistResponseText));
                     res.end();
@@ -109,104 +109,122 @@ function validateProductMid(req, res, next) {
     });
 }
 
-exports.createProductCont = async (req, res) => {
-    try {
-        validateProductMid(req, res, () => {
-            const { productName, price } = req.body;
-            if (_.isUndefined(productName) ||
-                _.isUndefined(price) ||
-                _.isUndefined(commissionRate)) {
-                res.status(400).json(createSingleResponse(requiredParamsNotFoundResponseText));
-            } else {
-                uploadAttachedImages(req, res, async () => {
-                    const createdProduct = await createProductRepo(req.body);
-                    res.json(createdProduct.toJson());
-                });
+module.exports = Object.freeze({
+    createProduct: async (req, res) => {
+        try {
+            validateProductMid(req, res, () => {
+                const { productName, price } = req.body;
+                if (_.isUndefined(productName) ||
+                    _.isUndefined(price) ||
+                    _.isUndefined(commissionRate)) {
+                    res.status(400).json(createSingleResponse(requiredParamsNotFoundResponseText));
+                } else {
+                    uploadAttachedImages(req, res, async () => {
+                        const createdProduct = await productsRepo.create(req.body);
+                        res.json(createdProduct.toJson());
+                    });
+                }
+            });
+        } catch (error) {
+            sendInternalError(error, res);
+        }
+    },
+    getProducts: async (req, res) => {
+        try {
+            let { search, filter, categories, skip, limit, sort } = req.query;
+
+            try {
+                search = _.isUndefined(search) ? {} : JSON.parse(search);
+            } catch (error) {
+                res.status(400).json(createSingleResponse(invalidSearchQueryResponseText));
+                return;
             }
-        });
-    } catch (error) {
-        sendInternalError(error, res);
-    }
-};
-
-exports.getProductsCont = async (req, res) => {
-    try {
-        let { search, filter, categories, skip, limit, sort } = req.query;
-
-        try {
-            search = _.isUndefined(search) ? {} : JSON.parse(search);
-        } catch (error) {
-            res.status(400).json(createSingleResponse(invalidSearchQueryResponseText));
-            return;
-        }
-        for (let key of Object.keys(search)) {
-            search[key] = new RegExp(search[key].toString());
-        }
-
-        try {
-            filter = _.isUndefined(filter) ? {} : JSON.parse(filter);
-        } catch (error) {
-            res.status(400).json(createSingleResponse(invalidFilterQueryResponseText));
-            return;
-        }
-        filter = { ...search, ...filter };
-
-        try {
-            categories = _.isUndefined(categories) ? [] : JSON.parse(categories);
-            if (!_.isArray(categories)) {
-                throw new Error();
+            for (let key of Object.keys(search)) {
+                search[key] = new RegExp(search[key].toString());
             }
-        } catch (error) {
-            res.status(400).json(createSingleResponse(invalidCategoriesQueryResponseText));
-            return;
-        }
 
-        skip = _.isUndefined(skip) ? undefined : Number.parseInt(skip);
-        if (!_.isUndefined(skip) && !isPositiveNumber(skip)) {
-            res.status(400).json(createSingleResponse(invalidSkipQueryResponseText));
-            return;
-        }
+            try {
+                filter = _.isUndefined(filter) ? {} : JSON.parse(filter);
+            } catch (error) {
+                res.status(400).json(createSingleResponse(invalidFilterQueryResponseText));
+                return;
+            }
+            filter = { ...search, ...filter };
 
-        limit = _.isUndefined(limit) ? undefined : Number.parseInt(limit);
-        if (!_.isUndefined(limit) && !isPositiveNumber(limit)) {
-            res.status(400).json(createSingleResponse(invalidLimitQueryResponseText));
-            return;
-        }
-
-        try {
-            sort = _.isUndefined(sort) ? {} : JSON.parse(sort);
-            for (let key of Object.keys(sort)) {
-                if (sort[key] !== -1 && sort[key] !== 1) {
+            try {
+                categories = _.isUndefined(categories) ? [] : JSON.parse(categories);
+                if (!_.isArray(categories)) {
                     throw new Error();
                 }
+            } catch (error) {
+                res.status(400).json(createSingleResponse(invalidCategoriesQueryResponseText));
+                return;
+            }
+
+            skip = _.isUndefined(skip) ? undefined : Number.parseInt(skip);
+            if (!_.isUndefined(skip) && !isPositiveNumber(skip)) {
+                res.status(400).json(createSingleResponse(invalidSkipQueryResponseText));
+                return;
+            }
+
+            limit = _.isUndefined(limit) ? undefined : Number.parseInt(limit);
+            if (!_.isUndefined(limit) && !isPositiveNumber(limit)) {
+                res.status(400).json(createSingleResponse(invalidLimitQueryResponseText));
+                return;
+            }
+
+            try {
+                sort = _.isUndefined(sort) ? {} : JSON.parse(sort);
+                for (let key of Object.keys(sort)) {
+                    if (sort[key] !== -1 && sort[key] !== 1) {
+                        throw new Error();
+                    }
+                }
+            } catch (error) {
+                res.status(400).json(createSingleResponse(invalidSortQueryResponseText));
+                return;
+            }
+
+            const products = await productsRepo.getMany({ filter, categories, skip, limit, sort });
+            const jsonProducts = [];
+            for (let product of products) {
+                jsonProducts.push(product.toJson());
+            }
+            res.json(jsonProducts);
+        } catch (error) {
+            sendInternalError(error, res);
+        }
+    },
+    getProduct: async (req, res) => {
+        try {
+            const userType = req.user?.userType;
+            const productId = req.params.productId;
+            const product = await productsRepo.getOne(productId, userType !== "admin");
+            if (product === null) {
+                res.status(404).json(createSingleResponse(productNotFoundResponseText));
+            } else {
+                res.json(product.toJson());
             }
         } catch (error) {
-            res.status(400).json(createSingleResponse(invalidSortQueryResponseText));
-            return;
+            sendInternalError(error, res);
         }
-
-        const products = await getProductsRepo({ filter, categories, skip, limit, sort });
-        const jsonProducts = [];
-        for (let product of products) {
-            jsonProducts.push(product.toJson());
+    },
+    updateProduct: async (req, res) => {
+        try {
+            const productId = req.params.productId;
+            const productExist = await productsRepo.exists({ id: productId });
+            if (!productExist) {
+                res.status(404).json(createSingleResponse(productNotFoundResponseText));
+            } else {
+                validateProductMid(req, res, () => {
+                    uploadAttachedImages(req, res, async () => {
+                        const updatedProduct = await productsRepo.update(productId, req.body);
+                        res.json(updatedProduct.toJson());
+                    });
+                });
+            }
+        } catch (error) {
+            sendInternalError(error, res);
         }
-        res.json(jsonProducts);
-    } catch (error) {
-        sendInternalError(error, res);
     }
-};
-
-exports.getProductCont = async (req, res) => {
-    try {
-        const userType = req.user?.userType;
-        const productId = req.params.productId;
-        const product = await getProductRepo(productId, userType !== "admin");
-        if (product === null) {
-            res.status(404).json(createSingleResponse(productNotFoundResponseText));
-        } else {
-            res.json(product.toJson());
-        }
-    } catch (error) {
-        sendInternalError(error, res);
-    }
-};
+});

@@ -53,6 +53,7 @@ module.exports = Object.freeze({
         const productDoc = await updateOne(productDbModel, conditions, updates);
         return adaptEntity(Product, productDoc, idName);
     },
+
     deleteOne: (conditions) => deleteOne(productDbModel, conditions),
     increment: async (conditions, incrementor) => {
         const productDoc = await increment(productDbModel, conditions, incrementor);

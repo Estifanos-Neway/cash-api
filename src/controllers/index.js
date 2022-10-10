@@ -1,0 +1,1 @@
+exports.productsCont = require("./product-controllers");

@@ -9,6 +9,7 @@ function adaptConditions(conditions) {
 }
 
 async function exists(model, conditions) {
+    adaptConditions(conditions);
     const documentFound = await model.exists(conditions);
     if (documentFound) {
         documentFound.id = documentFound._id.toString();

@@ -42,7 +42,6 @@ const productSchema = new mongoose.Schema(
                 validator: (value) => value >= 0 && _.isInteger(value),
                 message: invalidViewCountResponseText
             },
-            required,
             default: 0
         },
 
