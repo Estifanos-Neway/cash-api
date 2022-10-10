@@ -2,12 +2,8 @@ const mongoose = require("mongoose");
 const { findManyDefaultLimit } = require("../../commons/variables");
 
 function adaptConditions(conditions) {
-    if ("id" in conditions) {
-        if (mongoose.Types.ObjectId.isValid(conditions.id)) {
-            conditions._id = conditions.id;
-        } else {
-            conditions._id = new mongoose.Types.ObjectId();
-        }
+    if ("id" in conditions && mongoose.Types.ObjectId.isValid(conditions.id)) {
+        conditions._id = conditions.id;
         delete conditions.id;
     }
 }
@@ -32,12 +28,12 @@ async function create(model, doc) {
 
 async function findOne(model, conditions, selection) {
     adaptConditions(conditions);
-    return await model.findOne().where(conditions).select(selection).exec();
+    return await model.findOne(conditions).select(selection).exec();
 }
 
-async function findMany({ model, conditions, selection, skip = 0, limit = findManyDefaultLimit, sort }) {
+async function findMany({ model, conditions = {}, filter = {}, selection = {}, skip = 0, limit = findManyDefaultLimit, sort = {} }) {
     adaptConditions(conditions);
-    return await model.find(conditions).select(selection).skip(skip).limit(limit).sort(sort).exec();
+    return await model.find(conditions).where(filter).select(selection).skip(skip).limit(limit).sort(sort).exec();
 }
 
 async function deleteOne(model, conditions) {

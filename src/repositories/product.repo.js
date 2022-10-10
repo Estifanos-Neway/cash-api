@@ -6,8 +6,8 @@ exports.createProductRepo = async (jsonProduct) => {
     return await productsDb.create(product);
 };
 
-exports.getProductsRepo = async ({ skip }) => {
-    return await productsDb.findMany({ conditions: {}, skip });
+exports.getProductsRepo = async ({ filter, skip, limit, sort }) => {
+    return await productsDb.findMany({ filter, skip, limit, sort });
 };
 
 exports.getProductRepo = async (productId) => {

@@ -34,24 +34,28 @@ module.exports = class Product {
     }
 
     get moreImages() {
-        const jsonImageArray = [];
-        for (let image of this.#moreImages) {
-            jsonImageArray.push(image.toJson());
+        if (_.isArray(this.#moreImages)) {
+            const jsonImageArray = [];
+            for (let image of this.#moreImages) {
+                jsonImageArray.push(image.toJson());
+            }
+            return jsonImageArray;
+        } else {
+            return undefined;
         }
-        return jsonImageArray;
     }
 
     constructor({
         productId,
         productName,
         mainImage,
-        moreImages = [],
+        moreImages,
         price,
         commissionRate,
-        categories = [],
-        published = false,
-        featured = false,
-        viewCount = 0 }) {
+        categories,
+        published,
+        featured,
+        viewCount }) {
         this.productId = productId;
         this.productName = productName;
         this.mainImage = mainImage;

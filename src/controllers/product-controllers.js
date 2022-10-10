@@ -2,7 +2,7 @@ const _ = require("lodash");
 const multer = require("multer");
 const streamifier = require("streamifier");
 const { hasSingleValue, isPositiveNumber, isNonEmptyString, createUid, isImageMime } = require("../commons/functions");
-const { productNameAlreadyExistResponseText, requiredParamsNotFoundResponseText, productNotFoundResponseText } = require("../commons/response-texts");
+const { productNameAlreadyExistResponseText, requiredParamsNotFoundResponseText, productNotFoundResponseText, invalidFilterQueryResponseText, invalidSearchQueryResponseText, invalidSortQueryResponseText, invalidSkipQueryResponseText, invalidLimitQueryResponseText } = require("../commons/response-texts");
 const { commissionRate } = require("../database/db-models/db-model.commons");
 const { uploadProductImagesRepo } = require("../repositories/file-repositories");
 const { isUniqueProductName, createProductRepo, getProductsRepo, getProductRepo } = require("../repositories/product.repo");
@@ -72,7 +72,7 @@ function validateProductMid(req, res, next) {
             sendInternalError(error, res);
         } else {
             try {
-                req.body = JSON.parse(req.body.productDetail);
+                req.body = JSON.parse(req.body.productDetails);
             } catch (error) {
                 res.status(400).json(createSingleResponse("Invalid_Json"));
                 return res.end();
@@ -131,8 +131,49 @@ exports.createProductCont = async (req, res) => {
 
 exports.getProductsCont = async (req, res) => {
     try {
-        const skip = Number.parseInt(req.query.skip) || 0;
-        const products = await getProductsRepo({ skip });
+        let { search, filter, skip, limit, sort } = req.query;
+
+        skip = _.isUndefined(skip) ? undefined : Number.parseInt(skip);
+        if (!_.isUndefined(skip) && !isPositiveNumber(skip)) {
+            res.status(400).json(createSingleResponse(invalidSkipQueryResponseText));
+            return;
+        }
+
+        limit = _.isUndefined(limit) ? undefined : Number.parseInt(limit);
+        if (!_.isUndefined(limit) && !isPositiveNumber(limit)) {
+            res.status(400).json(createSingleResponse(invalidLimitQueryResponseText));
+            return;
+        }
+
+        try {
+            filter = _.isUndefined(filter) ? {} : JSON.parse(filter);
+        } catch (error) {
+            res.status(400).json(createSingleResponse(invalidFilterQueryResponseText));
+            return;
+        }
+        try {
+            search = _.isUndefined(search) ? {} : JSON.parse(search);
+        } catch (error) {
+            res.status(400).json(createSingleResponse(invalidSearchQueryResponseText));
+            return;
+        }
+        for (let key of Object.keys(search)) {
+            search[key] = new RegExp(search[key].toString());
+        }
+        filter = { ...search, ...filter };
+
+        try {
+            sort = _.isUndefined(sort) ? {} : JSON.parse(sort);
+            for (let key of Object.keys(sort)) {
+                if (sort[key] !== -1 && sort[key] !== 1) {
+                    throw new Error();
+                }
+            }
+        } catch (error) {
+            res.status(400).json(createSingleResponse(invalidSortQueryResponseText));
+            return;
+        }
+        const products = await getProductsRepo({ filter, skip, limit, sort });
         const jsonProducts = [];
         for (let product of products) {
             jsonProducts.push(product.toJson());

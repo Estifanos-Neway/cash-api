@@ -1,4 +1,5 @@
 const { productNameAlreadyExistResponseText } = require("../commons/response-texts");
+const { findManyDefaultLimit } = require("../commons/variables");
 const { Product } = require("../entities");
 const {
     exists,
@@ -38,8 +39,8 @@ module.exports = Object.freeze({
         }
     },
 
-    findMany: async ({ conditions, selection, skip, sort }) => {
-        const productDocList = await findMany({ model: productDbModel, conditions, skip, selection, sort });
+    findMany: async ({ conditions = {}, filter = {}, selection = {}, skip = 0, limit = findManyDefaultLimit, sort = {} }) => {
+        const productDocList = await findMany({ model: productDbModel, conditions, filter, skip, limit, selection, sort });
         const productList = [];
         for (const productDoc of productDocList) {
             productList.push(adaptEntity(Product, productDoc, idName));

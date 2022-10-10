@@ -3,12 +3,15 @@ const { invalidCommissionRateResponseText } = require("../../commons/response-te
 
 const required = true;
 
-const imageJsonSchema = new mongoose.Schema({
-    path: {
-        type: String,
-        required
-    }
-});
+const imageJsonSchema = new mongoose.Schema(
+    {
+        path: {
+            type: String,
+            required
+        }
+    },
+    { strictQuery: false }
+);
 
 const commissionRate = {
     type: Number,

@@ -14,6 +14,12 @@ const invalidApiKeyResponseText = "Invalid_Api_Key";
 const invalidPriceResponseText = "Invalid_Price";
 const invalidViewCountResponseText = "Invalid_View_Count";
 
+const invalidSkipQueryResponseText = "Invalid_Skip_Query";
+const invalidLimitQueryResponseText = "Invalid_Limit_Query";
+const invalidFilterQueryResponseText = "Invalid_Filter_Query";
+const invalidSearchQueryResponseText = "Invalid_Search_Query";
+const invalidSortQueryResponseText = "Invalid_Sort_Query";
+
 const productNameAlreadyExistResponseText = "Product_Name_Already_Exist";
 const productNotFoundResponseText = "Product_Not_Found";
 const noneMatchingTokensResponseText = "None_Matching_Tokens";
@@ -45,6 +51,14 @@ module.exports = {
     invalidEmailResponseText,
     invalidVerificationCodeResponseText,
     invalidTokenResponseText,
+    invalidViewCountResponseText,
+    invalidApiKeyResponseText,
+    invalidPriceResponseText,
+    invalidSkipQueryResponseText,
+    invalidLimitQueryResponseText,
+    invalidFilterQueryResponseText,
+    invalidSearchQueryResponseText,
+    invalidSortQueryResponseText,
     noneMatchingTokensResponseText,
     cantFindValidEmailResponseText,
     expiredTokenResponseText,
@@ -55,13 +69,10 @@ module.exports = {
     successResponseText,
     userNotFoundResponseText,
     internalErrorResponseText,
-    invalidApiKeyResponseText,
     missingApiKeyResponseText,
     pathNotFoundResponseText,
     tooManyRequestsResponseText,
     productNameAlreadyExistResponseText,
     productNotFoundResponseText,
-    invalidPriceResponseText,
-    invalidViewCountResponseText,
     fileNotFoundResponseText
 };

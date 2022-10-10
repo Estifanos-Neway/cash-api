@@ -30,11 +30,11 @@ const productSchema = new mongoose.Schema(
         categories: [String],
         published: {
             type: Boolean,
-            required
+            default: false
         },
         featured: {
             type: Boolean,
-            required
+            default: false
         },
         viewCount: {
             type: Number,
@@ -42,10 +42,12 @@ const productSchema = new mongoose.Schema(
                 validator: (value) => value >= 0 && _.isInteger(value),
                 message: invalidViewCountResponseText
             },
-            required
+            required,
+            default: 0
         },
 
-    }
+    },
+    { strictQuery: false }
 );
 
 module.exports = mongoose.model("product", productSchema, "products");
