@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const { productNameAlreadyExistResponseText } = require("../commons/response-texts");
 const { findManyDefaultLimit } = require("../commons/variables");
 const { Product } = require("../entities");
@@ -9,7 +10,8 @@ const {
     count,
     updateOne,
     deleteOne,
-    adaptEntity } = require("./db-commons/functions");
+    adaptEntity,
+    increment } = require("./db-commons/functions");
 const { productDbModel } = require("./db-models");
 
 const idName = "productId";
@@ -39,8 +41,8 @@ module.exports = Object.freeze({
         }
     },
 
-    findMany: async ({ conditions = {}, filter = {}, selection = {}, skip = 0, limit = findManyDefaultLimit, sort = {} }) => {
-        const productDocList = await findMany({ model: productDbModel, conditions, filter, skip, limit, selection, sort });
+    findMany: async ({ filter = {}, categories = [], selection = {}, skip = 0, limit = findManyDefaultLimit, sort = {} }) => {
+        const productDocList = await findMany({ model: productDbModel, conditions: { categories: _.isEmpty(categories) ? [] : { $all: categories } }, filter, skip, limit, selection, sort });
         const productList = [];
         for (const productDoc of productDocList) {
             productList.push(adaptEntity(Product, productDoc, idName));
@@ -51,6 +53,9 @@ module.exports = Object.freeze({
         const productDoc = await updateOne(productDbModel, conditions, updates);
         return adaptEntity(Product, productDoc, idName);
     },
-
-    deleteOne: (conditions) => deleteOne(productDbModel, conditions)
+    deleteOne: (conditions) => deleteOne(productDbModel, conditions),
+    increment: async (conditions, incrementor) => {
+        const productDoc = await increment(productDbModel, conditions, incrementor);
+        return adaptEntity(Product, productDoc, idName);
+    }
 });

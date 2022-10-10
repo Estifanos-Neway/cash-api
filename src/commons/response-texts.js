@@ -14,10 +14,11 @@ const invalidApiKeyResponseText = "Invalid_Api_Key";
 const invalidPriceResponseText = "Invalid_Price";
 const invalidViewCountResponseText = "Invalid_View_Count";
 
+const invalidSearchQueryResponseText = "Invalid_Search_Query";
+const invalidFilterQueryResponseText = "Invalid_Filter_Query";
+const invalidCategoriesQueryResponseText = "Invalid_Categories_Query";
 const invalidSkipQueryResponseText = "Invalid_Skip_Query";
 const invalidLimitQueryResponseText = "Invalid_Limit_Query";
-const invalidFilterQueryResponseText = "Invalid_Filter_Query";
-const invalidSearchQueryResponseText = "Invalid_Search_Query";
 const invalidSortQueryResponseText = "Invalid_Sort_Query";
 
 const productNameAlreadyExistResponseText = "Product_Name_Already_Exist";
@@ -59,6 +60,7 @@ module.exports = {
     invalidFilterQueryResponseText,
     invalidSearchQueryResponseText,
     invalidSortQueryResponseText,
+    invalidCategoriesQueryResponseText,
     noneMatchingTokensResponseText,
     cantFindValidEmailResponseText,
     expiredTokenResponseText,

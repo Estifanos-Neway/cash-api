@@ -52,6 +52,13 @@ async function updateOne(model, conditions, updates) {
     return await doc.save();
 }
 
+async function increment(model, conditions, incrementor) {
+    adaptConditions(conditions);
+    let doc = await model.findOne(conditions);
+    doc.$inc(...incrementor);
+    return await doc.save();
+}
+
 function adaptEntity(Entity, dbDoc, idName = "id") {
     dbDoc = dbDoc.toJSON();
     dbDoc[idName] = dbDoc._id.toString();
@@ -66,5 +73,6 @@ module.exports = {
     findMany,
     deleteOne,
     updateOne,
-    adaptEntity
+    adaptEntity,
+    increment
 };
