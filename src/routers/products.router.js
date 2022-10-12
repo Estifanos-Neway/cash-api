@@ -3,10 +3,11 @@ const { forceAccessToken } = require("../controllers/middlewares");
 const { productsCont } = require("../controllers");
 
 const productsRouter = express.Router();
-productsRouter.get("/", productsCont.getProducts);
-productsRouter.get("/:productId", productsCont.getProduct);
+productsRouter.get("/", productsCont.getMany);
+productsRouter.get("/:productId", productsCont.getOne);
 productsRouter.use(forceAccessToken(["admin"]));
-productsRouter.post("/", productsCont.createProduct);
-productsRouter.patch("/:productId", productsCont.updateProduct);
+productsRouter.post("/", productsCont.create);
+productsRouter.patch("/:productId", productsCont.update);
+productsRouter.delete("/:productId", productsCont.delete);
 
 module.exports = productsRouter;

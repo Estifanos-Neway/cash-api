@@ -17,8 +17,8 @@ const {
     cantFindValidEmailResponseText,
     successResponseText,
     userNotFoundResponseText,
-    invalidInputResponseText, 
-    invalidInput} = require("../commons/response-texts");
+    invalidInputResponseText,
+    invalidInput } = require("../commons/response-texts");
 const {
     errorHandler,
     createUserData,
@@ -26,16 +26,8 @@ const {
     createSingleResponse,
     sendEmailVerification,
     sendEmailVerificationCode } = require("./controller-commons/functions");
-const { addJwtRefreshRepo } = require("../repositories/jwt-refresh-repositories");
-const {
-    signInAdminRepo,
-    changeAdminPasswordHashRepo,
-    getAdminRepo,
-    updateAdminSettingsRepo,
-    getAdminSettingsRepo,
-    recoverAdminPasswordHashRepo,
-    updateAdminEmailRepo,
-    changeAdminUsernameRepo } = require("../repositories/admin-repositories");
+const { jwtRefreshesRepo } = require("../repositories");
+const { adminsRepo } = require("../repositories");
 const passwordRecoveryEmail = fs.readFileSync(path.resolve("src/assets/emails/password-recovery.html"), { encoding: "utf-8" });
 const emailVerificationEmail = fs.readFileSync(path.resolve("src/assets/emails/email-verification.html"), { encoding: "utf-8" });
 
@@ -45,14 +37,14 @@ exports.signInAdminCont = async (req, res) => {
         if (!hasSingleValue(username) || !hasSingleValue(passwordHash)) {
             res.status(400).json(createSingleResponse(invalidInputResponseText));
         } else {
-            const signedInAdmin = await signInAdminRepo({ username, passwordHash });
+            const signedInAdmin = await adminsRepo.signIn({ username, passwordHash });
             if (signedInAdmin) {
                 const userData = createUserData(signedInAdmin.userId, "admin");
                 // @ts-ignore
                 const accessToken = createAccessToken(userData);
                 // @ts-ignore
                 const refreshToken = jwt.sign(userData, env.JWT_REFRESH_SECRETE);
-                await addJwtRefreshRepo(refreshToken);
+                await jwtRefreshesRepo.add(refreshToken);
                 const response = {
                     admin: signedInAdmin,
                     accessToken,
@@ -70,7 +62,7 @@ exports.signInAdminCont = async (req, res) => {
 
 exports.getAdminCont = async (req, res) => {
     try {
-        const adminInfo = await getAdminRepo();
+        const adminInfo = await adminsRepo.get();
         if (adminInfo) {
             res.json(adminInfo);
         } else {
@@ -83,7 +75,7 @@ exports.getAdminCont = async (req, res) => {
 
 exports.getAdminSettingsCont = async (req, res) => {
     try {
-        const adminSettings = await getAdminSettingsRepo();
+        const adminSettings = await adminsRepo.getSettings();
         if (adminSettings) {
             res.json(adminSettings);
         } else {
@@ -101,7 +93,7 @@ exports.changeAdminPasswordHashCont = async (req, res) => {
         if (!hasSingleValue(oldPasswordHash) || !hasSingleValue(newPasswordHash)) {
             res.status(400).json(createSingleResponse(invalidInputResponseText));
         } else {
-            const result = await changeAdminPasswordHashRepo({ userId, oldPasswordHash, newPasswordHash });
+            const result = await adminsRepo.changePasswordHash({ userId, oldPasswordHash, newPasswordHash });
             if (result.success) {
                 res.json(createSingleResponse(successResponseText));
             } else {
@@ -120,7 +112,7 @@ exports.changeAdminUsernameCont = async (req, res) => {
         if (!hasSingleValue(newUsername)) {
             res.status(400).json(createSingleResponse(invalidInputResponseText));
         } else {
-            const result = await changeAdminUsernameRepo({ userId, newUsername });
+            const result = await adminsRepo.changeUsername({ userId, newUsername });
             if (result.success) {
                 res.json(createSingleResponse(successResponseText));
             } else {
@@ -139,7 +131,7 @@ exports.updateAdminSettingsCont = async (req, res) => {
         if (!_.isPlainObject(updates)) {
             res.status(400).json(createSingleResponse(invalidInputResponseText));
         } else {
-            const result = await updateAdminSettingsRepo({ userId, updates });
+            const result = await adminsRepo.updateSettings({ userId, updates });
             if (result.success) {
                 res.json(result.result);
             } else {
@@ -193,7 +185,7 @@ exports.verifyAdminEmailCont = async (req, res) => {
             } else if (!isEmail(verificationObject.email)) {
                 res.status(400).json(createSingleResponse(invalidTokenResponseText));
             } else {
-                const result = await updateAdminEmailRepo({ userId, email: verificationObject.email });
+                const result = await adminsRepo.updateEmail({ userId, email: verificationObject.email });
                 if (result.success) {
                     res.json({ newEmail: result.result });
                 } else {
@@ -219,7 +211,7 @@ exports.sendAdminPasswordRecoveryEmailCont = async (req, res) => {
         } else if (!isEmail(email)) {
             res.status(400).json(createSingleResponse(invalidEmailResponseText));
         } else {
-            const adminInfo = await getAdminRepo();
+            const adminInfo = await adminsRepo.get();
             if (!adminInfo) {
                 res.status(404).json(createSingleResponse(userNotFoundResponseText));
             } else {
@@ -248,7 +240,7 @@ exports.recoverAdminPasswordCont = async (req, res) => {
         if (!hasSingleValue(recoveryToken) || !hasSingleValue(newPasswordHash)) {
             res.status(400).json(createSingleResponse(invalidInputResponseText));
         } else {
-            const adminInfo = await getAdminRepo();
+            const adminInfo = await adminsRepo.get();
             if (!adminInfo) {
                 res.status(404).json(createSingleResponse(userNotFoundResponseText));
             } else {
@@ -267,7 +259,7 @@ exports.recoverAdminPasswordCont = async (req, res) => {
                     if (emailFrom !== adminEmail) {
                         res.status(400).json(createSingleResponse(invalidTokenResponseText));
                     } else {
-                        const result = await recoverAdminPasswordHashRepo({ email: adminEmail, newPasswordHash });
+                        const result = await adminsRepo.recoverPasswordHash({ email: adminEmail, newPasswordHash });
                         if (result.success) {
                             res.json(createSingleResponse(successResponseText));
                         } else {

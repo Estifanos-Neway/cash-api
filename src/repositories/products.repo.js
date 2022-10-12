@@ -1,6 +1,8 @@
+const _ = require("lodash");
 const { removeUndefined } = require("../commons/functions");
 const { productsDb } = require("../database");
 const Product = require("../entities/product.model");
+const { filesDb } = require("../database");
 
 module.exports = Object.freeze({
     create: async (jsonProduct) => {
@@ -22,6 +24,29 @@ module.exports = Object.freeze({
         return await productsDb.updateOne({ id: productId }, removeUndefined(product.toJson()));
     },
     exists: async (condition) => await productsDb.exists(condition),
+    delete: async (condition) => {
+        const product = await productsDb.deleteOne(condition);
+        console.log(product);
+        if (product) {
+            const filesToBeDeleted = [];
+            const mainImagePath = product.mainImage?.path;
+            if (mainImagePath) {
+                const fileName = mainImagePath.substring(mainImagePath.lastIndexOf("/")+1);
+                filesToBeDeleted.push(fileName);
+            }
+            const moreImages = product.moreImages;
+            if (_.isArray(moreImages)) {
+                for (const image of moreImages) {
+                    const imagePath = image.path;
+                    const fileName = imagePath.substring(imagePath.lastIndexOf("/")+1);
+                    filesToBeDeleted.push(fileName);
+                }
+            }
+            for (const fileName of filesToBeDeleted) {
+                await filesDb.delete(fileName, filesDb.bucketNames.productImages);
+            }
+        }
+    },
     isUniqueProductName: async (productName, productId) => {
         const productFound = await productsDb.exists({ productName });
         if (productFound) {

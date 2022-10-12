@@ -13,6 +13,8 @@ module.exports = class Product {
     published;
     featured;
     viewCount;
+    #createdAt;
+    #updatedAt;
 
     set mainImage(jsonImage) {
         if (hasValue(jsonImage)) {
@@ -45,6 +47,14 @@ module.exports = class Product {
         }
     }
 
+    get createdAt() {
+        return this.#createdAt;
+    }
+
+    get updatedAt() {
+        return this.#updatedAt;
+    }
+
     constructor({
         productId,
         productName,
@@ -55,7 +65,9 @@ module.exports = class Product {
         categories,
         published,
         featured,
-        viewCount }) {
+        viewCount,
+        createdAt,
+        updatedAt }) {
         this.productId = productId;
         this.productName = productName;
         this.mainImage = mainImage;
@@ -66,6 +78,8 @@ module.exports = class Product {
         this.published = published;
         this.featured = featured;
         this.viewCount = viewCount;
+        this.#createdAt = createdAt;
+        this.#updatedAt = updatedAt;
     }
 
     toJson() {
@@ -79,7 +93,9 @@ module.exports = class Product {
             categories: this.categories,
             published: this.published,
             featured: this.featured,
-            viewCount: this.viewCount
+            viewCount: this.viewCount,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt
         };
     }
 };

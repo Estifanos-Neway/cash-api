@@ -31,32 +31,24 @@ module.exports = Object.freeze({
             }
         }
     },
-
     findOne: async (conditions, selection) => {
         const productDoc = await findOne(productDbModel, conditions, selection);
-        if (productDoc) {
-            return adaptEntity(Product, productDoc, idName);
-        } else {
-            return null;
-        }
+        return productDoc ? adaptEntity(Product, productDoc, idName) : null;
     },
-
     findMany: async ({ filter = {}, categories = [], selection = {}, skip = 0, limit = findManyDefaultLimit, sort = {} }) => {
         const productDocList = await findMany({ model: productDbModel, conditions: { categories: _.isEmpty(categories) ? [] : { $all: categories } }, filter, skip, limit, selection, sort });
-        const productList = [];
-        for (const productDoc of productDocList) {
-            productList.push(adaptEntity(Product, productDoc, idName));
-        }
-        return productList;
+        return productDocList.map(productDoc => adaptEntity(Product, productDoc, idName));
     },
     updateOne: async (conditions, updates) => {
         const productDoc = await updateOne(productDbModel, conditions, updates);
         return adaptEntity(Product, productDoc, idName);
     },
-
-    deleteOne: (conditions) => deleteOne(productDbModel, conditions),
+    deleteOne: async (conditions) => {
+        const productDoc = await deleteOne(productDbModel, conditions);
+        return productDoc ? adaptEntity(Product, productDoc, idName) : null;
+    },
     increment: async (conditions, incrementor) => {
         const productDoc = await increment(productDbModel, conditions, incrementor);
-        return adaptEntity(Product, productDoc, idName);
+        return productDoc ? adaptEntity(Product, productDoc, idName) : null;
     }
 });

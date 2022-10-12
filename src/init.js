@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { adminsDb } = require("./database");
-const { signUpAdminRepo } = require("./repositories/admin-repositories");
+const { adminsRepo } = require("./repositories");
 const { defaultAdmin } = require("./config.json");
 const {
     errorLog,
@@ -15,7 +15,7 @@ async function init() {
     if (adminsCount === 0) {
         const passwordHash = hash(defaultAdmin.password);
         try {
-            await signUpAdminRepo({ username: defaultAdmin.username, passwordHash });
+            await adminsRepo.signUp({ username: defaultAdmin.username, passwordHash });
             console.log("Default admin created successfully.");
         } catch (error) {
             errorLog("Failed to create the default admin", error);

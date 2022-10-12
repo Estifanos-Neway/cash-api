@@ -10,7 +10,7 @@ const {
 const { defaultAdmin } = require("../config.json");
 const { createUserData, createAccessToken } = require("../controllers/controller-commons/functions");
 const { env } = require("../env");
-const { signUpAdminRepo } = require("../repositories/admin-repositories");
+const { adminsRepo } = require("../repositories");
 
 const adminCredentials = {
     username: defaultAdmin.username,
@@ -24,7 +24,7 @@ describe("/tokens", () => {
     beforeAll(async () => {
         // @ts-ignore
         await mongoose.connect(env.DB_URL_TEST, { keepAlive: true });
-        await signUpAdminRepo({ ...adminCredentials });
+        await adminsRepo.signUp({ ...adminCredentials });
     });
 
     beforeEach(async () => {

@@ -10,9 +10,7 @@ const {
     invalidInputResponseText,
     noneMatchingTokensResponseText,
     successResponseText } = require("../commons/response-texts");
-const {
-    checkJwtRefreshRepo,
-    deleteJwtRefreshRepo } = require("../repositories/jwt-refresh-repositories");
+const {jwtRefreshesRepo } = require("../repositories");
 exports.refreshTokenCont = async (req, res) => {
     try {
         const refreshToken = req.get("Refresh-Token");
@@ -20,7 +18,7 @@ exports.refreshTokenCont = async (req, res) => {
         if (!hasSingleValue(refreshToken) || !hasSingleValue(accessToken)) {
             res.status(400).json(createSingleResponse(invalidInputResponseText));
         } else {
-            const refreshTokenExists = await checkJwtRefreshRepo(refreshToken);
+            const refreshTokenExists = await jwtRefreshesRepo.exists(refreshToken);
             if (refreshTokenExists) {
                 // @ts-ignore
                 jwt.verify(refreshToken, env.JWT_REFRESH_SECRETE, (error, user1) => {
@@ -74,7 +72,7 @@ exports.signOutCont = async (req, res) => {
                         } else {
                             // @ts-ignore
                             if (user1.userType === user2.userType && user1.userId === user2.userId) {
-                                await deleteJwtRefreshRepo(refreshToken);
+                                await jwtRefreshesRepo.delete(refreshToken);
                                 res.json(createSingleResponse(successResponseText));
                             } else {
                                 res.status(401).json(createSingleResponse(noneMatchingTokensResponseText));

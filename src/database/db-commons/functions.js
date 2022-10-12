@@ -39,7 +39,7 @@ async function findMany({ model, conditions = {}, filter = {}, selection = {}, s
 
 async function deleteOne(model, conditions) {
     adaptConditions(conditions);
-    return await model.deleteOne(conditions);
+    return await model.findOneAndDelete(conditions);
 }
 
 async function updateOne(model, conditions, updates) {
@@ -55,9 +55,13 @@ async function updateOne(model, conditions, updates) {
 
 async function increment(model, conditions, incrementor) {
     adaptConditions(conditions);
-    let doc = await model.findOne(conditions);
-    doc.$inc(...incrementor);
-    return await doc.save();
+    const doc = await model.findOne(conditions);
+    if(doc){
+        doc.$inc(...incrementor);
+        return await doc.save();
+    } else{
+        return null;
+    }
 }
 
 function adaptEntity(Entity, dbDoc, idName = "id") {

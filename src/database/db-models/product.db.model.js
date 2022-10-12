@@ -44,9 +44,20 @@ const productSchema = new mongoose.Schema(
             },
             default: 0
         },
+        // createdDate: {
+        //     type: Number,
+        //     default: () => new Date().getTime()
+        // },
+        // lastUpdatedDate: {
+        //     type: Number,
+        //     default: () => new Date().getTime()
+        // }
 
     },
-    { strictQuery: false }
+    {
+        strictQuery: false,
+        timestamps: true
+    }
 );
 
 module.exports = mongoose.model("product", productSchema, "products");

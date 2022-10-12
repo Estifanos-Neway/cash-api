@@ -4,9 +4,8 @@ const streamifier = require("streamifier");
 const { hasSingleValue, isPositiveNumber, isNonEmptyString, createUid, isImageMime } = require("../commons/functions");
 const { productNameAlreadyExistResponseText, requiredParamsNotFoundResponseText, productNotFoundResponseText, invalidFilterQueryResponseText, invalidSearchQueryResponseText, invalidSortQueryResponseText, invalidSkipQueryResponseText, invalidLimitQueryResponseText, invalidCategoriesQueryResponseText, invalidJsonStringResponseText } = require("../commons/response-texts");
 const { commissionRate } = require("../database/db-models/db-model.commons");
-const { uploadProductImagesRepo } = require("../repositories/file-repositories");
-const { productsRepo } = require("../repositories");
-const { createSingleResponse, sendInvalidInputResponse, sendInternalError } = require("./controller-commons/functions");
+const { productsRepo, filesRepo } = require("../repositories");
+const { createSingleResponse, sendInvalidInputResponse, sendInternalError, sendSuccessResponse } = require("./controller-commons/functions");
 
 const mainImageName = "mainImage";
 const moreImagesName = "moreImages";
@@ -24,7 +23,7 @@ const productImageBasePath = "/images/products";
 async function uploadProductImage(image) {
     const fileName = createUid();
     const fileReadStream = streamifier.createReadStream(image.buffer);
-    await uploadProductImagesRepo(fileName, fileReadStream);
+    await filesRepo.uploadProductImage(fileName, fileReadStream);
     return `${productImageBasePath}/${fileName}`;
 
 }
@@ -110,7 +109,7 @@ function validateProductMid(req, res, next) {
 }
 
 module.exports = Object.freeze({
-    createProduct: async (req, res) => {
+    create: async (req, res) => {
         try {
             validateProductMid(req, res, () => {
                 const { productName, price } = req.body;
@@ -129,7 +128,7 @@ module.exports = Object.freeze({
             sendInternalError(error, res);
         }
     },
-    getProducts: async (req, res) => {
+    getMany: async (req, res) => {
         try {
             let { search, filter, categories, skip, limit, sort } = req.query;
 
@@ -184,7 +183,7 @@ module.exports = Object.freeze({
                 res.status(400).json(createSingleResponse(invalidSortQueryResponseText));
                 return;
             }
-
+            sort = { createdAt: -1, ...sort };
             const products = await productsRepo.getMany({ filter, categories, skip, limit, sort });
             const jsonProducts = [];
             for (let product of products) {
@@ -195,7 +194,7 @@ module.exports = Object.freeze({
             sendInternalError(error, res);
         }
     },
-    getProduct: async (req, res) => {
+    getOne: async (req, res) => {
         try {
             const userType = req.user?.userType;
             const productId = req.params.productId;
@@ -209,7 +208,7 @@ module.exports = Object.freeze({
             sendInternalError(error, res);
         }
     },
-    updateProduct: async (req, res) => {
+    update: async (req, res) => {
         try {
             const productId = req.params.productId;
             const productExist = await productsRepo.exists({ id: productId });
@@ -223,6 +222,15 @@ module.exports = Object.freeze({
                     });
                 });
             }
+        } catch (error) {
+            sendInternalError(error, res);
+        }
+    },
+    delete: async (req, res) => {
+        try {
+            const productId = req.params.productId;
+            await productsRepo.delete({ id: productId });
+            sendSuccessResponse(res);
         } catch (error) {
             sendInternalError(error, res);
         }

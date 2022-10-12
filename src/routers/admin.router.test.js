@@ -16,7 +16,7 @@ const {
 const { verificationTokenExpiresIn } = require("../commons/variables");
 const { defaultAdmin } = require("../config.json");
 const { env } = require("../env");
-const { signUpAdminRepo } = require("../repositories/admin-repositories");
+const { adminsRepo } = require("../repositories");
 
 const adminCredentials = {
     username: defaultAdmin.username,
@@ -32,7 +32,7 @@ describe("/admin", () => {
     beforeAll(async () => {
         // @ts-ignore
         await mongoose.connect(env.DB_URL_TEST, { keepAlive: true });
-        await signUpAdminRepo({ ...adminCredentials });
+        await adminsRepo.signUp({ ...adminCredentials });
     });
 
     beforeEach(() => {
