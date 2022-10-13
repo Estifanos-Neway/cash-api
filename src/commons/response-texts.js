@@ -18,6 +18,7 @@ const invalidJsonStringResponseText = "Invalid_Json_String";
 const invalidSearchQueryResponseText = "Invalid_Search_Query";
 const invalidFilterQueryResponseText = "Invalid_Filter_Query";
 const invalidCategoriesQueryResponseText = "Invalid_Categories_Query";
+const invalidSelectQueryResponseText = "Invalid_Select_Query";
 const invalidSkipQueryResponseText = "Invalid_Skip_Query";
 const invalidLimitQueryResponseText = "Invalid_Limit_Query";
 const invalidSortQueryResponseText = "Invalid_Sort_Query";
@@ -62,6 +63,7 @@ module.exports = {
     invalidSearchQueryResponseText,
     invalidSortQueryResponseText,
     invalidCategoriesQueryResponseText,
+    invalidSelectQueryResponseText,
     invalidJsonStringResponseText,
     noneMatchingTokensResponseText,
     cantFindValidEmailResponseText,

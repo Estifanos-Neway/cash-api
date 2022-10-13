@@ -2,7 +2,7 @@ const _ = require("lodash");
 const multer = require("multer");
 const streamifier = require("streamifier");
 const { hasSingleValue, isPositiveNumber, isNonEmptyString, createUid, isImageMime } = require("../commons/functions");
-const { productNameAlreadyExistResponseText, requiredParamsNotFoundResponseText, productNotFoundResponseText, invalidFilterQueryResponseText, invalidSearchQueryResponseText, invalidSortQueryResponseText, invalidSkipQueryResponseText, invalidLimitQueryResponseText, invalidCategoriesQueryResponseText, invalidJsonStringResponseText } = require("../commons/response-texts");
+const { productNameAlreadyExistResponseText, requiredParamsNotFoundResponseText, productNotFoundResponseText, invalidFilterQueryResponseText, invalidSearchQueryResponseText, invalidSortQueryResponseText, invalidSkipQueryResponseText, invalidLimitQueryResponseText, invalidCategoriesQueryResponseText, invalidJsonStringResponseText, invalidSelectQueryResponseText } = require("../commons/response-texts");
 const { commissionRate } = require("../database/db-models/db-model.commons");
 const { productsRepo, filesRepo } = require("../repositories");
 const { createSingleResponse, sendInvalidInputResponse, sendInternalError, sendSuccessResponse } = require("./controller-commons/functions");
@@ -108,6 +108,8 @@ function validateProductMid(req, res, next) {
     });
 }
 
+const findManyDefaultLimit = 8;
+const findManyMaxLimit = 20;
 module.exports = Object.freeze({
     create: async (req, res) => {
         try {
@@ -130,7 +132,7 @@ module.exports = Object.freeze({
     },
     getMany: async (req, res) => {
         try {
-            let { search, filter, categories, skip, limit, sort } = req.query;
+            let { search, filter, categories, skip, limit, select, sort } = req.query;
 
             try {
                 search = _.isUndefined(search) ? {} : JSON.parse(search);
@@ -154,9 +156,31 @@ module.exports = Object.freeze({
                 categories = _.isUndefined(categories) ? [] : JSON.parse(categories);
                 if (!_.isArray(categories)) {
                     throw new Error();
+                } else {
+                    for (const element of categories) {
+                        if (!_.isString(element)) {
+                            throw new Error();
+                        }
+                    }
                 }
             } catch (error) {
                 res.status(400).json(createSingleResponse(invalidCategoriesQueryResponseText));
+                return;
+            }
+
+            try {
+                select = _.isUndefined(select) ? [] : JSON.parse(select);
+                if (!_.isArray(select)) {
+                    throw new Error();
+                } else {
+                    for (const element of select) {
+                        if (!_.isString(element)) {
+                            throw new Error();
+                        }
+                    }
+                }
+            } catch (error) {
+                res.status(400).json(createSingleResponse(invalidSelectQueryResponseText));
                 return;
             }
 
@@ -171,6 +195,7 @@ module.exports = Object.freeze({
                 res.status(400).json(createSingleResponse(invalidLimitQueryResponseText));
                 return;
             }
+            limit = _.isUndefined(limit) ? findManyDefaultLimit : limit < findManyMaxLimit ? limit : findManyMaxLimit;
 
             try {
                 sort = _.isUndefined(sort) ? {} : JSON.parse(sort);
@@ -183,8 +208,8 @@ module.exports = Object.freeze({
                 res.status(400).json(createSingleResponse(invalidSortQueryResponseText));
                 return;
             }
-            sort = { createdAt: -1, ...sort };
-            const products = await productsRepo.getMany({ filter, categories, skip, limit, sort });
+            sort = _.isEmpty(sort) ? { createdAt: -1 } : sort;
+            const products = await productsRepo.getMany({ filter, categories, skip, limit, select, sort });
             const jsonProducts = [];
             for (let product of products) {
                 jsonProducts.push(product.toJson());

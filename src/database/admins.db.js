@@ -15,8 +15,8 @@ module.exports = Object.freeze({
             return null;
         }
     },
-    findOne: async (conditions, selection) => {
-        let result = await findOne(adminDbModel, conditions, selection);
+    findOne: async (conditions, select) => {
+        let result = await findOne(adminDbModel, conditions, select);
         if (result) {
             return adaptEntity(Admin, result, idName);
         } else {

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { findManyDefaultLimit } = require("../../commons/variables");
 
 function adaptConditions(conditions) {
     if ("id" in conditions && mongoose.Types.ObjectId.isValid(conditions.id)) {
@@ -27,14 +26,14 @@ async function create(model, doc) {
     return await model.create(doc);
 }
 
-async function findOne(model, conditions, selection) {
+async function findOne(model, conditions, select) {
     adaptConditions(conditions);
-    return await model.findOne(conditions).select(selection).exec();
+    return await model.findOne(conditions).select(select).exec();
 }
 
-async function findMany({ model, conditions = {}, filter = {}, selection = {}, skip = 0, limit = findManyDefaultLimit, sort = {} }) {
+async function findMany({ model, conditions = {}, filter = {}, select = [], skip = 0, limit, sort = {} }) {
     adaptConditions(conditions);
-    return await model.find(conditions).where(filter).select(selection).skip(skip).limit(limit).sort(sort).exec();
+    return await model.find(conditions).where(filter).select(select).skip(skip).limit(limit).sort(sort).exec();
 }
 
 async function deleteOne(model, conditions) {
@@ -56,10 +55,10 @@ async function updateOne(model, conditions, updates) {
 async function increment(model, conditions, incrementor) {
     adaptConditions(conditions);
     const doc = await model.findOne(conditions);
-    if(doc){
+    if (doc) {
         doc.$inc(...incrementor);
         return await doc.save();
-    } else{
+    } else {
         return null;
     }
 }

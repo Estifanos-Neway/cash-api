@@ -1,6 +1,5 @@
 const _ = require("lodash");
 const { productNameAlreadyExistResponseText } = require("../commons/response-texts");
-const { findManyDefaultLimit } = require("../commons/variables");
 const { Product } = require("../entities");
 const {
     exists,
@@ -31,12 +30,12 @@ module.exports = Object.freeze({
             }
         }
     },
-    findOne: async (conditions, selection) => {
-        const productDoc = await findOne(productDbModel, conditions, selection);
+    findOne: async (conditions, select) => {
+        const productDoc = await findOne(productDbModel, conditions, select);
         return productDoc ? adaptEntity(Product, productDoc, idName) : null;
     },
-    findMany: async ({ filter = {}, categories = [], selection = {}, skip = 0, limit = findManyDefaultLimit, sort = {} }) => {
-        const productDocList = await findMany({ model: productDbModel, conditions: { categories: _.isEmpty(categories) ? [] : { $all: categories } }, filter, skip, limit, selection, sort });
+    findMany: async ({ filter = {}, categories = [], select = [], skip = 0, limit, sort = {} }) => {
+        const productDocList = await findMany({ model: productDbModel, conditions: { categories: _.isEmpty(categories) ? [] : { $all: categories } }, filter, skip, limit, select, sort });
         return productDocList.map(productDoc => adaptEntity(Product, productDoc, idName));
     },
     updateOne: async (conditions, updates) => {
