@@ -34,7 +34,7 @@ const wrongPasswordHashResponseText = "Wrong_Password_Hash";
 const unknownSettingResponseText = "Unknown_Setting";
 const missingApiKeyResponseText = "Api_Key_Is_Required";
 const fileNotFoundResponseText = "File_Not_Found";
-
+const categoryNameAlreadyExistResponseText = "category_Name_AlreadyExist";
 const successResponseText = "OK";
 const pathNotFoundResponseText = "Path_Not_Found";
 const userNotFoundResponseText = "User_Not_Found";
@@ -79,6 +79,7 @@ module.exports = {
     pathNotFoundResponseText,
     tooManyRequestsResponseText,
     productNameAlreadyExistResponseText,
+    categoryNameAlreadyExistResponseText,
     productNotFoundResponseText,
     fileNotFoundResponseText
 };

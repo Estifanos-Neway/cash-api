@@ -43,15 +43,7 @@ const productSchema = new mongoose.Schema(
                 message: invalidViewCountResponseText
             },
             default: 0
-        },
-        // createdDate: {
-        //     type: Number,
-        //     default: () => new Date().getTime()
-        // },
-        // lastUpdatedDate: {
-        //     type: Number,
-        //     default: () => new Date().getTime()
-        // }
+        }
 
     },
     {
