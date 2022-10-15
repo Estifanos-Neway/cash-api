@@ -33,11 +33,15 @@ const notImplementedYetResponseText = "Not_Implemented_Yet";
 const wrongPasswordHashResponseText = "Wrong_Password_Hash";
 const unknownSettingResponseText = "Unknown_Setting";
 const missingApiKeyResponseText = "Api_Key_Is_Required";
+
+const categoryNameAlreadyExistResponseText = "Category_Name_Already_Exist";
+const categoryNotFoundResponseText = "Category_Not_Found";
+
 const fileNotFoundResponseText = "File_Not_Found";
-const categoryNameAlreadyExistResponseText = "category_Name_AlreadyExist";
+const userNotFoundResponseText = "User_Not_Found";
+
 const successResponseText = "OK";
 const pathNotFoundResponseText = "Path_Not_Found";
-const userNotFoundResponseText = "User_Not_Found";
 const tooManyRequestsResponseText = "Too_Many_Requests";
 const internalErrorResponseText = "Internal_Error";
 
@@ -80,6 +84,7 @@ module.exports = {
     tooManyRequestsResponseText,
     productNameAlreadyExistResponseText,
     categoryNameAlreadyExistResponseText,
+    categoryNotFoundResponseText,
     productNotFoundResponseText,
     fileNotFoundResponseText
 };

@@ -23,7 +23,7 @@ module.exports = Object.freeze({
             const productDoc = await create(productDbModel, product.toJson());
             return adaptEntity(Product, productDoc, idName);
         } catch (error) {
-            if (error.message == "not unique") {
+            if (/^E11000/.test(error.message)) {
                 throw new Error(productNameAlreadyExistResponseText);
             } else {
                 throw error;

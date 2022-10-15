@@ -1,3 +1,5 @@
+const { removeUndefined } = require("../../commons/functions");
+
 module.exports = class Image {
     path;
     constructor({ path }) {
@@ -5,8 +7,10 @@ module.exports = class Image {
     }
 
     toJson() {
-        return {
-            path: this.path
-        };
+        return removeUndefined(
+            {
+                path: this.path
+            }
+        );
     }
 };

@@ -1,13 +1,20 @@
-module.exports = class {
-    name;
+const { removeUndefined } = require("../commons/functions");
 
-    constructor({ name }) {
-        this.name = name;
+module.exports = class {
+    categoryId;
+    categoryName;
+
+    constructor({ categoryId, categoryName }) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
     }
-    
+
     toJson() {
-        return {
-            name: this.name
-        };
+        return removeUndefined(
+            {
+                categoryId: this.categoryId,
+                categoryName: this.categoryName
+            }
+        );
     }
 };

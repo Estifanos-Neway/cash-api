@@ -5,6 +5,7 @@ const Product = require("../entities/product.model");
 const { filesDb } = require("../database");
 
 module.exports = Object.freeze({
+    exists: async (condition) => await productsDb.exists(condition),
     create: async (jsonProduct) => {
         const product = new Product(jsonProduct);
         return await productsDb.create(product);
@@ -23,10 +24,8 @@ module.exports = Object.freeze({
         const product = new Product(updates);
         return await productsDb.updateOne({ id: productId }, removeUndefined(product.toJson()));
     },
-    exists: async (condition) => await productsDb.exists(condition),
     delete: async (condition) => {
         const product = await productsDb.deleteOne(condition);
-        console.log(product);
         if (product) {
             const filesToBeDeleted = [];
             const mainImagePath = product.mainImage?.path;

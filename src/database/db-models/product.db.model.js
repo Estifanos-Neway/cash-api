@@ -5,7 +5,7 @@ const {
     invalidViewCountResponseText } = require("../../commons/response-texts");
 const {
     imageJsonSchema,
-    commissionRate } = require("./db-model.commons");
+    commissionRateSchema } = require("./db-model.commons");
 
 const required = true;
 
@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema(
             },
             required
         },
-        commissionRate,
+        commissionRate: commissionRateSchema,
         categories: [String],
         published: {
             type: Boolean,

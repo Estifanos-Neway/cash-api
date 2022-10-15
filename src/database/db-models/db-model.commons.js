@@ -13,7 +13,7 @@ const imageJsonSchema = new mongoose.Schema(
     { strictQuery: false }
 );
 
-const commissionRate = {
+const commissionRateSchema = {
     type: Number,
     validate: {
         validator: (value) => value >= 0 && value <= 100,
@@ -24,5 +24,5 @@ const commissionRate = {
 
 module.exports = {
     imageJsonSchema,
-    commissionRate
+    commissionRateSchema
 };

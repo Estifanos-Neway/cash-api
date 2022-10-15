@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const Image = require("./entity-commons/image.model");
-const { hasValue } = require("../commons/functions");
+const { hasValue, removeUndefined } = require("../commons/functions");
 
 module.exports = class Product {
     productId;
@@ -83,19 +83,21 @@ module.exports = class Product {
     }
 
     toJson() {
-        return {
-            productId: this.productId,
-            productName: this.productName,
-            mainImage: this.mainImage,
-            moreImages: this.moreImages,
-            price: this.price,
-            commissionRate: this.commissionRate,
-            categories: this.categories,
-            published: this.published,
-            featured: this.featured,
-            viewCount: this.viewCount,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt
-        };
+        return removeUndefined(
+            {
+                productId: this.productId,
+                productName: this.productName,
+                mainImage: this.mainImage,
+                moreImages: this.moreImages,
+                price: this.price,
+                commissionRate: this.commissionRate,
+                categories: this.categories,
+                published: this.published,
+                featured: this.featured,
+                viewCount: this.viewCount,
+                createdAt: this.createdAt,
+                updatedAt: this.updatedAt
+            }
+        );
     }
 };

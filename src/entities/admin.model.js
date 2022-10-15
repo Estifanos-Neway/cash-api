@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const { defaultCommissionRate } = require("../config.json");
-const { hasValue, isEmail, hasSingleValue } = require("../commons/functions");
+const { hasValue, isEmail, hasSingleValue, removeUndefined } = require("../commons/functions");
 const {
     invalidInput,
     invalidPasswordHashResponseText,
@@ -34,9 +34,9 @@ class AdminSettings {
     }
 
     toJson() {
-        return {
+        return removeUndefined({
             commissionRate: this.#commissionRate
-        };
+        });
     }
 }
 
@@ -104,7 +104,7 @@ module.exports = class Admin {
     }
 
     toJson() {
-        return Object.freeze(
+        return removeUndefined(
             {
                 username: this.username,
                 passwordHash: this.passwordHash,

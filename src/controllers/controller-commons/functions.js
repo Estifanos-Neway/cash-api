@@ -2,8 +2,9 @@ const jwt = require("jsonwebtoken");
 const {
     invalidInput,
     internalErrorResponseText,
-    invalidInputResponseText, 
-    successResponseText} = require("../../commons/response-texts");
+    invalidInputResponseText,
+    successResponseText,
+    requiredParamsNotFoundResponseText } = require("../../commons/response-texts");
 const { env } = require("../../env");
 const {
     errorLog,
@@ -34,15 +35,19 @@ function getAccessToken(authHeader) {
     }
 }
 
-function sendInvalidInputResponse(res) {
-    res.status(400).json(createSingleResponse(invalidInputResponseText));
-}
-
 function sendSuccessResponse(res) {
     res.json(createSingleResponse(successResponseText));
 }
 
-function sendInternalError(error, res) {
+function sendRequiredParamsNotFoundResponse(res) {
+    res.status(400).json(createSingleResponse(requiredParamsNotFoundResponseText));
+}
+
+function sendInvalidInputResponse(res) {
+    res.status(400).json(createSingleResponse(invalidInputResponseText));
+}
+
+function sendInternalErrorResponse(error, res) {
     errorLog("Internal_Error", error);
     res.status(500).json(createSingleResponse(internalErrorResponseText));
 }
@@ -75,6 +80,14 @@ async function sendEmailVerification({ email, path, subject, html }) {
     await commonFunctions["sendEmail"]({ subject, html, to: email });
 }
 
+
+async function catchInternalError(res, task) {
+    try {
+        await task();
+    } catch (error) {
+        sendInternalErrorResponse(error, res);
+    }
+}
 module.exports = {
     createSingleResponse,
     createAccessToken,
@@ -84,6 +97,8 @@ module.exports = {
     errorHandler,
     sendEmailVerificationCode,
     sendEmailVerification,
-    sendInternalError,
-    sendSuccessResponse
+    sendInternalErrorResponse,
+    sendSuccessResponse,
+    sendRequiredParamsNotFoundResponse,
+    catchInternalError
 };
