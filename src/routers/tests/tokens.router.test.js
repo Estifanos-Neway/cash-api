@@ -1,16 +1,16 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
-const { makeApp } = require("../app");
-const { hash } = require("../commons/functions");
+const { makeApp } = require("../../app");
+const { hash } = require("../../commons/functions");
 const {
     invalidRefreshTokenResponseText,
     noneMatchingTokensResponseText,
     invalidInputResponseText,
-    invalidAccessTokenResponseText } = require("../commons/response-texts");
-const { defaultAdmin } = require("../config.json");
-const { createUserData, createAccessToken } = require("../controllers/controller-commons/functions");
-const { env } = require("../env");
-const { adminsRepo } = require("../repositories");
+    invalidAccessTokenResponseText } = require("../../commons/response-texts");
+const { defaultAdmin } = require("../../config.json");
+const { createUserData, createAccessToken } = require("../../controllers/controller-commons/functions");
+const { env } = require("../../env");
+const { adminsRepo } = require("../../repositories");
 
 const adminCredentials = {
     username: defaultAdmin.username,

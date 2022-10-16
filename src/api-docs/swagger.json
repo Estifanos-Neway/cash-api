@@ -524,6 +524,360 @@
           }
         }
       }
+    },
+    "/product-categories": {
+      "post": {
+        "summary": "Add a new product category. [Requires_Admin_Access_Token]",
+        "tags": ["Product Categories"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["categoryName"],
+                "type": "object",
+                "properties": {
+                  "categoryName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the created category.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productsCategory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/alreadyExist"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get list of all available categories.",
+        "tags": ["Product Categories"],
+        "responses": {
+          "200": {
+            "description": "Returns the list of available categories.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/productsCategory"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/product-categories/{categoryId}": {
+      "patch": {
+        "summary": "Update an existing category. [Requires_Admin_Access_Token]",
+        "tags": ["Product Categories"],
+        "parameters": [{ "$ref": "#/components/parameters/categoryId" }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "categoryName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the updated category.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productsCategory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/alreadyExist"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an existing category. [Requires_Admin_Access_Token]",
+        "tags": ["Product Categories"],
+        "parameters": [{ "$ref": "#/components/parameters/categoryId" }],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/success"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/products": {
+      "post": {
+        "summary": "Add a new product. [Requires_Admin_Access_Token]",
+        "tags": ["Products"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/productInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the created product.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get list of product.",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "name": "search",
+            "description": "Search by Regex",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productName": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "filter",
+            "description": "Filter by exact match. (properties in filter overrides properties in search)",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/productOutput"
+            }
+          },
+          {
+            "name": "categories",
+            "description": "Search entities under these categories.",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "skip",
+            "description": "Number of entities to skip (Must be positive)",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "description": "Number of entities to get back (Default:8, Max: 20) (Must be positive).",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "select",
+            "description": "Which properties to get back.",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "sort",
+            "description": "Default: {\"createdAt\":-1}",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "property name": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+
+        "responses": {
+          "200": {
+            "description": "Returns list of products.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/productOutput"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/products/{productId}": {
+      "get": {
+        "summary": "Get a product by id (this will increment the products 'viewCount' by 1).",
+        "tags": ["Products"],
+        "parameters": [{ "$ref": "#/components/parameters/productId" }],
+        "responses": {
+          "200": {
+            "description": "Returns a product.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productOutput"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a product.  [Requires_Admin_Access_Token]",
+        "tags": ["Products"],
+        "parameters": [{ "$ref": "#/components/parameters/productId" }],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/productInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the updated product.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a product.  [Requires_Admin_Access_Token]",
+        "tags": ["Products"],
+        "parameters": [{ "$ref": "#/components/parameters/productId" }],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/success"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -568,6 +922,123 @@
             "type": "string"
           }
         }
+      },
+      "productsCategory": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "string"
+          },
+          "categoryName": {
+            "type": "string"
+          }
+        }
+      },
+      "productInput": {
+        "type": "object",
+        "properties": {
+          "productDetails": {
+            "description": "    must be stringified JSON",
+            "type": "object",
+            "properties": {
+              "productName": {
+                "type": "string"
+              },
+              "price": {
+                "type": "number",
+                "description": "Must be positive"
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "commissionRate": {
+                "type": "number",
+                "description": "Must be between 0 and 100"
+              },
+              "published": {
+                "type": "boolean"
+              },
+              "featured": {
+                "type": "boolean"
+              },
+              "viewCount": {
+                "type": "integer",
+                "description": "Must be positive"
+              }
+            }
+          },
+          "mainImage": {
+            "type": "string",
+            "format": "byte"
+          },
+          "moreImages": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "byte"
+            }
+          }
+        }
+      },
+      "productOutput": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "mainImage": {
+            "$ref": "#/components/schemas/image"
+          },
+          "moreImages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/image"
+            }
+          },
+          "price": {
+            "type": "number"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "commissionRate": {
+            "type": "number"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "viewCount": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "This is a date string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "This is a date string"
+          }
+        }
+      },
+      "image": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        }
       }
     },
     "parameters": {
@@ -578,8 +1049,23 @@
         "required": true,
         "schema": {
           "type": "string"
-        },
-        "style": "simple"
+        }
+      },
+      "categoryId": {
+        "name": "categoryId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "productId": {
+        "name": "productId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "responses": {
@@ -615,6 +1101,16 @@
       },
       "notFound": {
         "description": "Data necessary to process this request is not found in the server.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/singleResponse"
+            }
+          }
+        }
+      },
+      "alreadyExist": {
+        "description": "The entity already exist",
         "content": {
           "application/json": {
             "schema": {

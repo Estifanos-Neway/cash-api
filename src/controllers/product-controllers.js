@@ -158,7 +158,7 @@ module.exports = Object.freeze({
                 return;
             }
             for (let key of Object.keys(search)) {
-                search[key] = new RegExp(search[key].toString());
+                search[key] = new RegExp(search[key].toString(),"i");
             }
 
             try {

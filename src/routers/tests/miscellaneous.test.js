@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
-const { makeApp } = require("../app");
+const { makeApp } = require("../../app");
 const {
     pathNotFoundResponseText,
     invalidApiKeyResponseText,
-    invalidAccessTokenResponseText } = require("../commons/response-texts");
-const { createUserData, createAccessToken } = require("../controllers/controller-commons/functions");
-const { env } = require("../env");
+    invalidAccessTokenResponseText } = require("../../commons/response-texts");
+const { createUserData, createAccessToken } = require("../../controllers/controller-commons/functions");
+const { env } = require("../../env");
 
 describe("Miscellaneous", () => {
     let request;

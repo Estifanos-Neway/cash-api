@@ -15,7 +15,7 @@ const {
 const {
     defaultPort,
     numberOfMaxApiRequestsPerMin } = require("./commons/variables");
-const { Responses } = require("./api-docs/responses.doc");
+const apiResponses = require("./api-docs/responses");
 const { adminRouter, tokensRouter, productsRouter, imagesRouter, categoriesRouter } = require("./routers");
 
 exports.makeApp = () => {
@@ -32,7 +32,7 @@ exports.makeApp = () => {
     };
 
     app.get("/docs/responses", (req, res) => {
-        res.json(Responses);
+        res.json(apiResponses);
     });
     app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, swaggerOptions));
     // Security
@@ -64,7 +64,7 @@ exports.makeApp = () => {
     app.use(authenticateByToken);
     app.use("/tokens", tokensRouter);
     app.use("/admin", adminRouter);
-    app.use("/products/categories", categoriesRouter);
+    app.use("/product-categories", categoriesRouter);
     app.use("/products", productsRouter);
 
     app.use("*", (req, res) => {

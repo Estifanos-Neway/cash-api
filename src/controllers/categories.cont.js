@@ -37,6 +37,10 @@ module.exports = Object.freeze({
         catchInternalError(res, async () => {
             const { categoryId } = req.params;
             const { categoryName } = req.body;
+            if (!_.isUndefined(categoryName) && !isNonEmptyString(categoryName)) {
+                sendInvalidInputResponse(res);
+                return;
+            }
             const categoryExist = await categoriesRepo.exists({ id: categoryId });
             if (!categoryExist) {
                 res.status(404).json(createSingleResponse(categoryNotFoundResponseText));

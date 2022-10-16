@@ -1,13 +1,14 @@
+const _ = require("lodash");
 const mongoose = require("mongoose");
 
-function adaptConditions(conditions) {
-    if ("id" in conditions && mongoose.Types.ObjectId.isValid(conditions.id)) {
+function adaptConditions(conditions={}) {
+    if (!_.isUndefined(conditions) && "id" in conditions && mongoose.Types.ObjectId.isValid(conditions.id)) {
         conditions._id = conditions.id;
         delete conditions.id;
     }
 }
 
-async function exists(model, conditions) {
+async function exists(model, conditions={}) {
     adaptConditions(conditions);
     const documentFound = await model.exists(conditions);
     if (documentFound) {
@@ -26,7 +27,7 @@ async function create(model, doc) {
     return await model.create(doc);
 }
 
-async function findOne(model, conditions, select) {
+async function findOne(model, conditions={}, select) {
     adaptConditions(conditions);
     return await model.findOne(conditions).select(select).exec();
 }
@@ -36,12 +37,12 @@ async function findMany({ model, conditions = {}, filter = {}, select = [], skip
     return await model.find(conditions).where(filter).select(select).skip(skip).limit(limit).sort(sort).exec();
 }
 
-async function deleteOne(model, conditions) {
+async function deleteOne(model, conditions={}) {
     adaptConditions(conditions);
     return await model.findOneAndDelete(conditions);
 }
 
-async function updateOne(model, conditions, updates) {
+async function updateOne(model, conditions={}, updates) {
     adaptConditions(conditions);
     let doc = await model.findOne(conditions);
     Object.entries(updates).forEach(update => {
@@ -52,7 +53,7 @@ async function updateOne(model, conditions, updates) {
     return await doc.save();
 }
 
-async function increment(model, conditions, incrementor) {
+async function increment(model, conditions={}, incrementor) {
     adaptConditions(conditions);
     const doc = await model.findOne(conditions);
     if (doc) {

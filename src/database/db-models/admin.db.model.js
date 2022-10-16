@@ -24,7 +24,7 @@ const adminSchema = new mongoose.Schema(
             }
         },
         settings: {
-            commissionRateSchema
+            commissionRate:commissionRateSchema
         }
     },
     {

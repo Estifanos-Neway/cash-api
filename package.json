@@ -7,7 +7,11 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "init": "node src/init.js",
-    "test": "jest"
+    "test": "jest",
+    "test-miscellaneous":"jest miscellaneous.test",
+    "test-admin.router":"jest admin.router.test",
+    "test-tokens.router":"jest tokens.router.test",
+    "test-product-categories.router":"jest product-categories.router.test"
   },
   "repository": {
     "type": "git",
