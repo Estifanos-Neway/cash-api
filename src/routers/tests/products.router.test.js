@@ -18,7 +18,8 @@ const {
     invalidSkipQueryResponseText,
     invalidSortQueryResponseText,
     invalidLimitQueryResponseText,
-    productNotFoundResponseText, } = require("../../commons/response-texts");
+    productNotFoundResponseText,
+    successResponseText, } = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
 
@@ -113,7 +114,7 @@ describe("/products", () => {
                     productB = bodyB;
                 });
             });
-            describe("Given invalid json string", () => {
+            describe("Given invalid json productDetails", () => {
                 it(`Should return 400 and ${invalidJsonStringResponseText}`, async () => {
                     const { body, statusCode } = await request.post(mainPath)
                         .set("Api-Key", env.API_KEY)
@@ -311,25 +312,160 @@ describe("/products", () => {
     });
     describe("/{productId}", () => {
         describe("GET", () => {
-            describe("Given valid product name", () => {
+            describe("Given valid product id", () => {
                 it("Should return a single product", async () => {
+                    const { body: bodyA, statusCode: statusCodeA } = await request.get(`${mainPath}/${productA.productId}`)
+                        .set("Api-Key", env.API_KEY);
+                    const { body: bodyB, statusCode: statusCodeB } = await request.get(`${mainPath}/${productB.productId}`)
+                        .set("Api-Key", env.API_KEY)
+                        .set("Authorization", `Bearer ${accessToken}`);
 
+                    expect(statusCodeA).toBe(200);
+                    expect(bodyA).toEqual(
+                        {
+                            ...productA,
+                            viewCount: productA.viewCount + 1,
+                            updatedAt: dateData
+                        }
+                    );
+                    expect(statusCodeB).toBe(200);
+                    expect(bodyB).toEqual(
+                        {
+                            ...productB,
+                            updatedAt: dateData
+                        }
+                    );
+                    productA = bodyA;
+                    productB = bodyB;
                 });
             });
-            describe("Given invalid product name", () => {
+            describe("Given invalid product id", () => {
                 it(`Should return 404 and ${productNotFoundResponseText}`, async () => {
+                    const { body: bodyA, statusCode: statusCodeA } = await request.get(`${mainPath}/invalid-product-id`)
+                        .set("Api-Key", env.API_KEY);
 
+                    expect(statusCodeA).toBe(404);
+                    expect(bodyA).toEqual(createSingleResponse(productNotFoundResponseText));
                 });
             });
         });
         describe("PATCH", () => {
             describe("Given valid updates", () => {
                 it("Should update the product", async () => {
+                    const { body, statusCode } = await request.patch(`${mainPath}/${productA.productId}`)
+                        .set("Api-Key", env.API_KEY)
+                        .set("Authorization", `Bearer ${accessToken}`)
+                        .field("productDetails", JSON.stringify(
+                            {
+                                productName: "Product-A-Updated",
+                                description: "New description",
+                                price: productA.price + 100,
+                                commissionRate: 80,
+                                categories: ["Big", "Blue"],
+                                featured: true,
+                                published: true,
+                                viewCount: productA.viewCount + 200
+                            }
+                        ))
+                        .attach("mainImage", path.resolve("src", "assets", "images", "sample-image-1.png"))
+                        .attach("moreImages", path.resolve("src", "assets", "images", "sample-image-1.png"))
+                        .attach("moreImages", path.resolve("src", "assets", "images", "sample-image-2.jpg"))
+                        .attach("moreImages", path.resolve("src", "assets", "files", "sample-file.txt"));
+                    expect(statusCode).toBe(200);
+                    expect(body).toEqual({
+                        ...productA,
+                        productName: "Product-A-Updated",
+                        description: "New description",
+                        price: productA.price + 100,
+                        commissionRate: 80,
+                        categories: ["Big", "Blue"],
+                        mainImage: imageData,
+                        moreImages: [imageData, imageData],
+                        featured: true,
+                        published: true,
+                        viewCount: productA.viewCount + 200,
+                        createdAt: dateData,
+                        updatedAt: dateData,
+                    });
 
+                    productA = body;
+                });
+            });
+            describe("Given un-updated product name", () => {
+                it("Should not break", async () => {
+                    const { body, statusCode } = await request.patch(`${mainPath}/${productB.productId}`)
+                        .set("Api-Key", env.API_KEY)
+                        .set("Authorization", `Bearer ${accessToken}`)
+                        .field("productDetails", JSON.stringify({ productName: productB.productName }));
+                    expect(statusCode).toBe(200);
+                    expect(body).toEqual({ ...productB, updatedAt: dateData });
+
+                    productB = body;
+                });
+            });
+            describe("Given invalid json productDetails", () => {
+                it(`Should return 400 and ${invalidJsonStringResponseText}`, async () => {
+                    const { body, statusCode } = await request.patch(`${mainPath}/${productB.productId}`)
+                        .set("Api-Key", env.API_KEY)
+                        .set("Authorization", `Bearer ${accessToken}`)
+                        .field("productDetails", "invalid-json");
+                    expect(statusCode).toBe(400);
+                    expect(body).toEqual(createSingleResponse(invalidJsonStringResponseText));
+                });
+            });
+            describe("Given invalid input (ex: non-boolean featured)", () => {
+                it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+                    const { body, statusCode } = await request.patch(`${mainPath}/${productB.productId}`)
+                        .set("Api-Key", env.API_KEY)
+                        .set("Authorization", `Bearer ${accessToken}`)
+                        .field("productDetails", JSON.stringify({ featured: "not-boolean" }));
+                    expect(statusCode).toBe(400);
+                    expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                });
+            });
+            describe("Given invalid product id", () => {
+                it(`Should return 404 and ${productNotFoundResponseText}`, async () => {
+                    const { body, statusCode } = await request.patch(`${mainPath}/invalid-product-id`)
+                        .set("Api-Key", env.API_KEY)
+                        .set("Authorization", `Bearer ${accessToken}`)
+                        .field("productDetails", JSON.stringify({ featured: true }));
+
+                    expect(statusCode).toBe(404);
+                    expect(body).toEqual(createSingleResponse(productNotFoundResponseText));
+                });
+            });
+            describe("Given existing product name", () => {
+                it(`Should return 409 and ${productNameAlreadyExistResponseText}`, async () => {
+                    const { body, statusCode } = await request.patch(`${mainPath}/${productB.productId}`)
+                        .set("Api-Key", env.API_KEY)
+                        .set("Authorization", `Bearer ${accessToken}`)
+                        .field("productDetails", JSON.stringify({ productName: productA.productName }));
+                    expect(statusCode).toBe(409);
+                    expect(body).toEqual(createSingleResponse(productNameAlreadyExistResponseText));
                 });
             });
         });
         describe("DELETE", () => {
+            describe("Given valid product id", () => {
+                it("Should delete the product", async () => {
+                    const { body, statusCode } = await request.delete(`${mainPath}/${productA.productId}`)
+                        .set("Api-Key", env.API_KEY)
+                        .set("Authorization", `Bearer ${accessToken}`);
+
+                    expect(statusCode).toBe(200);
+                    expect(body).toEqual(createSingleResponse(successResponseText));
+                });
+            });
+            describe("Given invalid product id", () => {
+                it(`Should return 404 and ${productNotFoundResponseText}`, async () => {
+                    const { body, statusCode } = await request.delete(`${mainPath}/${productA.productId}`)
+                        .set("Api-Key", env.API_KEY)
+                        .set("Authorization", `Bearer ${accessToken}`);
+
+                    expect(statusCode).toBe(404);
+                    expect(body).toEqual(createSingleResponse(productNotFoundResponseText));
+                });
+            });
         });
     });
 });

@@ -15,7 +15,13 @@ module.exports = Object.freeze({
     },
     getOne: async (productId, viewed = false) => {
         if (viewed) {
-            return await productsDb.increment({ id: productId }, ["viewCount", 1]);
+            try {
+                return await productsDb.increment({ id: productId }, ["viewCount", 1]);
+            } catch (error) {
+                if (error.message == db.responses.docNotFound) {
+                    return null;
+                }
+            }
         } else {
             return await productsDb.findOne({ id: productId });
         }
