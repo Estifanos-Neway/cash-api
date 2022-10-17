@@ -1,8 +1,8 @@
 const express = require("express");
-const { downloadProductImagesCont } = require("../controllers/image-controllers");
+const { imagesCont } = require("../controllers");
 
 const imageRouter = express.Router();
 
-imageRouter.get("/products/:fileName", downloadProductImagesCont);
+imageRouter.get("/products/:fileName", imagesCont.downloadProductImagesCont);
 
 module.exports = imageRouter;

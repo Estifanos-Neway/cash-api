@@ -5,7 +5,7 @@ const {
     pathNotFoundResponseText,
     invalidApiKeyResponseText,
     invalidAccessTokenResponseText } = require("../../commons/response-texts");
-const { createUserData, createAccessToken } = require("../../controllers/controller-commons/functions");
+const { createUserData, createAccessToken, createSingleResponse } = require("../../controllers/controller-commons/functions");
 const { env } = require("../../env");
 
 describe("Miscellaneous", () => {
@@ -32,7 +32,7 @@ describe("Miscellaneous", () => {
             const { body, statusCode } = await request.get(somePath);
 
             expect(statusCode).toBe(401);
-            expect(body).toHaveProperty("message", invalidApiKeyResponseText);
+            expect(body).toEqual(createSingleResponse(invalidApiKeyResponseText));
         });
     });
 
@@ -43,7 +43,7 @@ describe("Miscellaneous", () => {
                 .set("Api-Key", env.API_KEY);
 
             expect(statusCode).toBe(404);
-            expect(body).toHaveProperty("message", pathNotFoundResponseText);
+            expect(body).toEqual(createSingleResponse(pathNotFoundResponseText));
         });
     });
 
@@ -55,7 +55,7 @@ describe("Miscellaneous", () => {
                     .set("Api-Key", env.API_KEY);
 
                 expect(statusCode).toBe(401);
-                expect(body).toHaveProperty("message", invalidAccessTokenResponseText);
+                expect(body).toEqual(createSingleResponse(invalidAccessTokenResponseText));
             });
         });
 
@@ -66,7 +66,7 @@ describe("Miscellaneous", () => {
                     .set("Authorization", "Bearer invalidAccessToken");
 
                 expect(statusCode).toBe(401);
-                expect(body).toHaveProperty("message", invalidAccessTokenResponseText);
+                expect(body).toEqual(createSingleResponse(invalidAccessTokenResponseText));
             });
         });
 
@@ -79,7 +79,7 @@ describe("Miscellaneous", () => {
                     .set("Authorization", `Bearer ${invalidAccessToken}`);
 
                 expect(statusCode).toBe(401);
-                expect(body).toHaveProperty("message", invalidAccessTokenResponseText);
+                expect(body).toEqual(createSingleResponse(invalidAccessTokenResponseText));
             });
         });
     });

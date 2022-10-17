@@ -8,17 +8,16 @@ const {
     invalidInputResponseText,
     invalidAccessTokenResponseText } = require("../../commons/response-texts");
 const { defaultAdmin } = require("../../config.json");
-const { createUserData, createAccessToken } = require("../../controllers/controller-commons/functions");
+const { createUserData, createAccessToken, createSingleResponse } = require("../../controllers/controller-commons/functions");
 const { env } = require("../../env");
 const { adminsRepo } = require("../../repositories");
 
-const adminCredentials = {
-    username: defaultAdmin.username,
-    passwordHash: hash(defaultAdmin.password)
-};
-
 describe("/tokens", () => {
     const mainPath = "/tokens";
+    const adminCredentials = {
+        username: defaultAdmin.username,
+        passwordHash: hash(defaultAdmin.password)
+    };
     let request, accessToken, refreshToken;
 
     beforeAll(async () => {
@@ -63,7 +62,7 @@ describe("/tokens", () => {
                     .set("Refresh-Token", "invalidRefreshToken");
 
                 expect(statusCode).toBe(401);
-                expect(body).toHaveProperty("message", invalidRefreshTokenResponseText);
+                expect(body).toEqual(createSingleResponse(invalidRefreshTokenResponseText));
             });
         });
 
@@ -77,7 +76,7 @@ describe("/tokens", () => {
                     .set("Refresh-Token", `${refreshToken}`);
 
                 expect(statusCode).toBe(401);
-                expect(body).toHaveProperty("message", noneMatchingTokensResponseText);
+                expect(body).toEqual(createSingleResponse(noneMatchingTokensResponseText));
             });
         });
 
@@ -89,7 +88,7 @@ describe("/tokens", () => {
                     .set("Refresh-Token", `${refreshToken}`);
 
                 expect(statusCode).toBe(401);
-                expect(body).toHaveProperty("message", invalidAccessTokenResponseText);
+                expect(body).toEqual(createSingleResponse(invalidAccessTokenResponseText));
             });
         });
 
@@ -100,7 +99,7 @@ describe("/tokens", () => {
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
     });
@@ -121,7 +120,7 @@ describe("/tokens", () => {
 
                 expect(statusCode).toBe(200);
                 expect(statusCode2).toBe(401);
-                expect(body).toHaveProperty("message", invalidRefreshTokenResponseText);
+                expect(body).toEqual(createSingleResponse(invalidRefreshTokenResponseText));
             });
         });
 
@@ -133,7 +132,7 @@ describe("/tokens", () => {
                     .set("Refresh-Token", "invalidRefreshToken");
 
                 expect(statusCode).toBe(401);
-                expect(body).toHaveProperty("message", invalidRefreshTokenResponseText);
+                expect(body).toEqual(createSingleResponse(invalidRefreshTokenResponseText));
             });
         });
 
@@ -147,7 +146,7 @@ describe("/tokens", () => {
                     .set("Refresh-Token", `${refreshToken}`);
 
                 expect(statusCode).toBe(401);
-                expect(body).toHaveProperty("message", noneMatchingTokensResponseText);
+                expect(body).toEqual(createSingleResponse(noneMatchingTokensResponseText));
             });
         });
 
@@ -159,7 +158,7 @@ describe("/tokens", () => {
                     .set("Refresh-Token", `${refreshToken}`);
 
                 expect(statusCode).toBe(401);
-                expect(body).toHaveProperty("message", invalidAccessTokenResponseText);
+                expect(body).toEqual(createSingleResponse(invalidAccessTokenResponseText));
             });
         });
 
@@ -170,7 +169,7 @@ describe("/tokens", () => {
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
     });

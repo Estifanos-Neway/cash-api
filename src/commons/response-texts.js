@@ -1,5 +1,3 @@
-const invalidInput = "|:Invalid_Input:|";
-
 const invalidAccessTokenResponseText = "Invalid_Access_Token";
 const invalidInputResponseText = "Invalid_Input";
 const invalidRefreshTokenResponseText = "Invalid_Refresh_Token";
@@ -48,7 +46,6 @@ const internalErrorResponseText = "Internal_Error";
 
 module.exports = {
     invalidInputResponseText,
-    invalidInput,
     invalidAccessTokenResponseText,
     invalidRefreshTokenResponseText,
     invalidPasswordHashResponseText,

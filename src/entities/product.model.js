@@ -4,7 +4,8 @@ const { hasValue, removeUndefined } = require("../commons/functions");
 
 module.exports = class Product {
     productId;
-    productName;
+    #productName;
+    #description;
     #mainImage;
     #moreImages;
     price;
@@ -15,6 +16,22 @@ module.exports = class Product {
     viewCount;
     #createdAt;
     #updatedAt;
+
+    set productName(productName) {
+        this.#productName = productName?.trim();
+    }
+
+    get productName() {
+        return this.#productName;
+    }
+
+    set description(description) {
+        this.#description = description?.trim();
+    }
+
+    get description() {
+        return this.#description;
+    }
 
     set mainImage(jsonImage) {
         if (hasValue(jsonImage)) {
@@ -58,6 +75,7 @@ module.exports = class Product {
     constructor({
         productId,
         productName,
+        description,
         mainImage,
         moreImages,
         price,
@@ -70,6 +88,7 @@ module.exports = class Product {
         updatedAt }) {
         this.productId = productId;
         this.productName = productName;
+        this.description = description;
         this.mainImage = mainImage;
         this.moreImages = moreImages;
         this.price = price;
@@ -87,6 +106,7 @@ module.exports = class Product {
             {
                 productId: this.productId,
                 productName: this.productName,
+                description: this.description,
                 mainImage: this.mainImage,
                 moreImages: this.moreImages,
                 price: this.price,

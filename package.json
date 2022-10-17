@@ -8,10 +8,11 @@
     "dev": "nodemon src/index.js",
     "init": "node src/init.js",
     "test": "jest",
-    "test-miscellaneous":"jest miscellaneous.test",
-    "test-admin.router":"jest admin.router.test",
-    "test-tokens.router":"jest tokens.router.test",
-    "test-product-categories.router":"jest product-categories.router.test"
+    "test-miscellaneous": "jest miscellaneous.test",
+    "test-admin.router": "jest admin.router.test",
+    "test-tokens.router": "jest tokens.router.test",
+    "test-product-categories.router": "jest product-categories.router.test",
+    "test-products.router": "jest products.router.test"
   },
   "repository": {
     "type": "git",

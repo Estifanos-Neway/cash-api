@@ -11,7 +11,7 @@ const { createSingleResponse } = require("../../controllers/controller-commons/f
 module.exports = {
     "/product-categories": {
         "POST": {
-            200: ["<categoryObject"],
+            200: ["<productCategoryObject"],
             400: [
                 createSingleResponse(invalidInputResponseText),
                 createSingleResponse(requiredParamsNotFoundResponseText)
@@ -20,12 +20,12 @@ module.exports = {
             409: [createSingleResponse(categoryNameAlreadyExistResponseText)]
         },
         "GET": {
-            200: [["<categoryObject"]],
+            200: [["<productCategoryObject"]],
         }
     },
     "/product-categories/{productId}": {
         "PATCH": {
-            200: ["<categoryObject"],
+            200: ["<productCategoryObject"],
             400: [createSingleResponse(invalidInputResponseText)],
             404: [createSingleResponse(categoryNotFoundResponseText)],
             401: [createSingleResponse(invalidAccessTokenResponseText)],

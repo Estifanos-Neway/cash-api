@@ -1,8 +1,8 @@
 const _ = require("lodash");
-const { removeUndefined } = require("../commons/functions");
-const { productsDb } = require("../database");
+const { productsDb, db } = require("../database");
 const Product = require("../entities/product.model");
 const { filesDb } = require("../database");
+const { productNotFoundResponseText } = require("../commons/response-texts");
 
 module.exports = Object.freeze({
     exists: async (condition) => await productsDb.exists(condition),
@@ -21,8 +21,12 @@ module.exports = Object.freeze({
         }
     },
     update: async (productId, updates) => {
-        const product = new Product(updates);
-        return await productsDb.updateOne({ id: productId }, removeUndefined(product.toJson()));
+        try {
+            const product = new Product(updates);
+            return await productsDb.updateOne({ id: productId }, product.toJson());
+        } catch (error) {
+            throw error.message === db.responses.docNotFound ? new Error(productNotFoundResponseText) : error;
+        }
     },
     delete: async (condition) => {
         const product = await productsDb.deleteOne(condition);
@@ -49,7 +53,7 @@ module.exports = Object.freeze({
     isUniqueProductName: async (productName, productId) => {
         const productFound = await productsDb.exists({ productName });
         if (productFound) {
-            return productFound.id == productId;
+            return productFound.productId == productId;
         } else {
             return true;
         }

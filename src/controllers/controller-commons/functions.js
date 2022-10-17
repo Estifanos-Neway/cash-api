@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const {
-    invalidInput,
     internalErrorResponseText,
     invalidInputResponseText,
     successResponseText,
@@ -51,15 +50,6 @@ function sendInternalErrorResponse(error, res) {
     errorLog("Internal_Error", error);
     res.status(500).json(createSingleResponse(internalErrorResponseText));
 }
-function errorHandler(error, res) {
-    const errorMessage = error.message;
-    if (errorMessage.startsWith(invalidInput)) {
-        res.status(400).json(createSingleResponse(errorMessage.slice(invalidInput.length)));
-    } else {
-        errorLog("Internal_Error", error);
-        res.status(500).json(createSingleResponse(internalErrorResponseText));
-    }
-}
 
 async function sendEmailVerificationCode({ email, subject, html }) {
     const verificationCode = commonFunctions["createVerificationCode"]();
@@ -94,7 +84,6 @@ module.exports = {
     createUserData,
     getAccessToken,
     sendInvalidInputResponse,
-    errorHandler,
     sendEmailVerificationCode,
     sendEmailVerification,
     sendInternalErrorResponse,

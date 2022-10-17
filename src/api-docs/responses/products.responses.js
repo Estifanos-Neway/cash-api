@@ -11,7 +11,8 @@ const {
     invalidSelectQueryResponseText,
     invalidSkipQueryResponseText,
     invalidSortQueryResponseText,
-    invalidAccessTokenResponseText
+    invalidAccessTokenResponseText,
+    invalidLimitQueryResponseText
 } = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
@@ -22,10 +23,10 @@ module.exports = {
             400: [
                 createSingleResponse(invalidJsonStringResponseText),
                 createSingleResponse(invalidInputResponseText),
-                createSingleResponse(productNameAlreadyExistResponseText),
                 createSingleResponse(requiredParamsNotFoundResponseText)
             ],
             401: [createSingleResponse(invalidAccessTokenResponseText)],
+            409: [createSingleResponse(productNameAlreadyExistResponseText)]
         },
         "GET": {
             200: [["<productObject"]],
@@ -35,6 +36,7 @@ module.exports = {
                 createSingleResponse(invalidCategoriesQueryResponseText),
                 createSingleResponse(invalidSelectQueryResponseText),
                 createSingleResponse(invalidSkipQueryResponseText),
+                createSingleResponse(invalidLimitQueryResponseText),
                 createSingleResponse(invalidSortQueryResponseText)
             ]
         }
@@ -49,11 +51,11 @@ module.exports = {
             200: ["<productObject"],
             400: [
                 createSingleResponse(invalidJsonStringResponseText),
-                createSingleResponse(invalidInputResponseText),
-                createSingleResponse(productNameAlreadyExistResponseText)
+                createSingleResponse(invalidInputResponseText)
             ],
             401: [createSingleResponse(invalidAccessTokenResponseText)],
-            404: [createSingleResponse(productNotFoundResponseText)]
+            404: [createSingleResponse(productNotFoundResponseText)],
+            409: [createSingleResponse(productNameAlreadyExistResponseText)]
         },
         "DELETE": {
             200: [createSingleResponse(successResponseText)],

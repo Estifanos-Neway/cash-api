@@ -1,8 +1,8 @@
-const { exists, deleteOne, create } = require("./db-commons/functions");
+const { db } = require("./db.commons");
 const { jwtRefreshDbModel } = require("./db-models");
 
 module.exports = Object.freeze({
-    create: (token) => create(jwtRefreshDbModel, { token }),
-    exists: (token) => exists(jwtRefreshDbModel, { token }),
-    deleteOne: (token) => deleteOne(jwtRefreshDbModel, { token })
+    create: (token) => db.create(jwtRefreshDbModel, { token }),
+    exists: (token) => db.exists(jwtRefreshDbModel, { token }),
+    deleteOne: (token) => db.deleteOne(jwtRefreshDbModel, { token })
 });

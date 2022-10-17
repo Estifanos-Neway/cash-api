@@ -1,41 +1,22 @@
-const _ = require("lodash");
 const { defaultCommissionRate } = require("../config.json");
 const { hasValue, isEmail, hasSingleValue, removeUndefined } = require("../commons/functions");
 const {
-    invalidInput,
     invalidPasswordHashResponseText,
     wrongPasswordHashResponseText,
-    invalidCommissionRateResponseText,
     invalidEmailResponseText,
     invalidUsernameResponseText,
     invalidUserIdResponseText } = require("../commons/response-texts");
 
-function adaptCommissionRate(commissionRate) {
-    if (!_.isNumber(commissionRate)) {
-        throw new Error(`${invalidInput}${invalidCommissionRateResponseText}`);
-    } else if (commissionRate < 0) {
-        return 0;
-    } else if (commissionRate > 100) {
-        return 100;
-    } else {
-        return commissionRate;
-    }
-}
-
 class AdminSettings {
-    #commissionRate = defaultCommissionRate;
+    commissionRate = defaultCommissionRate;
 
     constructor({ commissionRate = defaultCommissionRate }) {
         this.commissionRate = commissionRate;
     }
 
-    set commissionRate(newCommissionRate) {
-        this.#commissionRate = adaptCommissionRate(newCommissionRate);
-    }
-
     toJson() {
         return removeUndefined({
-            commissionRate: this.#commissionRate
+            commissionRate: this.commissionRate
         });
     }
 }
@@ -117,7 +98,7 @@ module.exports = class Admin {
 
     changePasswordHash({ oldPasswordHash, newPasswordHash }) {
         if (oldPasswordHash !== this.passwordHash) {
-            throw new Error(`${invalidInput}${wrongPasswordHashResponseText}`);
+            throw new Error(wrongPasswordHashResponseText);
         } else {
             this.passwordHash = newPasswordHash;
         }

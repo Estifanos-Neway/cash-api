@@ -708,6 +708,9 @@
               "properties": {
                 "productName": {
                   "type": "string"
+                },
+                "description": {
+                  "type": "string"
                 }
               }
             }
@@ -936,12 +939,18 @@
       },
       "productInput": {
         "type": "object",
+        "required": ["productDetails"],
         "properties": {
           "productDetails": {
             "description": "    must be stringified JSON",
             "type": "object",
+            "required": ["productName", "price", "commissionRate"],
             "properties": {
               "productName": {
+                "type": "string",
+                "description": "Must be unique"
+              },
+              "description": {
                 "type": "string"
               },
               "price": {
@@ -990,6 +999,9 @@
             "type": "string"
           },
           "productName": {
+            "type": "string"
+          },
+          "description": {
             "type": "string"
           },
           "mainImage": {

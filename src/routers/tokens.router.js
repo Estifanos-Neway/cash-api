@@ -1,9 +1,7 @@
 const express = require("express");
-const {
-    refreshTokenCont,
-    signOutCont } = require("../controllers/token-controllers");
+const { tokensCont } = require("../controllers");
 
 const tokensRouter = express.Router();
-tokensRouter.get("/refresh", refreshTokenCont);
-tokensRouter.delete("/sign-out", signOutCont);
+tokensRouter.get("/refresh", tokensCont.refresh);
+tokensRouter.delete("/sign-out", tokensCont.signOut);
 module.exports = tokensRouter;

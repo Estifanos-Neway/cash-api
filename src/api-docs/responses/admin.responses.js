@@ -9,7 +9,8 @@ const {
     expiredTokenResponseText,
     invalidVerificationCodeResponseText,
     cantFindValidEmailResponseText,
-    invalidAccessTokenResponseText
+    invalidAccessTokenResponseText,
+    requiredParamsNotFoundResponseText
 } = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
@@ -97,7 +98,7 @@ module.exports = {
             200: [createSingleResponse(successResponseText)],
             400: [
                 createSingleResponse(invalidEmailResponseText),
-                createSingleResponse(invalidInputResponseText)
+                createSingleResponse(requiredParamsNotFoundResponseText)
             ],
             404: [
                 createSingleResponse(userNotFoundResponseText),

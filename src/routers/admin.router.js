@@ -1,27 +1,17 @@
 const express = require("express");
 const { forceAccessToken } = require("../controllers/middlewares");
-const {
-    signInAdminCont,
-    changeAdminPasswordHashCont,
-    getAdminCont,
-    updateAdminSettingsCont,
-    getAdminSettingsCont,
-    sendAdminEmailVerificationCont,
-    verifyAdminEmailCont,
-    sendAdminPasswordRecoveryEmailCont,
-    recoverAdminPasswordCont,
-    changeAdminUsernameCont } = require("../controllers/admin-controllers");
+const { adminCont } = require("../controllers");
 
 const adminRouter = express.Router();
-adminRouter.post("/sign-in", signInAdminCont);
-adminRouter.put("/forgot-password", sendAdminPasswordRecoveryEmailCont);
-adminRouter.put("/recover-password", recoverAdminPasswordCont);
+adminRouter.post("/sign-in", adminCont.signIn);
+adminRouter.put("/forgot-password", adminCont.sendPasswordRecoveryEmail);
+adminRouter.put("/recover-password", adminCont.recoverPassword);
 adminRouter.use(forceAccessToken(["admin"]));
-adminRouter.get("/", getAdminCont);
-adminRouter.patch("/username", changeAdminUsernameCont);
-adminRouter.patch("/password-hash", changeAdminPasswordHashCont);
-adminRouter.get("/settings", getAdminSettingsCont);
-adminRouter.patch("/settings", updateAdminSettingsCont);
-adminRouter.put("/email", sendAdminEmailVerificationCont);
-adminRouter.put("/verify-email", verifyAdminEmailCont);
+adminRouter.get("/", adminCont.get);
+adminRouter.patch("/username", adminCont.changeUsername);
+adminRouter.patch("/password-hash", adminCont.changePasswordHash);
+adminRouter.get("/settings", adminCont.getSettings);
+adminRouter.patch("/settings", adminCont.updateSettings);
+adminRouter.put("/email", adminCont.sendEmailVerification);
+adminRouter.put("/verify-email", adminCont.verifyEmail);
 module.exports = adminRouter;

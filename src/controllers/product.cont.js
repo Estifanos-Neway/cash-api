@@ -79,6 +79,7 @@ async function validateProductMid(req, res, next) {
                     }
                     const {
                         productName,
+                        description,
                         price,
                         categories,
                         commissionRate,
@@ -88,6 +89,7 @@ async function validateProductMid(req, res, next) {
                     } = req.body;
                     if (
                         (!_.isUndefined(productName) && !hasSingleValue(productName)) ||
+                        (!_.isUndefined(description) && !hasSingleValue(description)) ||
                         (!_.isUndefined(price) && !isPositiveNumber(price)) ||
                         (!_.isUndefined(commissionRate) && !(_.isNumber(commissionRate) && commissionRate >= 0 && commissionRate <= 100)) ||
                         !isValidCategoryList(categories) ||
@@ -99,7 +101,7 @@ async function validateProductMid(req, res, next) {
                     } else {
                         const uniqueProductName = await productsRepo.isUniqueProductName(productName, req.params.productId);
                         if (!uniqueProductName) {
-                            res.status(400).json(createSingleResponse(productNameAlreadyExistResponseText));
+                            res.status(409).json(createSingleResponse(productNameAlreadyExistResponseText));
                             res.end();
                         } else {
                             await next();
@@ -136,7 +138,7 @@ module.exports = Object.freeze({
                             res.json(createdProduct.toJson());
                         } catch (error) {
                             if (error.message === productNameAlreadyExistResponseText) {
-                                res.status(400).json(createSingleResponse(productNameAlreadyExistResponseText));
+                                res.status(409).json(createSingleResponse(productNameAlreadyExistResponseText));
                                 res.end();
                             } else {
                                 throw error;
@@ -158,7 +160,7 @@ module.exports = Object.freeze({
                 return;
             }
             for (let key of Object.keys(search)) {
-                search[key] = new RegExp(search[key].toString(),"i");
+                search[key] = new RegExp(search[key].toString(), "i");
             }
 
             try {

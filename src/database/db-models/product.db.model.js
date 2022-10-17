@@ -16,6 +16,7 @@ const productSchema = new mongoose.Schema(
             required,
             unique: true
         },
+        description: String,
         mainImage: imageJsonSchema,
         moreImages: [imageJsonSchema],
         price: {

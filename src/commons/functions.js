@@ -40,10 +40,6 @@ function isEmail(email) {
     return _.isString(email) && validator.isEmail(email);
 }
 
-function createResult(success, result) {
-    return { success, result: _.isUndefined(result) ? null : result };
-}
-
 function createUid(length = 32) {
     // @ts-ignore
     const uid = new shortUniqueId({ length });
@@ -114,7 +110,6 @@ module.exports = {
     hasSingleValue,
     hasMultiValue,
     isNonEmptyString,
-    createResult,
     createUid,
     createVerificationCode,
     sendEmail,

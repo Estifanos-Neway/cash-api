@@ -1,3 +1,3 @@
 exports.Admin = require("./admin.model");
 exports.Product = require("./product.model");
-exports.Category = require("./category.model");
+exports.ProductCategory = require("./product-category.model");

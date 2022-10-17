@@ -1,11 +1,11 @@
 const express = require("express");
-const { categoriesCont } = require("../controllers");
+const { productCategoriesCont } = require("../controllers");
 const { forceAccessToken } = require("../controllers/middlewares");
 
-const categoriesRouter = express.Router();
-categoriesRouter.get("/", categoriesCont.getMany);
-categoriesRouter.use(forceAccessToken(["admin"]));
-categoriesRouter.post("/", categoriesCont.create);
-categoriesRouter.patch("/:categoryId", categoriesCont.update);
-categoriesRouter.delete("/:categoryId", categoriesCont.delete);
-module.exports = categoriesRouter;
+const productCategoriesRouter = express.Router();
+productCategoriesRouter.get("/", productCategoriesCont.getMany);
+productCategoriesRouter.use(forceAccessToken(["admin"]));
+productCategoriesRouter.post("/", productCategoriesCont.create);
+productCategoriesRouter.patch("/:categoryId", productCategoriesCont.update);
+productCategoriesRouter.delete("/:categoryId", productCategoriesCont.delete);
+module.exports = productCategoriesRouter;

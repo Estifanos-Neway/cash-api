@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const { isNonEmptyString } = require("../commons/functions");
 const { categoryNameAlreadyExistResponseText, categoryNotFoundResponseText } = require("../commons/response-texts");
-const categoriesRepo = require("../repositories/categories.repo");
+const {productCategoriesRepo} = require("../repositories");
 const { sendRequiredParamsNotFoundResponse, createSingleResponse, catchInternalError, sendInvalidInputResponse, sendSuccessResponse } = require("./controller-commons/functions");
 
 module.exports = Object.freeze({
@@ -14,7 +14,7 @@ module.exports = Object.freeze({
                 sendInvalidInputResponse(res);
             } else {
                 try {
-                    const categoryCreated = await categoriesRepo.create({ categoryName });
+                    const categoryCreated = await productCategoriesRepo.create({ categoryName });
                     res.json(categoryCreated.toJson());
                 } catch (error) {
                     if (error.message === categoryNameAlreadyExistResponseText) {
@@ -29,7 +29,7 @@ module.exports = Object.freeze({
     },
     getMany: (req, res) => {
         catchInternalError(res, async () => {
-            const categories = await categoriesRepo.getMany();
+            const categories = await productCategoriesRepo.getMany();
             res.json(categories.map(category => category.toJson()));
         });
     },
@@ -41,16 +41,16 @@ module.exports = Object.freeze({
                 sendInvalidInputResponse(res);
                 return;
             }
-            const categoryExist = await categoriesRepo.exists({ id: categoryId });
+            const categoryExist = await productCategoriesRepo.exists({ id: categoryId });
             if (!categoryExist) {
                 res.status(404).json(createSingleResponse(categoryNotFoundResponseText));
                 return;
             }
-            const uniqueCategoryName = await categoriesRepo.isUniqueCategoryName(categoryName, categoryId);
+            const uniqueCategoryName = await productCategoriesRepo.isUniqueCategoryName(categoryName, categoryId);
             if (!uniqueCategoryName) {
                 res.status(409).json(createSingleResponse(categoryNameAlreadyExistResponseText));
             } else {
-                const updatedCategory = await categoriesRepo.update(categoryId, req.body);
+                const updatedCategory = await productCategoriesRepo.update(categoryId, req.body);
                 res.json(updatedCategory.toJson());
             }
         });
@@ -58,12 +58,12 @@ module.exports = Object.freeze({
     delete: (req, res) => {
         catchInternalError(res, async () => {
             const { categoryId } = req.params;
-            const categoryExist = await categoriesRepo.exists({ id: categoryId });
+            const categoryExist = await productCategoriesRepo.exists({ id: categoryId });
             if (!categoryExist) {
                 res.status(404).json(createSingleResponse(categoryNotFoundResponseText));
                 return;
             } else {
-                await categoriesRepo.delete(categoryId);
+                await productCategoriesRepo.delete(categoryId);
                 sendSuccessResponse(res);
             }
         });

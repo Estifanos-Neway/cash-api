@@ -1,34 +1,37 @@
 const { Admin } = require("../entities");
 const { adminDbModel } = require("./db-models");
-const { exists, create, findOne, count, updateOne, adaptEntity } = require("./db-commons/functions");
+const { db } = require("./db.commons");
 
 const idName = "userId";
 
 module.exports = Object.freeze({
-    exists: (conditions) => exists(adminDbModel, conditions),
-    count: () => count(adminDbModel),
+    exists: async (conditions) => {
+        const docWithId = await db.exists(adminDbModel, conditions);
+        if (docWithId) {
+            return { [idName]: docWithId._id.toString() };
+        } else {
+            return false;
+        }
+    },
+    count: () => db.count(adminDbModel),
     create: async (admin) => {
-        let result = await create(adminDbModel, admin.toJson());
+        let result = await db.create(adminDbModel, admin.toJson());
         if (result) {
-            return adaptEntity(Admin, result, idName);
+            return db.adaptEntity(Admin, result, idName);
         } else {
             return null;
         }
     },
     findOne: async (conditions, select) => {
-        let result = await findOne(adminDbModel, conditions, select);
+        let result = await db.findOne(adminDbModel, conditions, select);
         if (result) {
-            return adaptEntity(Admin, result, idName);
+            return db.adaptEntity(Admin, result, idName);
         } else {
             return null;
         }
     },
     updateOne: async (conditions, updates) => {
-        let result = await updateOne(adminDbModel, conditions, updates);
-        if (result) {
-            return adaptEntity(Admin, result, idName);
-        } else {
-            return null;
-        }
+        let result = await db.updateOne(adminDbModel, conditions, updates);
+        return db.adaptEntity(Admin, result, idName);
     }
 });

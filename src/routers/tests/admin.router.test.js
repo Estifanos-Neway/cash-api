@@ -12,21 +12,21 @@ const {
     invalidVerificationCodeResponseText,
     invalidTokenResponseText,
     expiredTokenResponseText,
-    invalidInput, } = require("../../commons/response-texts");
+    requiredParamsNotFoundResponseText, } = require("../../commons/response-texts");
 const { verificationTokenExpiresIn } = require("../../commons/variables");
 const { defaultAdmin } = require("../../config.json");
+const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 const { env } = require("../../env");
 const { adminsRepo } = require("../../repositories");
-
-const adminCredentials = {
-    username: defaultAdmin.username,
-    passwordHash: hash(defaultAdmin.password)
-};
 
 describe("/admin", () => {
     const mainPath = "/admin";
     const newEmail = "estifanos.neway.d@gmail.com";
     let emailVerificationCode = "VCODE";
+    const adminCredentials = {
+        username: defaultAdmin.username,
+        passwordHash: hash(defaultAdmin.password)
+    };
     let request, accessToken, emailVerificationToken;
 
     beforeAll(async () => {
@@ -64,7 +64,7 @@ describe("/admin", () => {
                     .send({ ...adminCredentials, passwordHash: "wrongPasswordHash" });
 
                 expect(statusCode).toBe(404);
-                expect(body).toHaveProperty("message", userNotFoundResponseText);
+                expect(body).toEqual(createSingleResponse(userNotFoundResponseText));
             });
         });
 
@@ -75,7 +75,7 @@ describe("/admin", () => {
                     .send({ ...adminCredentials, username: "wrongUsername" });
 
                 expect(statusCode).toBe(404);
-                expect(body).toHaveProperty("message", userNotFoundResponseText);
+                expect(body).toEqual(createSingleResponse(userNotFoundResponseText));
             });
         });
 
@@ -86,7 +86,7 @@ describe("/admin", () => {
                     .send({ username: "wrongUsername", passwordHash: "wrongPasswordHash" });
 
                 expect(statusCode).toBe(404);
-                expect(body).toHaveProperty("message", userNotFoundResponseText);
+                expect(body).toEqual(createSingleResponse(userNotFoundResponseText));
             });
         });
 
@@ -97,7 +97,7 @@ describe("/admin", () => {
                     .send({ ...adminCredentials, username: ["invalidUsernameFormat"], });
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
 
@@ -108,7 +108,7 @@ describe("/admin", () => {
                     .send({ username: adminCredentials.username });
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
     });
@@ -154,7 +154,7 @@ describe("/admin", () => {
                     .send({ newUsername });
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
         describe("Given no username", () => {
@@ -164,7 +164,7 @@ describe("/admin", () => {
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
     });
@@ -199,7 +199,7 @@ describe("/admin", () => {
                     .send({ newPasswordHash, oldPasswordHash: "wrongOldPasswordHash" });
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", wrongPasswordHashResponseText);
+                expect(body).toEqual(createSingleResponse(wrongPasswordHashResponseText));
             });
         });
 
@@ -212,7 +212,7 @@ describe("/admin", () => {
                     .send({ newPasswordHash, oldPasswordHash: adminCredentials.passwordHash });
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
 
@@ -223,7 +223,7 @@ describe("/admin", () => {
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
     });
@@ -269,7 +269,7 @@ describe("/admin", () => {
                     .send({ newEmail: "invalidEmail" });
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidEmailResponseText);
+                expect(body).toEqual(createSingleResponse(invalidEmailResponseText));
             });
         });
 
@@ -281,7 +281,7 @@ describe("/admin", () => {
                     .send({ newEmail: ["invalidEmail"] });
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
 
@@ -292,7 +292,7 @@ describe("/admin", () => {
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
     });
@@ -332,7 +332,7 @@ describe("/admin", () => {
                     );
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidVerificationCodeResponseText);
+                expect(body).toEqual(createSingleResponse(invalidVerificationCodeResponseText));
             });
         });
 
@@ -348,7 +348,7 @@ describe("/admin", () => {
                         });
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidTokenResponseText);
+                expect(body).toEqual(createSingleResponse(invalidTokenResponseText));
             });
         });
 
@@ -370,7 +370,7 @@ describe("/admin", () => {
                             verificationToken: expiredVerificationToken
                         });
                 expect(statusCode).toBe(408);
-                expect(body).toHaveProperty("message", expiredTokenResponseText);
+                expect(body).toEqual(createSingleResponse(expiredTokenResponseText));
             });
         });
 
@@ -381,7 +381,7 @@ describe("/admin", () => {
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
     });
@@ -407,7 +407,7 @@ describe("/admin", () => {
                     .set("Authorization", `Bearer ${accessToken}`).
                     send({ email: "nottheadmins@example.come" });
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidEmailResponseText);
+                expect(body).toEqual(createSingleResponse(invalidEmailResponseText));
             });
         });
         describe("Given an invalid email (invalid email)", () => {
@@ -417,7 +417,7 @@ describe("/admin", () => {
                     .set("Authorization", `Bearer ${accessToken}`).
                     send({ email: [newEmail] });
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidEmailResponseText);
+                expect(body).toEqual(createSingleResponse(invalidEmailResponseText));
             });
         });
         describe("Given no email", () => {
@@ -426,7 +426,7 @@ describe("/admin", () => {
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`);
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInput);
+                expect(body).toEqual(createSingleResponse(requiredParamsNotFoundResponseText));
             });
         });
     });
@@ -468,7 +468,7 @@ describe("/admin", () => {
                     .send({ newPasswordHash: anotherNewPasswordHash, recoveryToken });
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidTokenResponseText);
+                expect(body).toEqual(createSingleResponse(invalidTokenResponseText));
             });
         });
 
@@ -486,7 +486,7 @@ describe("/admin", () => {
                     .set("Authorization", `Bearer ${accessToken}`)
                     .send({ newPasswordHash: anotherNewPasswordHash, recoveryToken });
                 expect(statusCode).toBe(408);
-                expect(body).toHaveProperty("message", expiredTokenResponseText);
+                expect(body).toEqual(createSingleResponse(expiredTokenResponseText));
             });
         });
 
@@ -505,7 +505,7 @@ describe("/admin", () => {
                     .send({ newPasswordHash: anotherNewPasswordHash, recoveryToken });
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
 
@@ -516,7 +516,7 @@ describe("/admin", () => {
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message", invalidInputResponseText);
+                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
             });
         });
     });

@@ -1,6 +1,5 @@
 const { Admin } = require("../entities");
-const { adminsDb } = require("../database");
-const { createResult } = require("../commons/functions");
+const { adminsDb, db } = require("../database");
 const { userNotFoundResponseText } = require("../commons/response-texts");
 
 function createAdminInfo(admin) {
@@ -45,53 +44,64 @@ module.exports = Object.freeze({
         }
     },
     changeUsername: async ({ userId, newUsername }) => {
-        const admin = await adminsDb.findOne({ id: userId });
-        if (admin) {
-            admin.username = newUsername;
-            await adminsDb.updateOne({ id: userId }, { username: admin.username });
-            return createResult(true);
-        } else {
-            return createResult(false, userNotFoundResponseText);
+        try {
+            // @ts-ignore
+            const admin = new Admin({ userId, username: newUsername });
+            return await adminsDb.updateOne({ id: userId }, { username: admin.username });
+        } catch (error) {
+            throw error.message === db.responses.docNotFound ? new Error(userNotFoundResponseText) : error;
         }
+
     },
     changePasswordHash: async ({ userId, oldPasswordHash, newPasswordHash }) => {
         const admin = await adminsDb.findOne({ id: userId });
         if (admin) {
-            admin.changePasswordHash({ oldPasswordHash, newPasswordHash });
-            await adminsDb.updateOne({ id: userId }, { passwordHash: admin.passwordHash });
-            return createResult(true);
+            try {
+                admin.changePasswordHash({ oldPasswordHash, newPasswordHash });
+                return await adminsDb.updateOne({ id: userId }, { passwordHash: admin.passwordHash });
+            } catch (error) {
+                throw error.message === db.responses.docNotFound ? new Error(userNotFoundResponseText) : error;
+            }
         } else {
-            return createResult(false, userNotFoundResponseText);
+            throw new Error(userNotFoundResponseText);
         }
     },
     recoverPasswordHash: async ({ email, newPasswordHash }) => {
         const admin = await adminsDb.findOne({ email });
         if (admin) {
-            admin.changePasswordHash({ oldPasswordHash: admin.passwordHash, newPasswordHash });
-            await adminsDb.updateOne({ email }, { passwordHash: admin.passwordHash });
-            return createResult(true);
+            try {
+                admin.changePasswordHash({ oldPasswordHash: admin.passwordHash, newPasswordHash });
+                return await adminsDb.updateOne({ email }, { passwordHash: admin.passwordHash });
+            } catch (error) {
+                throw error.message === db.responses.docNotFound ? new Error(userNotFoundResponseText) : error;
+            }
         } else {
-            return createResult(false, userNotFoundResponseText);
+            throw new Error(userNotFoundResponseText);
         }
     },
     updateSettings: async ({ userId, updates }) => {
         const admin = await adminsDb.findOne({ id: userId });
         if (admin) {
-            admin.updateSettings({ updates });
-            const result = await adminsDb.updateOne({ id: userId }, { settings: admin.settings });
-            return createResult(true, result.settings);
+            try {
+                admin.updateSettings({ updates });
+                const result = await adminsDb.updateOne({ id: userId }, { settings: admin.settings });
+                return result.settings;
+            } catch (error) {
+                throw error.message === db.responses.docNotFound ? new Error(userNotFoundResponseText) : error;
+            }
         } else {
-            return createResult(false, userNotFoundResponseText);
+            throw new Error(userNotFoundResponseText);
         }
     },
     updateEmail: async ({ userId, email }) => {
-        const admin = await adminsDb.findOne({ id: userId });
-        if (admin) {
+        try {
+            // @ts-ignore
+            const admin = new Admin({ userId });
             admin.email = email;
             const result = await adminsDb.updateOne({ id: userId }, { email: admin.email });
-            return createResult(true, result.email);
-        } else {
-            return createResult(false, userNotFoundResponseText);
+            return result.email;
+        } catch (error) {
+            throw error.message === db.responses.docNotFound ? new Error(userNotFoundResponseText) : error;
         }
     }
 });
