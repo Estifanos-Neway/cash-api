@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const Image = require("./entity-commons/image.model");
+const Image = require("./entity-commons/image.entity");
 const { hasValue, removeUndefined } = require("../commons/functions");
 
 module.exports = class Product {
