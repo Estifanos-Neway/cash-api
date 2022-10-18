@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const { productsDb, db } = require("../database");
-const Product = require("../entities/product.model");
+const { Product } = require("../entities");
 const { filesDb } = require("../database");
 const { productNotFoundResponseText } = require("../commons/response-texts");
 
