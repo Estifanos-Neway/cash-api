@@ -9,14 +9,12 @@ const {
     authenticateByToken,
     forceApiKey } = require("./controllers/middlewares");
 const { env } = require("./env");
-const {
-    pathNotFoundResponseText,
-    tooManyRequestsResponseText } = require("./commons/response-texts");
+const rt = require("./commons/response-texts");
 const {
     defaultPort,
     numberOfMaxApiRequestsPerMin } = require("./commons/variables");
 const apiResponses = require("./api-docs/responses");
-const { adminRouter, tokensRouter, productsRouter, imagesRouter, productCategoriesRouter } = require("./routers");
+const { adminRouter, tokensRouter, productsRouter, imagesRouter, productCategoriesRouter, affiliatesRouter } = require("./routers");
 
 exports.makeApp = () => {
     const app = express();
@@ -41,7 +39,7 @@ exports.makeApp = () => {
     const limiter = rateLimit({
         windowMs: 1 * 60 * 1000,
         max: numberOfMaxApiRequestsPerMin,
-        message: createSingleResponse(tooManyRequestsResponseText),
+        message: createSingleResponse(rt.tooManyRequests),
         standardHeaders: true,
         legacyHeaders: false
     });
@@ -66,9 +64,10 @@ exports.makeApp = () => {
     app.use("/admin", adminRouter);
     app.use("/product-categories", productCategoriesRouter);
     app.use("/products", productsRouter);
+    app.use("/affiliates", affiliatesRouter);
 
     app.use("*", (req, res) => {
-        res.status(404).json(createSingleResponse(pathNotFoundResponseText));
+        res.status(404).json(createSingleResponse(rt.pathNotFound));
     });
 
     return app;

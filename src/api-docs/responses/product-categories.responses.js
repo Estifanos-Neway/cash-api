@@ -1,11 +1,4 @@
-const {
-    invalidInputResponseText,
-    successResponseText,
-    requiredParamsNotFoundResponseText,
-    categoryNameAlreadyExistResponseText,
-    categoryNotFoundResponseText,
-    invalidAccessTokenResponseText
-} = require("../../commons/response-texts");
+const rt = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
 module.exports = {
@@ -13,11 +6,11 @@ module.exports = {
         "POST": {
             200: ["<productCategoryObject"],
             400: [
-                createSingleResponse(invalidInputResponseText),
-                createSingleResponse(requiredParamsNotFoundResponseText)
+                createSingleResponse(rt.invalidInput),
+                createSingleResponse(rt.requiredParamsNotFound)
             ],
-            401: [createSingleResponse(invalidAccessTokenResponseText)],
-            409: [createSingleResponse(categoryNameAlreadyExistResponseText)]
+            401: [createSingleResponse(rt.invalidAccessToken)],
+            409: [createSingleResponse(rt.categoryNameAlreadyExist)]
         },
         "GET": {
             200: [["<productCategoryObject"]],
@@ -26,15 +19,15 @@ module.exports = {
     "/product-categories/{productId}": {
         "PATCH": {
             200: ["<productCategoryObject"],
-            400: [createSingleResponse(invalidInputResponseText)],
-            404: [createSingleResponse(categoryNotFoundResponseText)],
-            401: [createSingleResponse(invalidAccessTokenResponseText)],
-            409: [createSingleResponse(categoryNameAlreadyExistResponseText)]
+            400: [createSingleResponse(rt.invalidInput)],
+            404: [createSingleResponse(rt.categoryNotFound)],
+            401: [createSingleResponse(rt.invalidAccessToken)],
+            409: [createSingleResponse(rt.categoryNameAlreadyExist)]
         },
         "DELETE": {
-            200: [createSingleResponse(successResponseText)],
-            401: [createSingleResponse(invalidAccessTokenResponseText)],
-            404: [createSingleResponse(categoryNotFoundResponseText)],
+            200: [createSingleResponse(rt.success)],
+            401: [createSingleResponse(rt.invalidAccessToken)],
+            404: [createSingleResponse(rt.categoryNotFound)],
         }
     }
 };

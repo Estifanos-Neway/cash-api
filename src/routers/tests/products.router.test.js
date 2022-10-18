@@ -6,20 +6,7 @@ const { defaultAdmin } = require("../../config.json");
 const { hash } = require("../../commons/functions");
 const supertest = require("supertest");
 const { makeApp } = require("../../app");
-const {
-    invalidJsonStringResponseText,
-    invalidInputResponseText,
-    productNameAlreadyExistResponseText,
-    requiredParamsNotFoundResponseText,
-    invalidSearchQueryResponseText,
-    invalidFilterQueryResponseText,
-    invalidCategoriesQueryResponseText,
-    invalidSelectQueryResponseText,
-    invalidSkipQueryResponseText,
-    invalidSortQueryResponseText,
-    invalidLimitQueryResponseText,
-    productNotFoundResponseText,
-    successResponseText, } = require("../../commons/response-texts");
+const rt = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
 
@@ -115,43 +102,43 @@ describe("/products", () => {
                 });
             });
             describe("Given invalid json productDetails", () => {
-                it(`Should return 400 and ${invalidJsonStringResponseText}`, async () => {
+                it(`Should return 400 and ${rt.invalidJsonString}`, async () => {
                     const { body, statusCode } = await request.post(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .field("productDetails", "invalid-json");
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidJsonStringResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidJsonString));
                 });
             });
             describe("Given invalid input (ex: non-number price)", () => {
-                it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+                it(`Should return 400 and ${rt.invalidInput}`, async () => {
                     const { body, statusCode } = await request.post(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .field("productDetails", JSON.stringify({ ...productA, price: "200" }));
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidInput));
                 });
             });
             describe("Given missing required field (ex: no commission rate)", () => {
-                it(`Should return 400 and ${requiredParamsNotFoundResponseText}`, async () => {
+                it(`Should return 400 and ${rt.requiredParamsNotFound}`, async () => {
                     const { body, statusCode } = await request.post(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .field("productDetails", JSON.stringify({ ...productA, productName: "Non-Existing-Name", commissionRate: undefined }));
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(requiredParamsNotFoundResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.requiredParamsNotFound));
                 });
             });
             describe("Given existing product name", () => {
-                it(`Should return 409 and ${productNameAlreadyExistResponseText}`, async () => {
+                it(`Should return 409 and ${rt.productNameAlreadyExist}`, async () => {
                     const { body, statusCode } = await request.post(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .field("productDetails", JSON.stringify(productA));
                     expect(statusCode).toBe(409);
-                    expect(body).toEqual(createSingleResponse(productNameAlreadyExistResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.productNameAlreadyExist));
                 });
             });
         });
@@ -246,66 +233,66 @@ describe("/products", () => {
                 });
             });
             describe("Given invalid search query", () => {
-                it(`Should return 400 ${invalidSearchQueryResponseText}`, async () => {
+                it(`Should return 400 and ${rt.invalidSearchQuery}`, async () => {
                     const { body, statusCode } = await request.get(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .query({ search: "string-is-not-valid" });
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidSearchQueryResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidSearchQuery));
                 });
             });
             describe("Given invalid filter query", () => {
-                it(`Should return 400 ${invalidFilterQueryResponseText}`, async () => {
+                it(`Should return 400 and ${rt.invalidFilterQuery}`, async () => {
                     const { body, statusCode } = await request.get(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .query({ filter: "string-is-not-valid" });
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidFilterQueryResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidFilterQuery));
                 });
             });
             describe("Given invalid categories query", () => {
-                it(`Should return 400 ${invalidCategoriesQueryResponseText}`, async () => {
+                it(`Should return 400 ${rt.invalidCategoriesQuery}`, async () => {
                     const { body, statusCode } = await request.get(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .query({ categories: "string-is-not-valid" });
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidCategoriesQueryResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidCategoriesQuery));
                 });
             });
             describe("Given invalid select query", () => {
-                it(`Should return 400 ${invalidSelectQueryResponseText}`, async () => {
+                it(`Should return 400 ${rt.invalidSelectQuery}`, async () => {
                     const { body, statusCode } = await request.get(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .query({ select: "string-is-not-valid" });
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidSelectQueryResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidSelectQuery));
                 });
             });
             describe("Given invalid skip query", () => {
-                it(`Should return 400 ${invalidSkipQueryResponseText}`, async () => {
+                it(`Should return 400 ${rt.invalidSkipQuery}`, async () => {
                     const { body, statusCode } = await request.get(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .query({ skip: "string-is-not-valid" });
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidSkipQueryResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidSkipQuery));
                 });
             });
             describe("Given invalid limit query", () => {
-                it(`Should return 400 ${invalidLimitQueryResponseText}`, async () => {
+                it(`Should return 400 ${rt.invalidLimitQuery}`, async () => {
                     const { body, statusCode } = await request.get(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .query({ limit: "string-is-not-valid" });
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidLimitQueryResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidLimitQuery));
                 });
             });
             describe("Given invalid sort query", () => {
-                it(`Should return 400 ${invalidSortQueryResponseText}`, async () => {
+                it(`Should return 400 ${rt.invalidSortQuery}`, async () => {
                     const { body, statusCode } = await request.get(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .query({ sort: "string-is-not-valid" });
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidSortQueryResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidSortQuery));
                 });
             });
         });
@@ -340,12 +327,12 @@ describe("/products", () => {
                 });
             });
             describe("Given invalid product id", () => {
-                it(`Should return 404 and ${productNotFoundResponseText}`, async () => {
+                it(`Should return 404 and ${rt.productNotFound}`, async () => {
                     const { body: bodyA, statusCode: statusCodeA } = await request.get(`${mainPath}/invalid-product-id`)
                         .set("Api-Key", env.API_KEY);
 
                     expect(statusCodeA).toBe(404);
-                    expect(bodyA).toEqual(createSingleResponse(productNotFoundResponseText));
+                    expect(bodyA).toEqual(createSingleResponse(rt.productNotFound));
                 });
             });
         });
@@ -404,44 +391,44 @@ describe("/products", () => {
                 });
             });
             describe("Given invalid json productDetails", () => {
-                it(`Should return 400 and ${invalidJsonStringResponseText}`, async () => {
+                it(`Should return 400 and ${rt.invalidJsonString}`, async () => {
                     const { body, statusCode } = await request.patch(`${mainPath}/${productB.productId}`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .field("productDetails", "invalid-json");
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidJsonStringResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidJsonString));
                 });
             });
             describe("Given invalid input (ex: non-boolean featured)", () => {
-                it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+                it(`Should return 400 and ${rt.invalidInput}`, async () => {
                     const { body, statusCode } = await request.patch(`${mainPath}/${productB.productId}`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .field("productDetails", JSON.stringify({ featured: "not-boolean" }));
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidInput));
                 });
             });
             describe("Given invalid product id", () => {
-                it(`Should return 404 and ${productNotFoundResponseText}`, async () => {
+                it(`Should return 404 and ${rt.productNotFound}`, async () => {
                     const { body, statusCode } = await request.patch(`${mainPath}/invalid-product-id`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .field("productDetails", JSON.stringify({ featured: true }));
 
                     expect(statusCode).toBe(404);
-                    expect(body).toEqual(createSingleResponse(productNotFoundResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.productNotFound));
                 });
             });
             describe("Given existing product name", () => {
-                it(`Should return 409 and ${productNameAlreadyExistResponseText}`, async () => {
+                it(`Should return 409 and ${rt.productNameAlreadyExist}`, async () => {
                     const { body, statusCode } = await request.patch(`${mainPath}/${productB.productId}`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .field("productDetails", JSON.stringify({ productName: productA.productName }));
                     expect(statusCode).toBe(409);
-                    expect(body).toEqual(createSingleResponse(productNameAlreadyExistResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.productNameAlreadyExist));
                 });
             });
         });
@@ -453,17 +440,17 @@ describe("/products", () => {
                         .set("Authorization", `Bearer ${accessToken}`);
 
                     expect(statusCode).toBe(200);
-                    expect(body).toEqual(createSingleResponse(successResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.success));
                 });
             });
             describe("Given invalid product id", () => {
-                it(`Should return 404 and ${productNotFoundResponseText}`, async () => {
+                it(`Should return 404 and ${rt.productNotFound}`, async () => {
                     const { body, statusCode } = await request.delete(`${mainPath}/${productA.productId}`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`);
 
                     expect(statusCode).toBe(404);
-                    expect(body).toEqual(createSingleResponse(productNotFoundResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.productNotFound));
                 });
             });
         });

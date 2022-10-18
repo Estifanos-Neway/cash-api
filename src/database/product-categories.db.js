@@ -1,4 +1,4 @@
-const { categoryNameAlreadyExistResponseText } = require("../commons/response-texts");
+const rt = require("../commons/response-texts");
 const { ProductCategory } = require("../entities");
 const { db } = require("./db.commons");
 const { productCategoryDbModel } = require("./db-models");
@@ -21,7 +21,7 @@ module.exports = Object.freeze({
             return db.adaptEntity(ProductCategory, categoryDoc, idName);
         } catch (error) {
             if (/^E11000/.test(error.message)) {
-                throw new Error(categoryNameAlreadyExistResponseText);
+                throw new Error(rt.categoryNameAlreadyExist);
             } else {
                 throw error;
             }

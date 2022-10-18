@@ -1,11 +1,6 @@
 const { defaultCommissionRate } = require("../config.json");
 const { hasValue, isEmail, hasSingleValue, removeUndefined } = require("../commons/functions");
-const {
-    invalidPasswordHashResponseText,
-    wrongPasswordHashResponseText,
-    invalidEmailResponseText,
-    invalidUsernameResponseText,
-    invalidUserIdResponseText } = require("../commons/response-texts");
+const rt = require("../commons/response-texts");
 
 class AdminSettings {
     commissionRate = defaultCommissionRate;
@@ -41,7 +36,7 @@ module.exports = class Admin {
             if (hasSingleValue(newUsername)) {
                 this.#username = newUsername;
             } else {
-                throw new Error(invalidUsernameResponseText);
+                throw new Error(rt.invalidUsername );
             }
         }
     }
@@ -51,7 +46,7 @@ module.exports = class Admin {
             if (hasSingleValue(newPasswordHash)) {
                 this.#passwordHash = newPasswordHash;
             } else {
-                throw new Error(invalidPasswordHashResponseText);
+                throw new Error(rt.invalidPasswordHash );
             }
         }
     }
@@ -61,7 +56,7 @@ module.exports = class Admin {
             if (isEmail(newEmail)) {
                 this.#email = newEmail;
             } else {
-                throw new Error(invalidEmailResponseText);
+                throw new Error(rt.invalidEmail );
             }
         }
     }
@@ -71,7 +66,7 @@ module.exports = class Admin {
             if (hasSingleValue(newUserId)) {
                 this.#userId = newUserId;
             } else {
-                throw new Error(invalidUserIdResponseText);
+                throw new Error(rt.invalidUserId );
             }
         }
     }
@@ -98,7 +93,7 @@ module.exports = class Admin {
 
     changePasswordHash({ oldPasswordHash, newPasswordHash }) {
         if (oldPasswordHash !== this.passwordHash) {
-            throw new Error(wrongPasswordHashResponseText);
+            throw new Error(rt.wrongPasswordHash );
         } else {
             this.passwordHash = newPasswordHash;
         }

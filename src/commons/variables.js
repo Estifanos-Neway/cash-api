@@ -1,12 +1,7 @@
 
-const defaultPort = 5000;
-const verificationTokenExpiresIn = 5;
-const accessTokenExpiresIn = 10;
-const numberOfMaxApiRequestsPerMin = 20;
-
 module.exports = {
-    defaultPort,
-    verificationTokenExpiresIn,
-    accessTokenExpiresIn,
-    numberOfMaxApiRequestsPerMin
+    defaultPort: 5000,
+    verificationTokenExpiresIn: 5 * 60 * 1000,
+    accessTokenExpiresIn: 10 * 60 * 1000,
+    numberOfMaxApiRequestsPerMin: 20
 };

@@ -2,16 +2,13 @@ const adminResponses = require("./admin.responses");
 const tokensResponses = require("./tokens.responses");
 const productCategoriesResponses = require("./product-categories.responses");
 const productResponses = require("./products.responses");
-const {
-    internalErrorResponseText,
-    invalidApiKeyResponseText
-} = require("../../commons/response-texts");
+const rt = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
 exports.Responses = {
     "any": {
-        401: [createSingleResponse(invalidApiKeyResponseText)],
-        500: [createSingleResponse(internalErrorResponseText)]
+        401: [createSingleResponse(rt.invalidApiKey)],
+        500: [createSingleResponse(rt.internalError)]
     },
     ...adminResponses,
     ...tokensResponses,

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { isEmail } = require("../../commons/functions");
-const { invalidEmailResponseText } = require("../../commons/response-texts");
+const rt = require("../../commons/response-texts");
 const { commissionRateSchema } = require("./db-model.commons");
 
 const required = true;
@@ -20,7 +20,7 @@ const adminSchema = new mongoose.Schema(
             type: String,
             validate: {
                 validator: (value) => isEmail(value),
-                message: invalidEmailResponseText
+                message: rt.invalidEmail 
             }
         },
         settings: {

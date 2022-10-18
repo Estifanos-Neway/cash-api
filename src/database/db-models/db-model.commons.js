@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { invalidCommissionRateResponseText } = require("../../commons/response-texts");
+const rt = require("../../commons/response-texts");
 
 const required = true;
 
@@ -17,7 +17,7 @@ const commissionRateSchema = {
     type: Number,
     validate: {
         validator: (value) => value >= 0 && value <= 100,
-        message: invalidCommissionRateResponseText
+        message: rt.invalidCommissionRate
     },
     required
 };

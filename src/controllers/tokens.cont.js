@@ -3,12 +3,7 @@ const { createUserData, getAccessToken, catchInternalError } = require("./contro
 const jwt = require("jsonwebtoken");
 const { env } = require("../env");
 const { createAccessToken, createSingleResponse } = require("./controller-commons/functions");
-const {
-    invalidAccessTokenResponseText,
-    invalidRefreshTokenResponseText,
-    invalidInputResponseText,
-    noneMatchingTokensResponseText,
-    successResponseText } = require("../commons/response-texts");
+const rt = require("../commons/response-texts");
 const { jwtRefreshesRepo } = require("../repositories");
 module.exports = Object.freeze({
     refresh: async (req, res) => {
@@ -16,19 +11,19 @@ module.exports = Object.freeze({
             const refreshToken = req.get("Refresh-Token");
             const accessToken = getAccessToken(req.get("Authorization"));
             if (!hasSingleValue(refreshToken) || !hasSingleValue(accessToken)) {
-                res.status(400).json(createSingleResponse(invalidInputResponseText));
+                res.status(400).json(createSingleResponse(rt.invalidInput));
             } else {
                 const refreshTokenExists = await jwtRefreshesRepo.exists(refreshToken);
                 if (refreshTokenExists) {
                     // @ts-ignore
                     jwt.verify(refreshToken, env.JWT_REFRESH_SECRETE, (error, user1) => {
                         if (error) {
-                            res.status(401).json(createSingleResponse(invalidRefreshTokenResponseText));
+                            res.status(401).json(createSingleResponse(rt.invalidRefreshToken));
                         } else {
                             // @ts-ignore
                             jwt.verify(accessToken, env.JWT_SECRETE, { ignoreExpiration: true }, (error, user2) => {
                                 if (error) {
-                                    res.status(401).json(createSingleResponse(invalidAccessTokenResponseText));
+                                    res.status(401).json(createSingleResponse(rt.invalidAccessToken));
                                 } else {
                                     // @ts-ignore
                                     if (user1.userType === user2.userType && user1.userId === user2.userId) {
@@ -37,14 +32,14 @@ module.exports = Object.freeze({
                                         const newAccessToken = createAccessToken(userData);
                                         res.json({ newAccessToken });
                                     } else {
-                                        res.status(401).json(createSingleResponse(noneMatchingTokensResponseText));
+                                        res.status(401).json(createSingleResponse(rt.noneMatchingTokens));
                                     }
                                 }
                             });
                         }
                     });
                 } else {
-                    res.status(401).json(createSingleResponse(invalidRefreshTokenResponseText));
+                    res.status(401).json(createSingleResponse(rt.invalidRefreshToken));
                 }
             }
         });
@@ -54,24 +49,24 @@ module.exports = Object.freeze({
             const refreshToken = req.get("refresh-token");
             const accessToken = getAccessToken(req.get("Authorization"));
             if (!hasSingleValue(refreshToken) || !hasSingleValue(accessToken)) {
-                res.status(400).json(createSingleResponse(invalidInputResponseText));
+                res.status(400).json(createSingleResponse(rt.invalidInput));
             } else {
                 // @ts-ignore
                 jwt.verify(refreshToken, env.JWT_REFRESH_SECRETE, (error, user1) => {
                     if (error) {
-                        res.status(401).json(createSingleResponse(invalidRefreshTokenResponseText));
+                        res.status(401).json(createSingleResponse(rt.invalidRefreshToken));
                     } else {
                         // @ts-ignore
                         jwt.verify(accessToken, env.JWT_SECRETE, { ignoreExpiration: true }, async (error, user2) => {
                             if (error) {
-                                res.status(401).json(createSingleResponse(invalidAccessTokenResponseText));
+                                res.status(401).json(createSingleResponse(rt.invalidAccessToken));
                             } else {
                                 // @ts-ignore
                                 if (user1.userType === user2.userType && user1.userId === user2.userId) {
                                     await jwtRefreshesRepo.delete(refreshToken);
-                                    res.json(createSingleResponse(successResponseText));
+                                    res.json(createSingleResponse(rt.success));
                                 } else {
-                                    res.status(401).json(createSingleResponse(noneMatchingTokensResponseText));
+                                    res.status(401).json(createSingleResponse(rt.noneMatchingTokens));
                                 }
                             }
                         });

@@ -16,8 +16,8 @@ exports.db = {
         adaptConditions(conditions);
         return await model.exists(conditions);
     },
-    count: async (model) => {
-        return await model.count();
+    count: async (model, conditions = {}) => {
+        return await model.count(conditions);
     },
     create: async (model, doc) => {
         return await model.create(doc);

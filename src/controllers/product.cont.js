@@ -2,7 +2,7 @@ const _ = require("lodash");
 const multer = require("multer");
 const streamifier = require("streamifier");
 const { hasSingleValue, isPositiveNumber, isNonEmptyString, createUid, isImageMime } = require("../commons/functions");
-const { productNameAlreadyExistResponseText, requiredParamsNotFoundResponseText, productNotFoundResponseText, invalidFilterQueryResponseText, invalidSearchQueryResponseText, invalidSortQueryResponseText, invalidSkipQueryResponseText, invalidLimitQueryResponseText, invalidCategoriesQueryResponseText, invalidJsonStringResponseText, invalidSelectQueryResponseText } = require("../commons/response-texts");
+const rt = require("../commons/response-texts");
 const { productsRepo, filesRepo } = require("../repositories");
 const { createSingleResponse, sendInvalidInputResponse, sendInternalErrorResponse, sendSuccessResponse, catchInternalError } = require("./controller-commons/functions");
 
@@ -74,7 +74,7 @@ async function validateProductMid(req, res, next) {
                     try {
                         req.body = JSON.parse(req.body.productDetails);
                     } catch (error) {
-                        res.status(400).json(createSingleResponse(invalidJsonStringResponseText));
+                        res.status(400).json(createSingleResponse(rt.invalidJsonString));
                         return res.end();
                     }
                     const {
@@ -101,7 +101,7 @@ async function validateProductMid(req, res, next) {
                     } else {
                         const uniqueProductName = await productsRepo.isUniqueProductName(productName, req.params.productId);
                         if (!uniqueProductName) {
-                            res.status(409).json(createSingleResponse(productNameAlreadyExistResponseText));
+                            res.status(409).json(createSingleResponse(rt.productNameAlreadyExist));
                             res.end();
                         } else {
                             await next();
@@ -130,15 +130,15 @@ module.exports = Object.freeze({
                 if (_.isUndefined(productName) ||
                     _.isUndefined(price) ||
                     _.isUndefined(commissionRate)) {
-                    res.status(400).json(createSingleResponse(requiredParamsNotFoundResponseText));
+                    res.status(400).json(createSingleResponse(rt.requiredParamsNotFound));
                 } else {
                     await uploadAttachedImagesMid(req, res, async () => {
                         try {
                             const createdProduct = await productsRepo.create(req.body);
                             res.json(createdProduct.toJson());
                         } catch (error) {
-                            if (error.message === productNameAlreadyExistResponseText) {
-                                res.status(409).json(createSingleResponse(productNameAlreadyExistResponseText));
+                            if (error.message === rt.productNameAlreadyExist) {
+                                res.status(409).json(createSingleResponse(rt.productNameAlreadyExist));
                                 res.end();
                             } else {
                                 throw error;
@@ -156,7 +156,7 @@ module.exports = Object.freeze({
             try {
                 search = _.isUndefined(search) ? {} : JSON.parse(search);
             } catch (error) {
-                res.status(400).json(createSingleResponse(invalidSearchQueryResponseText));
+                res.status(400).json(createSingleResponse(rt.invalidSearchQuery));
                 return;
             }
             for (let key of Object.keys(search)) {
@@ -166,7 +166,7 @@ module.exports = Object.freeze({
             try {
                 filter = _.isUndefined(filter) ? {} : JSON.parse(filter);
             } catch (error) {
-                res.status(400).json(createSingleResponse(invalidFilterQueryResponseText));
+                res.status(400).json(createSingleResponse(rt.invalidFilterQuery));
                 return;
             }
             filter = { ...search, ...filter };
@@ -183,7 +183,7 @@ module.exports = Object.freeze({
                     }
                 }
             } catch (error) {
-                res.status(400).json(createSingleResponse(invalidCategoriesQueryResponseText));
+                res.status(400).json(createSingleResponse(rt.invalidCategoriesQuery));
                 return;
             }
 
@@ -199,19 +199,19 @@ module.exports = Object.freeze({
                     }
                 }
             } catch (error) {
-                res.status(400).json(createSingleResponse(invalidSelectQueryResponseText));
+                res.status(400).json(createSingleResponse(rt.invalidSelectQuery));
                 return;
             }
 
             skip = _.isUndefined(skip) ? undefined : Number.parseInt(skip);
             if (!_.isUndefined(skip) && !isPositiveNumber(skip)) {
-                res.status(400).json(createSingleResponse(invalidSkipQueryResponseText));
+                res.status(400).json(createSingleResponse(rt.invalidSkipQuery));
                 return;
             }
 
             limit = _.isUndefined(limit) ? undefined : Number.parseInt(limit);
             if (!_.isUndefined(limit) && !isPositiveNumber(limit)) {
-                res.status(400).json(createSingleResponse(invalidLimitQueryResponseText));
+                res.status(400).json(createSingleResponse(rt.invalidLimitQuery));
                 return;
             }
             limit = _.isUndefined(limit) ? findManyDefaultLimit : limit < findManyMaxLimit ? limit : findManyMaxLimit;
@@ -224,7 +224,7 @@ module.exports = Object.freeze({
                     }
                 }
             } catch (error) {
-                res.status(400).json(createSingleResponse(invalidSortQueryResponseText));
+                res.status(400).json(createSingleResponse(rt.invalidSortQuery));
                 return;
             }
             sort = _.isEmpty(sort) ? { createdAt: -1 } : sort;
@@ -238,7 +238,7 @@ module.exports = Object.freeze({
             const productId = req.params.productId;
             const product = await productsRepo.getOne(productId, userType !== "admin");
             if (product === null) {
-                res.status(404).json(createSingleResponse(productNotFoundResponseText));
+                res.status(404).json(createSingleResponse(rt.productNotFound));
             } else {
                 res.json(product.toJson());
             }
@@ -249,7 +249,7 @@ module.exports = Object.freeze({
             const productId = req.params.productId;
             const productExist = await productsRepo.exists({ id: productId });
             if (!productExist) {
-                res.status(404).json(createSingleResponse(productNotFoundResponseText));
+                res.status(404).json(createSingleResponse(rt.productNotFound));
             } else {
                 await validateProductMid(req, res, async () => {
                     await uploadAttachedImagesMid(req, res, async () => {
@@ -265,7 +265,7 @@ module.exports = Object.freeze({
             const productId = req.params.productId;
             const productExist = await productsRepo.exists({ id: productId });
             if (!productExist) {
-                res.status(404).json(createSingleResponse(productNotFoundResponseText));
+                res.status(404).json(createSingleResponse(rt.productNotFound));
             } else {
                 await productsRepo.delete({ id: productId });
                 sendSuccessResponse(res);

@@ -1,32 +1,26 @@
-const {
-    invalidInputResponseText,
-    successResponseText,
-    invalidRefreshTokenResponseText,
-    invalidAccessTokenResponseText,
-    noneMatchingTokensResponseText,
-} = require("../../commons/response-texts");
+const rt = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
 module.exports = {
     "/tokens/refresh": {
         "GET": {
             200: [{ newAccessToken: "<newAccessToken>" }],
-            400: [createSingleResponse(invalidInputResponseText)],
+            400: [createSingleResponse(rt.invalidInput)],
             401: [
-                createSingleResponse(invalidRefreshTokenResponseText),
-                createSingleResponse(invalidAccessTokenResponseText),
-                createSingleResponse(noneMatchingTokensResponseText)
+                createSingleResponse(rt.invalidRefreshToken),
+                createSingleResponse(rt.invalidAccessToken),
+                createSingleResponse(rt.noneMatchingTokens)
             ]
         }
     },
     "/tokens/sign-out": {
         "DELETE": {
-            200: [createSingleResponse(successResponseText)],
-            400: [createSingleResponse(invalidInputResponseText)],
+            200: [createSingleResponse(rt.success)],
+            400: [createSingleResponse(rt.invalidInput)],
             401: [
-                createSingleResponse(invalidRefreshTokenResponseText),
-                createSingleResponse(invalidAccessTokenResponseText),
-                createSingleResponse(noneMatchingTokensResponseText)
+                createSingleResponse(rt.invalidRefreshToken),
+                createSingleResponse(rt.invalidAccessToken),
+                createSingleResponse(rt.noneMatchingTokens)
             ]
         }
     },

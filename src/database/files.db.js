@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { pipe } = require("../commons/functions");
-const { fileNotFoundResponseText } = require("../commons/response-texts");
+const rt = require("../commons/response-texts");
 
 module.exports = Object.freeze({
     bucketNames: { productImages: "product_images" },
@@ -16,7 +16,7 @@ module.exports = Object.freeze({
             await pipe(readStream, writeStream);
         } catch (error) {
             if (/^FileNotFound/.test(error.message)) {
-                throw new Error(fileNotFoundResponseText);
+                throw new Error(rt.fileNotFound);
             } else {
                 throw error;
             }

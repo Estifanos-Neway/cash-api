@@ -2,7 +2,7 @@ const _ = require("lodash");
 const { productsDb, db } = require("../database");
 const { Product } = require("../entities");
 const { filesDb } = require("../database");
-const { productNotFoundResponseText } = require("../commons/response-texts");
+const rt = require("../commons/response-texts");
 
 module.exports = Object.freeze({
     exists: async (condition) => await productsDb.exists(condition),
@@ -31,7 +31,7 @@ module.exports = Object.freeze({
             const product = new Product(updates);
             return await productsDb.updateOne({ id: productId }, product.toJson());
         } catch (error) {
-            throw error.message === db.responses.docNotFound ? new Error(productNotFoundResponseText) : error;
+            throw error.message === db.responses.docNotFound ? new Error(rt.productNotFound) : error;
         }
     },
     delete: async (condition) => {

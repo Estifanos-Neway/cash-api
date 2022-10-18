@@ -1,6 +1,6 @@
 const { Admin } = require("../entities");
 const { adminsDb, db } = require("../database");
-const { userNotFoundResponseText } = require("../commons/response-texts");
+const rt = require("../commons/response-texts");
 
 function createAdminInfo(admin) {
     return Object.freeze({
@@ -49,7 +49,7 @@ module.exports = Object.freeze({
             const admin = new Admin({ userId, username: newUsername });
             return await adminsDb.updateOne({ id: userId }, { username: admin.username });
         } catch (error) {
-            throw error.message === db.responses.docNotFound ? new Error(userNotFoundResponseText) : error;
+            throw error.message === db.responses.docNotFound ? new Error(rt.userNotFound) : error;
         }
 
     },
@@ -60,10 +60,10 @@ module.exports = Object.freeze({
                 admin.changePasswordHash({ oldPasswordHash, newPasswordHash });
                 return await adminsDb.updateOne({ id: userId }, { passwordHash: admin.passwordHash });
             } catch (error) {
-                throw error.message === db.responses.docNotFound ? new Error(userNotFoundResponseText) : error;
+                throw error.message === db.responses.docNotFound ? new Error(rt.userNotFound) : error;
             }
         } else {
-            throw new Error(userNotFoundResponseText);
+            throw new Error(rt.userNotFound);
         }
     },
     recoverPasswordHash: async ({ email, newPasswordHash }) => {
@@ -73,10 +73,10 @@ module.exports = Object.freeze({
                 admin.changePasswordHash({ oldPasswordHash: admin.passwordHash, newPasswordHash });
                 return await adminsDb.updateOne({ email }, { passwordHash: admin.passwordHash });
             } catch (error) {
-                throw error.message === db.responses.docNotFound ? new Error(userNotFoundResponseText) : error;
+                throw error.message === db.responses.docNotFound ? new Error(rt.userNotFound) : error;
             }
         } else {
-            throw new Error(userNotFoundResponseText);
+            throw new Error(rt.userNotFound);
         }
     },
     updateSettings: async ({ userId, updates }) => {
@@ -87,10 +87,10 @@ module.exports = Object.freeze({
                 const result = await adminsDb.updateOne({ id: userId }, { settings: admin.settings });
                 return result.settings;
             } catch (error) {
-                throw error.message === db.responses.docNotFound ? new Error(userNotFoundResponseText) : error;
+                throw error.message === db.responses.docNotFound ? new Error(rt.userNotFound) : error;
             }
         } else {
-            throw new Error(userNotFoundResponseText);
+            throw new Error(rt.userNotFound);
         }
     },
     updateEmail: async ({ userId, email }) => {
@@ -101,7 +101,7 @@ module.exports = Object.freeze({
             const result = await adminsDb.updateOne({ id: userId }, { email: admin.email });
             return result.email;
         } catch (error) {
-            throw error.message === db.responses.docNotFound ? new Error(userNotFoundResponseText) : error;
+            throw error.message === db.responses.docNotFound ? new Error(rt.userNotFound) : error;
         }
     }
 });

@@ -1,8 +1,6 @@
 const _ = require("lodash");
 const mongoose = require("mongoose");
-const {
-    invalidPriceResponseText,
-    invalidViewCountResponseText } = require("../../commons/response-texts");
+const rt = require("../../commons/response-texts");
 const {
     imageJsonSchema,
     commissionRateSchema } = require("./db-model.commons");
@@ -23,7 +21,7 @@ const productSchema = new mongoose.Schema(
             type: Number,
             validate: {
                 validator: (value) => value >= 0,
-                message: invalidPriceResponseText
+                message: rt.invalidPrice
             },
             required
         },
@@ -41,7 +39,7 @@ const productSchema = new mongoose.Schema(
             type: Number,
             validate: {
                 validator: (value) => value >= 0 && _.isInteger(value),
-                message: invalidViewCountResponseText
+                message: rt.invalidViewCount 
             },
             default: 0
         }

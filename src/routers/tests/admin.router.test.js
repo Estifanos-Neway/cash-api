@@ -2,17 +2,9 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const { makeApp } = require("../../app");
-const commonFunctions = require("../../commons/functions");
+const utils = require("../../commons/functions");
 const { hash, encrypt } = require("../../commons/functions");
-const {
-    wrongPasswordHashResponseText,
-    invalidInputResponseText,
-    userNotFoundResponseText,
-    invalidEmailResponseText,
-    invalidVerificationCodeResponseText,
-    invalidTokenResponseText,
-    expiredTokenResponseText,
-    requiredParamsNotFoundResponseText, } = require("../../commons/response-texts");
+const rt = require("../../commons/response-texts");
 const { verificationTokenExpiresIn } = require("../../commons/variables");
 const { defaultAdmin } = require("../../config.json");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
@@ -58,57 +50,57 @@ describe("/admin", () => {
         });
 
         describe("Given wrong password hash", () => {
-            it(`Should return 404 and ${userNotFoundResponseText}`, async () => {
+            it(`Should return 404 and ${rt.userNotFound}`, async () => {
                 const { body, statusCode } = await request.post(subPath)
                     .set("Api-Key", env.API_KEY)
                     .send({ ...adminCredentials, passwordHash: "wrongPasswordHash" });
 
                 expect(statusCode).toBe(404);
-                expect(body).toEqual(createSingleResponse(userNotFoundResponseText));
+                expect(body).toEqual(createSingleResponse(rt.userNotFound));
             });
         });
 
         describe("Given wrong username", () => {
-            it(`Should return 404 and ${userNotFoundResponseText}`, async () => {
+            it(`Should return 404 and ${rt.userNotFound}`, async () => {
                 const { body, statusCode } = await request.post(subPath)
                     .set("Api-Key", env.API_KEY)
                     .send({ ...adminCredentials, username: "wrongUsername" });
 
                 expect(statusCode).toBe(404);
-                expect(body).toEqual(createSingleResponse(userNotFoundResponseText));
+                expect(body).toEqual(createSingleResponse(rt.userNotFound));
             });
         });
 
         describe("Given wrong username and wrong password hash", () => {
-            it(`Should return 404 and ${userNotFoundResponseText}`, async () => {
+            it(`Should return 404 and ${rt.userNotFound}`, async () => {
                 const { body, statusCode } = await request.post(subPath)
                     .set("Api-Key", env.API_KEY)
                     .send({ username: "wrongUsername", passwordHash: "wrongPasswordHash" });
 
                 expect(statusCode).toBe(404);
-                expect(body).toEqual(createSingleResponse(userNotFoundResponseText));
+                expect(body).toEqual(createSingleResponse(rt.userNotFound));
             });
         });
 
         describe("Given invalid username", () => {
-            it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidInput}`, async () => {
                 const { body, statusCode } = await request.post(subPath)
                     .set("Api-Key", env.API_KEY)
                     .send({ ...adminCredentials, username: ["invalidUsernameFormat"], });
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidInput));
             });
         });
 
         describe("Given no password hash", () => {
-            it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidInput}`, async () => {
                 const { body, statusCode } = await request.post(subPath)
                     .set("Api-Key", env.API_KEY)
                     .send({ username: adminCredentials.username });
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidInput));
             });
         });
     });
@@ -146,7 +138,7 @@ describe("/admin", () => {
             });
         });
         describe("Given an invalid username", () => {
-            it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidInput}`, async () => {
                 let newUsername = ["Admin2"];
                 let { statusCode, body } = await request.patch(subPath)
                     .set("Api-Key", env.API_KEY)
@@ -154,17 +146,17 @@ describe("/admin", () => {
                     .send({ newUsername });
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidInput));
             });
         });
         describe("Given no username", () => {
-            it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidInput}`, async () => {
                 let { statusCode, body } = await request.patch(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidInput));
             });
         });
     });
@@ -191,7 +183,7 @@ describe("/admin", () => {
         });
 
         describe("Given wrong old password hash", () => {
-            it(`Should return 400 and ${wrongPasswordHashResponseText}`, async () => {
+            it(`Should return 400 and ${rt.wrongPasswordHash}`, async () => {
                 let newPasswordHash = "theNewPasswordHash";
                 let { statusCode, body } = await request.patch(subPath)
                     .set("Api-Key", env.API_KEY)
@@ -199,12 +191,12 @@ describe("/admin", () => {
                     .send({ newPasswordHash, oldPasswordHash: "wrongOldPasswordHash" });
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(wrongPasswordHashResponseText));
+                expect(body).toEqual(createSingleResponse(rt.wrongPasswordHash));
             });
         });
 
         describe("Given invalid new password hash", () => {
-            it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidInput}`, async () => {
                 let newPasswordHash = ["theNewPasswordHash"];
                 let { statusCode, body } = await request.patch(subPath)
                     .set("Api-Key", env.API_KEY)
@@ -212,18 +204,18 @@ describe("/admin", () => {
                     .send({ newPasswordHash, oldPasswordHash: adminCredentials.passwordHash });
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidInput));
             });
         });
 
         describe("Given no new and old password hash", () => {
-            it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidInput}`, async () => {
                 let { statusCode, body } = await request.patch(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidInput));
             });
         });
     });
@@ -244,8 +236,8 @@ describe("/admin", () => {
         const subPath = `${mainPath}/email`;
         describe("Given a valid email", () => {
             it("Should send a verification code to the admins email", async () => {
-                const sendEmailMock = jest.spyOn(commonFunctions, "sendEmail").mockReturnValue(Promise.resolve(true));
-                const createVerificationCodeMock = jest.spyOn(commonFunctions, "createVerificationCode").mockReturnValue(emailVerificationCode);
+                const sendEmailMock = jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
+                const createVerificationCodeMock = jest.spyOn(utils, "createVerificationCode").mockReturnValue(emailVerificationCode);
                 const { body, statusCode } = await request.put(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`)
@@ -262,37 +254,37 @@ describe("/admin", () => {
         });
 
         describe("Given an invalid email format", () => {
-            it(`Should return 400 and ${invalidEmailResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidEmail}`, async () => {
                 const { body, statusCode } = await request.put(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`)
                     .send({ newEmail: "invalidEmail" });
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidEmailResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidEmail));
             });
         });
 
         describe("Given an invalid email", () => {
-            it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidInput}`, async () => {
                 const { body, statusCode } = await request.put(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`)
                     .send({ newEmail: ["invalidEmail"] });
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidInput));
             });
         });
 
         describe("Given no email", () => {
-            it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidInput}`, async () => {
                 const { body, statusCode } = await request.put(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidInput));
             });
         });
     });
@@ -320,7 +312,7 @@ describe("/admin", () => {
         });
 
         describe("Given invalid verificationCode", () => {
-            it(`Should return 400 and ${invalidVerificationCodeResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidVerificationCode}`, async () => {
                 const { body, statusCode } = await request.put(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`)
@@ -332,12 +324,12 @@ describe("/admin", () => {
                     );
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidVerificationCodeResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidVerificationCode));
             });
         });
 
         describe("Given invalid verificationToken", () => {
-            it(`Should return 400 and ${invalidTokenResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidToken}`, async () => {
                 const { body, statusCode } = await request.put(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`)
@@ -348,19 +340,19 @@ describe("/admin", () => {
                         });
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidTokenResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidToken));
             });
         });
 
         describe("Given an expired verificationToken", () => {
-            it(`Should return 408 and ${expiredTokenResponseText}`, async () => {
+            it(`Should return 408 and ${rt.expiredToken}`, async () => {
                 const expiredVerificationObject = {
                     validUntil: 0,
                     email: newEmail,
                     verificationCode: emailVerificationCode
                 };
 
-                const expiredVerificationToken = encrypt(expiredVerificationObject);
+                const expiredVerificationToken = encrypt(JSON.stringify(expiredVerificationObject));
                 const { body, statusCode } = await request.put(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`)
@@ -370,18 +362,18 @@ describe("/admin", () => {
                             verificationToken: expiredVerificationToken
                         });
                 expect(statusCode).toBe(408);
-                expect(body).toEqual(createSingleResponse(expiredTokenResponseText));
+                expect(body).toEqual(createSingleResponse(rt.expiredToken));
             });
         });
 
         describe("Given no verificationCode and verificationToken ", () => {
-            it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidInput}`, async () => {
                 const { body, statusCode } = await request.put(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidInput));
             });
         });
     });
@@ -390,7 +382,7 @@ describe("/admin", () => {
         const subPath = `${mainPath}/forgot-password`;
         describe("Given a valid email", () => {
             it("Should send a recovery link to the admins email", async () => {
-                const sendEmailMock = jest.spyOn(commonFunctions, "sendEmail").mockReturnValue(Promise.resolve(true));
+                const sendEmailMock = jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
                 const { statusCode } = await request.put(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`).
@@ -407,7 +399,7 @@ describe("/admin", () => {
                     .set("Authorization", `Bearer ${accessToken}`).
                     send({ email: "nottheadmins@example.come" });
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidEmailResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidEmail));
             });
         });
         describe("Given an invalid email (invalid email)", () => {
@@ -417,7 +409,7 @@ describe("/admin", () => {
                     .set("Authorization", `Bearer ${accessToken}`).
                     send({ email: [newEmail] });
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidEmailResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidEmail));
             });
         });
         describe("Given no email", () => {
@@ -426,7 +418,7 @@ describe("/admin", () => {
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`);
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(requiredParamsNotFoundResponseText));
+                expect(body).toEqual(createSingleResponse(rt.requiredParamsNotFound));
             });
         });
     });
@@ -437,7 +429,7 @@ describe("/admin", () => {
             it("Should update the admins password hash", async () => {
                 const anotherNewPasswordHash = "anotherNewPasswordHash";
                 const recoveryObject = {
-                    validUntil: new Date().getTime() + verificationTokenExpiresIn * 60 * 1000,
+                    validUntil: new Date().getTime() + verificationTokenExpiresIn,
                     email: newEmail
                 };
                 // @ts-ignore
@@ -459,7 +451,7 @@ describe("/admin", () => {
         });
 
         describe("Given invalid recovery token", () => {
-            it(`Should return 400 and ${invalidTokenResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidToken}`, async () => {
                 const anotherNewPasswordHash = "anotherNewPasswordHash";
                 const recoveryToken = "invalidRecoveryToken";
                 const { body, statusCode } = await request.put(subPath)
@@ -468,12 +460,12 @@ describe("/admin", () => {
                     .send({ newPasswordHash: anotherNewPasswordHash, recoveryToken });
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidTokenResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidToken));
             });
         });
 
         describe("Given expired recovery token", () => {
-            it(`Should return 408 and ${expiredTokenResponseText}`, async () => {
+            it(`Should return 408 and ${rt.expiredToken}`, async () => {
                 const anotherNewPasswordHash = "anotherNewPasswordHash";
                 const recoveryObject = {
                     validUntil: 0,
@@ -486,15 +478,15 @@ describe("/admin", () => {
                     .set("Authorization", `Bearer ${accessToken}`)
                     .send({ newPasswordHash: anotherNewPasswordHash, recoveryToken });
                 expect(statusCode).toBe(408);
-                expect(body).toEqual(createSingleResponse(expiredTokenResponseText));
+                expect(body).toEqual(createSingleResponse(rt.expiredToken));
             });
         });
 
         describe("Given invalid new password hash", () => {
-            it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidInput}`, async () => {
                 const anotherNewPasswordHash = ["anotherNewPasswordHash"];
                 const recoveryObject = {
-                    validUntil: new Date().getTime() + verificationTokenExpiresIn * 60 * 1000,
+                    validUntil: new Date().getTime() + verificationTokenExpiresIn,
                     email: newEmail
                 };
                 // @ts-ignore
@@ -505,18 +497,18 @@ describe("/admin", () => {
                     .send({ newPasswordHash: anotherNewPasswordHash, recoveryToken });
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidInput));
             });
         });
 
         describe("Given no recovery token and new password hash", () => {
-            it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+            it(`Should return 400 and ${rt.invalidInput}`, async () => {
                 const { body, statusCode } = await request.put(subPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessToken}`);
 
                 expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                expect(body).toEqual(createSingleResponse(rt.invalidInput));
             });
         });
     });

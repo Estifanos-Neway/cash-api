@@ -5,7 +5,7 @@ const { defaultAdmin } = require("../../config.json");
 const { hash } = require("../../commons/functions");
 const supertest = require("supertest");
 const { makeApp } = require("../../app");
-const { invalidInputResponseText, requiredParamsNotFoundResponseText, categoryNameAlreadyExistResponseText, categoryNotFoundResponseText, successResponseText } = require("../../commons/response-texts");
+const rt = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
 describe("/product-categories", () => {
@@ -65,34 +65,34 @@ describe("/product-categories", () => {
                 });
             });
             describe("Given invalid category name", () => {
-                it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+                it(`Should return 400 and ${rt.invalidInput}`, async () => {
                     const { body, statusCode } = await request.post(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .send({ ...category, categoryName: ["invalid"] });
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidInput));
                 });
             });
             describe("Given no category name", () => {
-                it(`Should return 400 and ${requiredParamsNotFoundResponseText}`, async () => {
+                it(`Should return 400 and ${rt.requiredParamsNotFound}`, async () => {
                     const { body, statusCode } = await request.post(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`);
 
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(requiredParamsNotFoundResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.requiredParamsNotFound));
                 });
             });
             describe("Given duplicated category name", () => {
-                it(`Should return 409 and ${categoryNameAlreadyExistResponseText}`, async () => {
+                it(`Should return 409 and ${rt.categoryNameAlreadyExist}`, async () => {
                     const { body, statusCode } = await request.post(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .send(category);
 
                     expect(statusCode).toBe(409);
-                    expect(body).toEqual(createSingleResponse(categoryNameAlreadyExistResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.categoryNameAlreadyExist));
                 });
             });
         });
@@ -136,33 +136,33 @@ describe("/product-categories", () => {
                 });
             });
             describe("Given invalid new category name", () => {
-                it(`Should return 400 and ${invalidInputResponseText}`, async () => {
+                it(`Should return 400 and ${rt.invalidInput}`, async () => {
                     const { body, statusCode } = await request.patch(`${mainPath}/${category.categoryId}`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .send({ categoryName: ["invalid"] });
                     expect(statusCode).toBe(400);
-                    expect(body).toEqual(createSingleResponse(invalidInputResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.invalidInput));
                 });
             });
             describe("Given invalid category id", () => {
-                it(`Should return 404 and ${categoryNotFoundResponseText}`, async () => {
+                it(`Should return 404 and ${rt.categoryNotFound}`, async () => {
                     const { body, statusCode } = await request.patch(`${mainPath}/invalid`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .send({ categoryName: "valid-category-name" });
                     expect(statusCode).toBe(404);
-                    expect(body).toEqual(createSingleResponse(categoryNotFoundResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.categoryNotFound));
                 });
             });
             describe("Given existing category name", () => {
-                it(`Should return 409 and ${categoryNameAlreadyExistResponseText}`, async () => {
+                it(`Should return 409 and ${rt.categoryNameAlreadyExist}`, async () => {
                     const { body, statusCode } = await request.patch(`${mainPath}/${category.categoryId}`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
                         .send({ categoryName: anotherCategory.categoryName });
                     expect(statusCode).toBe(409);
-                    expect(body).toEqual(createSingleResponse(categoryNameAlreadyExistResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.categoryNameAlreadyExist));
                 });
             });
         });
@@ -173,16 +173,16 @@ describe("/product-categories", () => {
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`);
                     expect(statusCode).toBe(200);
-                    expect(body).toEqual(createSingleResponse(successResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.success));
                 });
             });
             describe("Given non-existing category id", () => {
-                it(`Should return 404 and ${categoryNotFoundResponseText}`, async () => {
+                it(`Should return 404 and ${rt.categoryNotFound}`, async () => {
                     const { body, statusCode } = await request.delete(`${mainPath}/${category.categoryId}`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`);
                     expect(statusCode).toBe(404);
-                    expect(body).toEqual(createSingleResponse(categoryNotFoundResponseText));
+                    expect(body).toEqual(createSingleResponse(rt.categoryNotFound));
                 });
             });
         });

@@ -1,19 +1,4 @@
-const {
-    invalidInputResponseText,
-    successResponseText,
-    requiredParamsNotFoundResponseText,
-    invalidJsonStringResponseText,
-    productNameAlreadyExistResponseText,
-    invalidSearchQueryResponseText,
-    productNotFoundResponseText,
-    invalidFilterQueryResponseText,
-    invalidCategoriesQueryResponseText,
-    invalidSelectQueryResponseText,
-    invalidSkipQueryResponseText,
-    invalidSortQueryResponseText,
-    invalidAccessTokenResponseText,
-    invalidLimitQueryResponseText
-} = require("../../commons/response-texts");
+const rt = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
 module.exports = {
@@ -21,46 +6,46 @@ module.exports = {
         "POST": {
             200: ["<productObject"],
             400: [
-                createSingleResponse(invalidJsonStringResponseText),
-                createSingleResponse(invalidInputResponseText),
-                createSingleResponse(requiredParamsNotFoundResponseText)
+                createSingleResponse(rt.invalidJsonString),
+                createSingleResponse(rt.invalidInput),
+                createSingleResponse(rt.requiredParamsNotFound)
             ],
-            401: [createSingleResponse(invalidAccessTokenResponseText)],
-            409: [createSingleResponse(productNameAlreadyExistResponseText)]
+            401: [createSingleResponse(rt.invalidAccessToken)],
+            409: [createSingleResponse(rt.productNameAlreadyExist)]
         },
         "GET": {
             200: [["<productObject"]],
             400: [
-                createSingleResponse(invalidSearchQueryResponseText),
-                createSingleResponse(invalidFilterQueryResponseText),
-                createSingleResponse(invalidCategoriesQueryResponseText),
-                createSingleResponse(invalidSelectQueryResponseText),
-                createSingleResponse(invalidSkipQueryResponseText),
-                createSingleResponse(invalidLimitQueryResponseText),
-                createSingleResponse(invalidSortQueryResponseText)
+                createSingleResponse(rt.invalidSearchQuery),
+                createSingleResponse(rt.invalidFilterQuery),
+                createSingleResponse(rt.invalidCategoriesQuery),
+                createSingleResponse(rt.invalidSelectQuery),
+                createSingleResponse(rt.invalidSkipQuery),
+                createSingleResponse(rt.invalidLimitQuery),
+                createSingleResponse(rt.invalidSortQuery)
             ]
         }
     },
     "/products/{productId}": {
         "GET": {
             200: [["<productObject"]],
-            404: [createSingleResponse(productNotFoundResponseText)]
+            404: [createSingleResponse(rt.productNotFound)]
 
         },
         "PATCH": {
             200: ["<productObject"],
             400: [
-                createSingleResponse(invalidJsonStringResponseText),
-                createSingleResponse(invalidInputResponseText)
+                createSingleResponse(rt.invalidJsonString),
+                createSingleResponse(rt.invalidInput)
             ],
-            401: [createSingleResponse(invalidAccessTokenResponseText)],
-            404: [createSingleResponse(productNotFoundResponseText)],
-            409: [createSingleResponse(productNameAlreadyExistResponseText)]
+            401: [createSingleResponse(rt.invalidAccessToken)],
+            404: [createSingleResponse(rt.productNotFound)],
+            409: [createSingleResponse(rt.productNameAlreadyExist)]
         },
         "DELETE": {
-            200: [createSingleResponse(successResponseText)],
-            401: [createSingleResponse(invalidAccessTokenResponseText)],
-            404: [createSingleResponse(productNotFoundResponseText)]
+            200: [createSingleResponse(rt.success)],
+            401: [createSingleResponse(rt.invalidAccessToken)],
+            404: [createSingleResponse(rt.productNotFound)]
         }
     }
 };

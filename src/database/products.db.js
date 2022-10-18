@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const { productNameAlreadyExistResponseText } = require("../commons/response-texts");
+const rt = require("../commons/response-texts");
 const { Product } = require("../entities");
 const { db } = require("./db.commons");
 const { productDbModel } = require("./db-models");
@@ -22,7 +22,7 @@ module.exports = Object.freeze({
             return db.adaptEntity(Product, productDoc, idName);
         } catch (error) {
             if (/^E11000/.test(error.message)) {
-                throw new Error(productNameAlreadyExistResponseText);
+                throw new Error(rt.productNameAlreadyExist);
             } else {
                 throw error;
             }

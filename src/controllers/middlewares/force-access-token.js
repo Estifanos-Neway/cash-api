@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const { invalidAccessTokenResponseText } = require("../../commons/response-texts");
+const rt= require("../../commons/response-texts");
 const { createSingleResponse } = require("../controller-commons/functions");
 
 module.exports = (allowedUsers) => {
@@ -9,7 +9,7 @@ module.exports = (allowedUsers) => {
         if (_.isPlainObject(user) && (_.isEmpty(allowedUsers) || allowedUsers.includes(user.userType))) {
             next();
         } else {
-            res.status(401).json(createSingleResponse(invalidAccessTokenResponseText));
+            res.status(401).json(createSingleResponse(rt.invalidAccessToken ));
         }
     };
 };

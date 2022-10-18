@@ -1,15 +1,7 @@
 const jwt = require("jsonwebtoken");
-const {
-    internalErrorResponseText,
-    invalidInputResponseText,
-    successResponseText,
-    requiredParamsNotFoundResponseText } = require("../../commons/response-texts");
+const rt = require("../../commons/response-texts");
 const { env } = require("../../env");
-const {
-    errorLog,
-    encrypt,
-    isNonEmptyString } = require("../../commons/functions");
-const commonFunctions = require("../../commons/functions");
+const utils = require("../../commons/functions");
 const { urls } = require("../../config.json");
 const { accessTokenExpiresIn, verificationTokenExpiresIn } = require("../../commons/variables");
 
@@ -21,13 +13,13 @@ function createUserData(userId, userType) {
     return { userId, userType, rand: Math.random() };
 }
 
-function createAccessToken(userData, expiresIn = `${accessTokenExpiresIn}m`) {
+function createAccessToken(userData, expiresIn = `${accessTokenExpiresIn}ms`) {
     // @ts-ignore
     return jwt.sign(userData, env.JWT_SECRETE, { expiresIn });
 }
 
 function getAccessToken(authHeader) {
-    if (isNonEmptyString(authHeader)) {
+    if (utils.isNonEmptyString(authHeader)) {
         return authHeader.split(" ")[1];
     } else {
         return null;
@@ -35,39 +27,39 @@ function getAccessToken(authHeader) {
 }
 
 function sendSuccessResponse(res) {
-    res.json(createSingleResponse(successResponseText));
+    res.json(createSingleResponse(rt.success));
 }
 
 function sendRequiredParamsNotFoundResponse(res) {
-    res.status(400).json(createSingleResponse(requiredParamsNotFoundResponseText));
+    res.status(400).json(createSingleResponse(rt.requiredParamsNotFound));
 }
 
 function sendInvalidInputResponse(res) {
-    res.status(400).json(createSingleResponse(invalidInputResponseText));
+    res.status(400).json(createSingleResponse(rt.invalidInput));
 }
 
 function sendInternalErrorResponse(error, res) {
-    errorLog("Internal_Error", error);
-    res.status(500).json(createSingleResponse(internalErrorResponseText));
+    utils.errorLog("Internal_Error", error);
+    res.status(500).json(createSingleResponse(rt.internalError));
 }
 
 async function sendEmailVerificationCode({ email, subject, html }) {
-    const verificationCode = commonFunctions["createVerificationCode"]();
+    const verificationCode = utils["createVerificationCode"]();
     html = html.replaceAll("__verificationCode__", verificationCode);
-    await commonFunctions["sendEmail"]({ subject, html, to: email });
-    const validUntil = new Date().getTime() + verificationTokenExpiresIn * 60 * 1000;
+    await utils["sendEmail"]({ subject, html, to: email });
+    const validUntil = new Date().getTime() + verificationTokenExpiresIn;
     const verificationObject = { email, verificationCode, validUntil };
-    return encrypt(verificationObject);
+    return utils.encrypt(JSON.stringify(verificationObject));
 }
 
 async function sendEmailVerification({ email, path, subject, html }) {
-    const validUntil = new Date().getTime() + verificationTokenExpiresIn * 60 * 1000;
+    const validUntil = new Date().getTime() + verificationTokenExpiresIn;
     const verificationObject = { email, validUntil };
     // @ts-ignore
     const verificationToken = jwt.sign(verificationObject, env.JWT_SECRETE);
     const verificationLink = `${urls.baseUrl}${path}?t=${verificationToken}`;
     html = html.replaceAll("__verificationLink__", verificationLink);
-    await commonFunctions["sendEmail"]({ subject, html, to: email });
+    await utils["sendEmail"]({ subject, html, to: email });
 }
 
 

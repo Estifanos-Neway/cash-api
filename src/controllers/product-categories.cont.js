@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const { isNonEmptyString } = require("../commons/functions");
-const { categoryNameAlreadyExistResponseText, categoryNotFoundResponseText } = require("../commons/response-texts");
+const rt= require("../commons/response-texts");
 const {productCategoriesRepo} = require("../repositories");
 const { sendRequiredParamsNotFoundResponse, createSingleResponse, catchInternalError, sendInvalidInputResponse, sendSuccessResponse } = require("./controller-commons/functions");
 
@@ -17,8 +17,8 @@ module.exports = Object.freeze({
                     const categoryCreated = await productCategoriesRepo.create({ categoryName });
                     res.json(categoryCreated.toJson());
                 } catch (error) {
-                    if (error.message === categoryNameAlreadyExistResponseText) {
-                        res.status(409).json(createSingleResponse(categoryNameAlreadyExistResponseText));
+                    if (error.message === rt.categoryNameAlreadyExist ) {
+                        res.status(409).json(createSingleResponse(rt.categoryNameAlreadyExist ));
                     } else {
                         throw error;
                     }
@@ -43,12 +43,12 @@ module.exports = Object.freeze({
             }
             const categoryExist = await productCategoriesRepo.exists({ id: categoryId });
             if (!categoryExist) {
-                res.status(404).json(createSingleResponse(categoryNotFoundResponseText));
+                res.status(404).json(createSingleResponse(rt.categoryNotFound ));
                 return;
             }
             const uniqueCategoryName = await productCategoriesRepo.isUniqueCategoryName(categoryName, categoryId);
             if (!uniqueCategoryName) {
-                res.status(409).json(createSingleResponse(categoryNameAlreadyExistResponseText));
+                res.status(409).json(createSingleResponse(rt.categoryNameAlreadyExist ));
             } else {
                 const updatedCategory = await productCategoriesRepo.update(categoryId, req.body);
                 res.json(updatedCategory.toJson());
@@ -60,7 +60,7 @@ module.exports = Object.freeze({
             const { categoryId } = req.params;
             const categoryExist = await productCategoriesRepo.exists({ id: categoryId });
             if (!categoryExist) {
-                res.status(404).json(createSingleResponse(categoryNotFoundResponseText));
+                res.status(404).json(createSingleResponse(rt.categoryNotFound ));
                 return;
             } else {
                 await productCategoriesRepo.delete(categoryId);

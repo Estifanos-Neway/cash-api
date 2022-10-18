@@ -1,4 +1,4 @@
-const { categoryNotFoundResponseText } = require("../commons/response-texts");
+const rt = require("../commons/response-texts");
 const { productCategoriesDb, db } = require("../database");
 const { ProductCategory } = require("../entities");
 
@@ -19,7 +19,7 @@ module.exports = Object.freeze({
             const category = new ProductCategory(updates);
             return await productCategoriesDb.updateOne({ id: categoryId }, category.toJson());
         } catch (error) {
-            throw error.message === db.responses.docNotFound ? new Error(categoryNotFoundResponseText) : error;
+            throw error.message === db.responses.docNotFound ? new Error(rt.categoryNotFound) : error;
         }
     },
     delete: async (categoryId) => {
