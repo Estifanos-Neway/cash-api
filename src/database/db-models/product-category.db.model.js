@@ -1,11 +1,13 @@
 const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 
-const categorySchema = new mongoose.Schema(
+const productCategorySchema = new mongoose.Schema(
     {
         categoryName: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
+            uniqueCaseInsensitive: true
         }
     },
     {
@@ -13,4 +15,5 @@ const categorySchema = new mongoose.Schema(
         timestamps: true
     });
 
-module.exports = mongoose.model("Category", categorySchema, "categories");
+productCategorySchema.plugin(uniqueValidator);
+module.exports = mongoose.model("Product_Category", productCategorySchema, "product_categories");

@@ -20,7 +20,7 @@ module.exports = Object.freeze({
             const categoryDoc = await db.create(productCategoryDbModel, category.toJson());
             return db.adaptEntity(ProductCategory, categoryDoc, idName);
         } catch (error) {
-            if (/^E11000/.test(error.message)) {
+            if (error.errors?.categoryName?.kind === "unique") {
                 throw new Error(rt.categoryNameAlreadyExist);
             } else {
                 throw error;

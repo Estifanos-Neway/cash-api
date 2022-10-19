@@ -45,5 +45,24 @@ module.exports = Object.freeze({
                 }
             }
         });
+    },
+    signIn: (req, res) => {
+        catchInternalError(res, async () => {
+            try {
+                const signedInAffiliate = await affiliatesRepo.signIn(req.body);
+                res.json(signedInAffiliate);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.unauthorized:
+                        res.status(sc.unauthorized).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
     }
 });

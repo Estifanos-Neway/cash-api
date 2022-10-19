@@ -10,6 +10,7 @@ module.exports = {
     invalidToken: "Invalid_Token",
     invalidEmail: "Invalid_Email",
     invalidPhone: "Invalid_Phone",
+    invalidPhoneOrEmail: "Invalid_Phone_Or_Email",
     invalidApiKey: "Invalid_Api_Key",
     invalidPrice: "Invalid_Price",
     invalidViewCount: "Invalid_View_Count",
@@ -33,9 +34,14 @@ module.exports = {
     unknownSetting: "Unknown_Setting",
     missingApiKey: "Api_Key_Is_Required",
 
+    // Wrong
+    wrongCredentials: "Wrong_Credentials",
+
+    // Category
     categoryNameAlreadyExist: "Category_Name_Already_Exist",
     categoryNotFound: "Category_Not_Found",
 
+    // Not_Found
     fileNotFound: "File_Not_Found",
     userNotFound: "User_Not_Found",
 
@@ -49,5 +55,6 @@ module.exports = {
     invalidFullName: "Invalid_Full_Name",
     invalidAffiliateId: "Invalid_Affiliate_Id",
     invalidParentId: "Invalid_Parent_Id",
-    affiliateEmailAlreadyExist: "Affiliate_Email_Already_Exist"
+    affiliateEmailAlreadyExist: "Affiliate_Email_Already_Exist",
+    affiliatePhoneAlreadyExist: "Affiliate_Phone_Already_Exist"
 };

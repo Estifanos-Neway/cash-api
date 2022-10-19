@@ -6,6 +6,7 @@ const { User } = require("../entities");
 const affiliatesRouter = express.Router();
 affiliatesRouter.post("/sign-up", affiliatesCont.signUp);
 affiliatesRouter.post("/verify-sign-up", affiliatesCont.verifySignUp);
+affiliatesRouter.post("/sign-in", affiliatesCont.signIn);
 affiliatesRouter.use(forceAccessToken([User.userTypes.Affiliate]));
 
 module.exports = affiliatesRouter;

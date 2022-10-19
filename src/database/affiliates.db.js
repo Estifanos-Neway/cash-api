@@ -3,6 +3,13 @@ const { Affiliate } = require("../entities");
 const { affiliateDbModel } = require("./db-models");
 const { db } = require("./db.commons");
 
+function catchUniquenessErrors(error) {
+    if (error.errors?.email?.kind === "unique") {
+        throw new Error(rt.affiliateEmailAlreadyExist);
+    } else if (error.errors?.email?.kind === "phone") {
+        throw new Error(rt.affiliatePhoneAlreadyExist);
+    }
+}
 const idName = "userId";
 module.exports = Object.freeze({
     exists: async (conditions) => {
@@ -19,11 +26,8 @@ module.exports = Object.freeze({
             const affiliateDoc = await db.create(affiliateDbModel, affiliate.toJson());
             return db.adaptEntity(Affiliate, affiliateDoc, idName);
         } catch (error) {
-            if (error.code === 11000) {
-                throw new Error(rt.affiliateEmailAlreadyExist);
-            } else {
-                throw error;
-            }
+            catchUniquenessErrors(error);
+            throw error;
         }
     },
     findOne: async (conditions, select) => {
@@ -35,8 +39,13 @@ module.exports = Object.freeze({
         return affiliateDocList.map(affiliateDoc => db.adaptEntity(Affiliate, affiliateDoc, idName));
     },
     updateOne: async (conditions, updates) => {
-        const affiliateDoc = await db.updateOne(affiliateDbModel, conditions, updates);
-        return db.adaptEntity(Affiliate, affiliateDoc, idName);
+        try {
+            const affiliateDoc = await db.updateOne(affiliateDbModel, conditions, updates);
+            return db.adaptEntity(Affiliate, affiliateDoc, idName);
+        } catch (error) {
+            catchUniquenessErrors(error);
+            throw error;
+        }
     },
     deleteOne: async (conditions) => {
         const affiliateDoc = await db.deleteOne(affiliateDbModel, conditions);

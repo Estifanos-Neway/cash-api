@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 const utils = require("../../commons/functions");
 const { User } = require("../../entities");
 const { imageJsonSchema } = require("./db-model.commons");
 
 const required = true;
+const unique = true;
 const affiliateSchema = new mongoose.Schema(
     {
         fullName: {
@@ -13,6 +15,7 @@ const affiliateSchema = new mongoose.Schema(
         phone: {
             type: String,
             required,
+            unique,
             validate: {
                 validator: (value) => {
                     utils.isPhone(value);
@@ -22,7 +25,7 @@ const affiliateSchema = new mongoose.Schema(
         },
         email: {
             type: String,
-            unique: true,
+            unique,
             required,
             validate: {
                 validator: (value) => utils.isEmail(value),
@@ -42,7 +45,11 @@ const affiliateSchema = new mongoose.Schema(
             required
         },
         avatar: imageJsonSchema,
-        parentId: String
+        parentId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Affiliate",
+            immutable: true
+        }
     },
     {
         strictQuery: false,
@@ -58,4 +65,5 @@ affiliateSchema.pre("save", function (next) {
     next();
 });
 
+affiliateSchema.plugin(uniqueValidator);
 module.exports = mongoose.model(User.userTypes.Affiliate, affiliateSchema, "affiliates");
