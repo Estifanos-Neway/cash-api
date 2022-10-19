@@ -471,10 +471,10 @@
         }
       }
     },
-    "/tokens/refresh": {
+    "/sessions/refresh": {
       "get": {
         "summary": "Refresh an access token. [Requires_User_Access_Token]",
-        "tags": ["Tokens"],
+        "tags": ["Sessions"],
         "parameters": [{ "$ref": "#/components/parameters/refreshToken" }],
         "responses": {
           "200": {
@@ -495,19 +495,16 @@
           "400": {
             "$ref": "#/components/responses/invalidInput"
           },
-          "401": {
-            "$ref": "#/components/responses/unauthorized"
-          },
           "500": {
             "$ref": "#/components/responses/internalError"
           }
         }
       }
     },
-    "/tokens/sign-out": {
+    "/sessions/sign-out": {
       "delete": {
         "summary": "Sign out a user. [Requires_User_Access_Token]",
-        "tags": ["Tokens"],
+        "tags": ["Sessions"],
         "parameters": [{ "$ref": "#/components/parameters/refreshToken" }],
         "responses": {
           "200": {

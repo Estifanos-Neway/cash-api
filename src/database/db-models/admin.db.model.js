@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { isEmail } = require("../../commons/functions");
 const rt = require("../../commons/response-texts");
+const { User } = require("../../entities");
 const { commissionRateSchema } = require("./db-model.commons");
 
 const required = true;
@@ -32,4 +33,4 @@ const adminSchema = new mongoose.Schema(
         timestamps: true
     });
 
-module.exports = mongoose.model("admin", adminSchema, "admins");
+module.exports = mongoose.model(User.userTypes.Admin, adminSchema, "admins");

@@ -28,15 +28,16 @@ describe("/product-categories", () => {
         // @ts-ignore
         await mongoose.connect(env.DB_URL_TEST, { keepAlive: true });
         await adminsRepo.signUp({ ...adminCredentials });
-    });
-
-    beforeEach(async () => {
         request = supertest(makeApp());
         // @ts-ignore
         const { body } = await request.post("/admin/sign-in")
             .set("Api-Key", env.API_KEY)
             .send({ ...adminCredentials });
         accessToken = body.accessToken;
+    });
+
+    beforeEach(async () => {
+        request = supertest(makeApp());
     });
 
     afterAll(() => {

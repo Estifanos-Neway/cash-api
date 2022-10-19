@@ -1,5 +1,5 @@
 const adminResponses = require("./admin.responses");
-const tokensResponses = require("./tokens.responses");
+const sessionsResponses = require("./sessions.responses");
 const productCategoriesResponses = require("./product-categories.responses");
 const productResponses = require("./products.responses");
 const rt = require("../../commons/response-texts");
@@ -11,7 +11,7 @@ exports.Responses = {
         500: [createSingleResponse(rt.internalError)]
     },
     ...adminResponses,
-    ...tokensResponses,
+    ...sessionsResponses,
     ...productCategoriesResponses,
     ...productResponses
 };

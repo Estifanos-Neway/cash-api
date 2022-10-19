@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const { makeApp } = require("../../app");
 const rt = require("../../commons/response-texts");
-const { createUserData, createAccessToken, createSingleResponse } = require("../../controllers/controller-commons/functions");
+const { createSingleResponse } = require("../../controllers/controller-commons/functions");
+const { User } = require("../../entities");
 const { env } = require("../../env");
 
 describe("Miscellaneous", () => {
@@ -69,8 +70,8 @@ describe("Miscellaneous", () => {
 
         describe("Given invalid access token (non-admin)", () => {
             it(`Should return 401 and ${rt.invalidAccessToken}`, async () => {
-                const invalidUserData = createUserData("invalidUserId", "notAdmin");
-                const invalidAccessToken = createAccessToken(invalidUserData);
+                const invalidUser = new User({ userId: "invalidUserId", userType: User.userTypes.Affiliate });
+                const invalidAccessToken = invalidUser.createAccessToken();
                 const { body, statusCode } = await request.get(adminsPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${invalidAccessToken}`);

@@ -12,15 +12,14 @@ const {
     hasValue } = require("../commons/functions");
 const rt = require("../commons/response-texts");
 const {
-    createUserData,
-    createAccessToken,
     createSingleResponse,
     sendEmailVerification,
     sendEmailVerificationCode,
     sendSuccessResponse,
     catchInternalError } = require("./controller-commons/functions");
-const { jwtRefreshesRepo } = require("../repositories");
 const { adminsRepo } = require("../repositories");
+const { User } = require("../entities");
+const repoUtils = require("../repositories/repo.utils");
 const passwordRecoveryEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "password-recovery.html"), { encoding: "utf-8" });
 const emailVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "email-verification.html"), { encoding: "utf-8" });
 module.exports = Object.freeze({
@@ -32,12 +31,7 @@ module.exports = Object.freeze({
             } else {
                 const signedInAdmin = await adminsRepo.signIn({ username, passwordHash });
                 if (signedInAdmin) {
-                    const userData = createUserData(signedInAdmin.userId, "admin");
-                    // @ts-ignore
-                    const accessToken = createAccessToken(userData);
-                    // @ts-ignore
-                    const refreshToken = jwt.sign(userData, env.JWT_REFRESH_SECRETE);
-                    await jwtRefreshesRepo.add(refreshToken);
+                    const { refreshToken, accessToken } = await repoUtils.startSession({ userId: signedInAdmin.userId, userType: User.userTypes.Admin });
                     const response = {
                         admin: signedInAdmin,
                         accessToken,

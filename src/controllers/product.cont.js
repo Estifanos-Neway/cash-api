@@ -3,6 +3,7 @@ const multer = require("multer");
 const streamifier = require("streamifier");
 const { hasSingleValue, isPositiveNumber, isNonEmptyString, createUid, isImageMime } = require("../commons/functions");
 const rt = require("../commons/response-texts");
+const { User } = require("../entities");
 const { productsRepo, filesRepo } = require("../repositories");
 const { createSingleResponse, sendInvalidInputResponse, sendInternalErrorResponse, sendSuccessResponse, catchInternalError } = require("./controller-commons/functions");
 
@@ -236,7 +237,7 @@ module.exports = Object.freeze({
         catchInternalError(res, async () => {
             const userType = req.user?.userType;
             const productId = req.params.productId;
-            const product = await productsRepo.getOne(productId, userType !== "admin");
+            const product = await productsRepo.getOne(productId, userType !== User.userTypes.Admin);
             if (product === null) {
                 res.status(404).json(createSingleResponse(rt.productNotFound));
             } else {

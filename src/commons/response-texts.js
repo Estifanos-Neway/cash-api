@@ -25,7 +25,6 @@ module.exports = {
 
     productNameAlreadyExist: "Product_Name_Already_Exist",
     productNotFound: "Product_Not_Found",
-    noneMatchingTokens: "None_Matching_Tokens",
     cantFindValidEmail: "Can_Not_Find_Valid_Recovery_Email",
     expiredToken: "Expired_Token",
     requiredParamsNotFound: "Required_Params_Not_Found",

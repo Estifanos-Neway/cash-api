@@ -10,7 +10,7 @@
     "test": "jest",
     "test-miscellaneous": "jest miscellaneous.test",
     "test-admin.router": "jest admin.router.test",
-    "test-tokens.router": "jest tokens.router.test",
+    "test-sessions.router": "jest sessions.router.test",
     "test-product-categories.router": "jest product-categories.router.test",
     "test-products.router": "jest products.router.test"
   },

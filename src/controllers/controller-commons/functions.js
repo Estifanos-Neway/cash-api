@@ -3,19 +3,10 @@ const rt = require("../../commons/response-texts");
 const { env } = require("../../env");
 const utils = require("../../commons/functions");
 const { urls } = require("../../config.json");
-const { accessTokenExpiresIn, verificationTokenExpiresIn } = require("../../commons/variables");
+const { verificationTokenExpiresIn } = require("../../commons/variables");
 
 function createSingleResponse(response) {
     return { message: response };
-}
-
-function createUserData(userId, userType) {
-    return { userId, userType, rand: Math.random() };
-}
-
-function createAccessToken(userData, expiresIn = `${accessTokenExpiresIn}ms`) {
-    // @ts-ignore
-    return jwt.sign(userData, env.JWT_SECRETE, { expiresIn });
 }
 
 function getAccessToken(authHeader) {
@@ -72,8 +63,6 @@ async function catchInternalError(res, task) {
 }
 module.exports = {
     createSingleResponse,
-    createAccessToken,
-    createUserData,
     getAccessToken,
     sendInvalidInputResponse,
     sendEmailVerificationCode,

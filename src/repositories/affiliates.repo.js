@@ -1,14 +1,12 @@
 const fs = require("fs");
 const path = require("path");
-const jwt = require("jsonwebtoken");
 const utils = require("../commons/functions");
 const rc = require("../commons/response-codes");
 const rt = require("../commons/response-texts");
 const { verificationTokenExpiresIn } = require("../commons/variables");
-const { createUserData, createAccessToken } = require("../controllers/controller-commons/functions");
-const { affiliatesDb, jwtRefreshesDb } = require("../database");
-const { Affiliate } = require("../entities");
-const { env } = require("../env");
+const { affiliatesDb } = require("../database");
+const { Affiliate, User } = require("../entities");
+const repoUtils = require("./repo.utils");
 const signUpVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-sign-up-verification-email.html"), { encoding: "utf-8" });
 
 module.exports = Object.freeze({
@@ -73,11 +71,7 @@ module.exports = Object.freeze({
                 const affiliate = new Affiliate(signUpVerificationObject.affiliate);
                 try {
                     const signedUpAffiliate = await affiliatesDb.create(affiliate);
-                    const userData = createUserData(signedUpAffiliate.userId, "affiliate");
-                    const accessToken = createAccessToken(userData);
-                    // @ts-ignore
-                    const refreshToken = jwt.sign(userData, env.JWT_REFRESH_SECRETE);
-                    await jwtRefreshesDb.create(refreshToken);
+                    const { refreshToken, accessToken } = await repoUtils.startSession({ userId: signedUpAffiliate.userId, userType: User.userTypes.Affiliate });
                     return {
                         affiliate: signedUpAffiliate.toJson(),
                         accessToken,

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const utils = require("../../commons/functions");
+const { User } = require("../../entities");
 const { imageJsonSchema } = require("./db-model.commons");
 
 const required = true;
@@ -57,4 +58,4 @@ affiliateSchema.pre("save", function (next) {
     next();
 });
 
-module.exports = mongoose.model("affiliate", affiliateSchema, "affiliates");
+module.exports = mongoose.model(User.userTypes.Affiliate, affiliateSchema, "affiliates");
