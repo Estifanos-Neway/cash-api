@@ -139,5 +139,15 @@ module.exports = {
         // @ts-ignore
         error.code = code;
         return error;
+    },
+    sanitizeEmail: (originalEmail) => {
+        if (isEmail(originalEmail) && /@gmail\.com$/.test(originalEmail)) {
+            let sanitized = originalEmail.split("@")[0];
+            sanitized = sanitized.split("+")[0];
+            sanitized = sanitized.replaceAll(".", "");
+            return sanitized+"@gmail.com";
+        } else {
+            return originalEmail;
+        }
     }
 };

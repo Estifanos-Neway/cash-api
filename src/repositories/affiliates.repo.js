@@ -26,7 +26,7 @@ module.exports = Object.freeze({
         } else if (!affiliate.hasValidParentId()) {
             throw utils.createError(rt.invalidParentId, rc.invalidInput);
         } else {
-            const emailAlreadyExist = await affiliatesDb.exists({ email });
+            const emailAlreadyExist = await affiliatesDb.exists({ sanitizedEmail: utils.sanitizeEmail(affiliate.email) });
             if (emailAlreadyExist) {
                 throw utils.createError(rt.affiliateEmailAlreadyExist, rc.alreadyExist);
             } else {

@@ -28,6 +28,14 @@ const affiliateSchema = new mongoose.Schema(
                 message: "Invalid_Email"
             }
         },
+        sanitizedEmail: {
+            type: String,
+            unique: true,
+            validate: {
+                validator: (value) => utils.isEmail(value),
+                message: "Invalid_Email"
+            }
+        },
         passwordHash: {
             type: String,
             required
@@ -43,5 +51,10 @@ const affiliateSchema = new mongoose.Schema(
         }
     }
 );
+// @ts-ignore
+affiliateSchema.pre("save", function (next) {
+    this.sanitizedEmail = utils.sanitizeEmail(this.email);
+    next();
+});
 
 module.exports = mongoose.model("affiliate", affiliateSchema, "affiliates");

@@ -32,7 +32,16 @@ module.exports = class Affiliate {
     }
 
     // email
-    email;
+    #email;
+    set email(email) {
+        if (_.isString(email)) {
+            email = email.toLowerCase();
+        }
+        this.#email = email;
+    }
+    get email() {
+        return this.#email;
+    }
     hasValidEmail(strict) {
         const email = this.email;
         return utils.isEmail(email) || (!strict && _.isUndefined(email));
