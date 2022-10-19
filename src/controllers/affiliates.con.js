@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 const rc = require("../commons/response-codes");
 const { affiliatesRepo } = require("../repositories");
-const { catchInternalError, createSingleResponse } = require("./controller-commons/functions");
+const { catchInternalError, createSingleResponse, sendSuccessResponse } = require("./controller-commons/functions");
 const sc = require("./controller-commons/status-codes");
 
 module.exports = Object.freeze({
@@ -58,6 +58,25 @@ module.exports = Object.freeze({
                         break;
                     case rc.unauthorized:
                         res.status(sc.unauthorized).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
+    },
+    forgotPassword: (req, res) => {
+        catchInternalError(res, async () => {
+            try {
+                await affiliatesRepo.forgotPassword(req.body);
+                sendSuccessResponse(res);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.notFound:
+                        res.status(sc.notFound).json(createSingleResponse(error.message));
                         break;
                     default:
                         throw error;

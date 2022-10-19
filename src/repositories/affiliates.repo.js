@@ -4,11 +4,13 @@ const path = require("path");
 const utils = require("../commons/functions");
 const rc = require("../commons/response-codes");
 const rt = require("../commons/response-texts");
-const { verificationTokenExpiresIn } = require("../commons/variables");
+const vars = require("../commons/variables");
+const configs = require("../config.json");
 const { affiliatesDb } = require("../database");
 const { Affiliate, User } = require("../entities");
 const repoUtils = require("./repo.utils");
 const signUpVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-sign-up-verification-email.html"), { encoding: "utf-8" });
+const passwordRecoveryEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-password-recovery.html"), { encoding: "utf-8" });
 
 const strict = true;
 module.exports = Object.freeze({
@@ -38,9 +40,8 @@ module.exports = Object.freeze({
                     const subject = "Email Verification";
                     // @ts-ignore
                     const html = signUpVerificationEmail.replaceAll("__verificationCode__", verificationCode);
-                    // clean
-                    // await utils.sendEmail({ subject, html, to: email });
-                    const validUntil = new Date().getTime() + verificationTokenExpiresIn;
+                    await utils.sendEmail({ subject, html, to: email });
+                    const validUntil = new Date().getTime() + vars.verificationTokenExpiresIn;
                     const signUpVerificationToken = utils.encrypt(JSON.stringify({
                         affiliate: {
                             fullName,
@@ -125,5 +126,28 @@ module.exports = Object.freeze({
                 };
             }
         }
+    },
+    forgotPassword: async ({ email }) => {
+        // @ts-ignore
+        const affiliate = new Affiliate({ email });
+        if (!affiliate.hasValidEmail(strict)) {
+            throw utils.createError(rt.invalidEmail, rc.invalidInput);
+        } else {
+            const emailExist = await affiliatesDb.exists({ sanitizedEmail: utils.sanitizeEmail(affiliate.email) });
+            if (!emailExist) {
+                throw utils.createError(rt.userNotFound, rc.notFound);
+            } else {
+                const affiliateId = emailExist.affiliateId;
+                const validUntil = new Date().getTime() + vars.verificationTokenExpiresIn;
+                const recoveryObject = { affiliateId, validUntil };
+                const recoveryToken = utils.encrypt(JSON.stringify(recoveryObject));
+                const recoveryLink = `${configs.urls.baseUrl}${configs.urls.passwordRecoveryPath}?u=affiliate&t=${recoveryToken}`;
+                const subject = "Password Recovery";
+                // @ts-ignore
+                const html = passwordRecoveryEmail.replaceAll("__recoveryLink__", recoveryLink);
+                await utils.sendEmail({ subject, html, to: email });
+            }
+        }
+
     }
 });
