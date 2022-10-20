@@ -3,7 +3,7 @@ const { pipe } = require("../commons/functions");
 const rt = require("../commons/response-texts");
 
 module.exports = Object.freeze({
-    bucketNames: { productImages: "product_images" },
+    bucketNames: { productImages: "product_images", avatars: "avatars" },
     upload: async ({ readStream, fileName, bucketName }) => {
         const gridfsBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, { bucketName });
         const writeStream = gridfsBucket.openUploadStream(fileName);
@@ -22,7 +22,7 @@ module.exports = Object.freeze({
             }
         }
     },
-    delete: async (fileName, bucketName) => {
+    delete: async ({fileName, bucketName}) => {
         const gridfsBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, { bucketName });
         const file = await gridfsBucket.find({ filename: fileName }).next();
         if (file) {

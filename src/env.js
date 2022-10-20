@@ -9,7 +9,6 @@ exports.env = {
     DB_URL: environment.DB_URL,
     DB_URL_TEST: environment.DB_URL_TEST,
     PORT: environment.PORT,
-    CORS_WHITE_LIST: environment.CORS_WHITE_LIST,
     EMAIL_FROM: environment.EMAIL_FROM,
     SMTP_URL: environment.SMTP_URL,
     PRIVATE_KEY: environment.PRIVATE_KEY,

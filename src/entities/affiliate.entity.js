@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const utils = require("../commons/functions");
-const Image = require("./entity-commons/image.entity");
+const Image = require("./image.entity");
 
 module.exports = class Affiliate {
     // userId

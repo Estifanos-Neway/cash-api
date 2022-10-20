@@ -1,0 +1,3 @@
+v-
+- /tokens is changed to /sessions
+- cors whitelist is moved from `.env` to `config.json`

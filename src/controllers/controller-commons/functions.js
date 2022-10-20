@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const rt = require("../../commons/response-texts");
+const sc = require("./status-codes");
 const { env } = require("../../env");
 const utils = require("../../commons/functions");
 const { urls } = require("../../config.json");
@@ -17,21 +18,9 @@ function getAccessToken(authHeader) {
     }
 }
 
-function sendSuccessResponse(res) {
-    res.json(createSingleResponse(rt.success));
-}
-
-function sendRequiredParamsNotFoundResponse(res) {
-    res.status(400).json(createSingleResponse(rt.requiredParamsNotFound));
-}
-
-function sendInvalidInputResponse(res) {
-    res.status(400).json(createSingleResponse(rt.invalidInput));
-}
-
 function sendInternalErrorResponse(error, res) {
     utils.errorLog("Internal_Error", error);
-    res.status(500).json(createSingleResponse(rt.internalError));
+    res.status(sc.internalError).json(createSingleResponse(rt.internalError));
 }
 
 async function sendEmailVerificationCode({ email, subject, html }) {
@@ -53,22 +42,29 @@ async function sendEmailVerification({ email, path, subject, html }) {
     await utils["sendEmail"]({ subject, html, to: email });
 }
 
-
-async function catchInternalError(res, task) {
-    try {
-        await task();
-    } catch (error) {
-        sendInternalErrorResponse(error, res);
-    }
-}
 module.exports = {
     createSingleResponse,
     getAccessToken,
-    sendInvalidInputResponse,
     sendEmailVerificationCode,
     sendEmailVerification,
+    sendSuccessResponse: (res) => {
+        res.json(createSingleResponse(rt.success));
+    },
+    sendInvalidInputResponse: (res) => {
+        res.status(sc.invalidInput).json(createSingleResponse(rt.invalidInput));
+    },
+    sendRequiredParamsNotFoundResponse: (res) => {
+        res.status(sc.invalidInput).json(createSingleResponse(rt.requiredParamsNotFound));
+    },
+    sendUnauthorizedResponse: (res) => {
+        res.status(sc.unauthorized).json(createSingleResponse(rt.unauthorized));
+    },
     sendInternalErrorResponse,
-    sendSuccessResponse,
-    sendRequiredParamsNotFoundResponse,
-    catchInternalError
+    catchInternalError: async (res, task) => {
+        try {
+            await task();
+        } catch (error) {
+            sendInternalErrorResponse(error, res);
+        }
+    }
 };

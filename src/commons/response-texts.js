@@ -47,6 +47,7 @@ module.exports = {
 
     // HTTP
     success: "OK",
+    unauthorized: "Not_Authorized",
     pathNotFound: "Path_Not_Found",
     tooManyRequests: "Too_Many_Requests",
     internalError: "Internal_Error",

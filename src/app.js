@@ -9,6 +9,7 @@ const {
     authenticateByToken,
     forceApiKey } = require("./controllers/middlewares");
 const { env } = require("./env");
+const config = require("./config.json");
 const rt = require("./commons/response-texts");
 const {
     defaultPort,
@@ -47,7 +48,7 @@ exports.makeApp = () => {
     app.use(limiter);
     app.use(cors(
         {
-            origin: env.CORS_WHITE_LIST?.split(","),
+            origin: config.corsWhiteList,
             optionsSuccessStatus: 200
         }
     ));

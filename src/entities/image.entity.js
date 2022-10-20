@@ -1,4 +1,4 @@
-const { removeUndefined } = require("../../commons/functions");
+const { removeUndefined } = require("../commons/functions");
 
 module.exports = class Image {
     path;

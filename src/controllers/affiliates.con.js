@@ -1,9 +1,12 @@
 /* eslint-disable indent */
+const multer = require("multer");
+const streamifier = require("streamifier");
 const rc = require("../commons/response-codes");
-const { affiliatesRepo } = require("../repositories");
-const { catchInternalError, createSingleResponse, sendSuccessResponse } = require("./controller-commons/functions");
 const sc = require("./controller-commons/status-codes");
+const { affiliatesRepo } = require("../repositories");
+const { catchInternalError, createSingleResponse, sendSuccessResponse, sendInvalidInputResponse, sendUnauthorizedResponse } = require("./controller-commons/functions");
 
+const catchAvatarMid = multer().single("avatar");
 module.exports = Object.freeze({
     signUp: (req, res) => {
         catchInternalError(res, async () => {
@@ -81,6 +84,65 @@ module.exports = Object.freeze({
                     default:
                         throw error;
                 }
+            }
+        });
+    },
+    recoverPassword: (req, res) => {
+        catchInternalError(res, async () => {
+            try {
+                await affiliatesRepo.recoverPassword(req.body);
+                sendSuccessResponse(res);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.timeout:
+                        res.status(sc.timeout).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
+    },
+    updateAvatar: (req, res) => {
+        catchInternalError(res, async () => {
+            const { userId } = req.params;
+            if (userId !== req.user.userId) {
+                sendUnauthorizedResponse(res);
+            } else {
+                catchAvatarMid(req, res, (error) => {
+                    catchInternalError(res, async () => {
+                        if (error && error.message !== "Unexpected field") {
+                            if (error.message === "Unexpected end of form") {
+                                sendInvalidInputResponse(res);
+                            } else {
+                                throw error;
+                            }
+                        } else {
+                            const imageBuffer = req.file?.buffer;
+                            if (!imageBuffer) {
+                                sendInvalidInputResponse(res);
+                            } else {
+                                const imageReadStream = streamifier.createReadStream(imageBuffer);
+                                const avatar = await affiliatesRepo.updateAvatar({ userId, imageReadStream });
+                                res.json({ avatar });
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    },
+    deleteAvatar: (req, res) => {
+        catchInternalError(res, async () => {
+            const userId = req.params.userId;
+            if (userId !== req.user.userId) {
+                sendUnauthorizedResponse(res);
+            } else {
+                await affiliatesRepo.deleteAvatar({ userId });
+                sendSuccessResponse(res);
             }
         });
     }

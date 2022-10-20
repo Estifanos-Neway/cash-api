@@ -9,5 +9,6 @@
     "passwordRecoveryPath": "/password-recovery",
     "emailVerificationPath": "/verify-email"
   },
-  "defaultCountryForPhone": "ETH"
+  "defaultCountryForPhone": "ETH",
+  "corsWhiteList": []
 }
