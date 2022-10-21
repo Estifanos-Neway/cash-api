@@ -246,5 +246,18 @@ module.exports = Object.freeze({
         await filesDb.delete({ fileName, bucketName });
         await affiliatesDb.updateOne({ id: userId }, { avatar: undefined });
         return true;
+    },
+    getOne: async ({ userId }) => {
+        const affiliate = await affiliatesDb.findOne({ id: userId });
+        if (!affiliate) {
+            throw utils.createError(rt.userNotFound, rc.notFound);
+        } else {
+            return adaptAffiliate(affiliate);
+        }
+    },
+    getMany: async () => {
+        const affiliatesList = await affiliatesDb.findMany();
+        return affiliatesList.map(affiliate => adaptAffiliate(affiliate));
+
     }
 });
