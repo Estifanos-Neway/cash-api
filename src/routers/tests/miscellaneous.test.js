@@ -48,28 +48,28 @@ describe("Miscellaneous", () => {
 
     describe(`Forcing Access Token: ${adminsPath} GET`, () => {
         describe("Given no access token", () => {
-            it(`Should return 401 and ${rt.invalidAccessToken}`, async () => {
+            it(`Should return 401 and ${rt.unauthorized}`, async () => {
                 const { body, statusCode } = await request.get(adminsPath)
                     .set("Api-Key", env.API_KEY);
 
                 expect(statusCode).toBe(401);
-                expect(body).toEqual(createSingleResponse(rt.invalidAccessToken));
+                expect(body).toEqual(createSingleResponse(rt.unauthorized));
             });
         });
 
         describe("Given invalid access token (format)", () => {
-            it(`Should return 401 and ${rt.invalidAccessToken}`, async () => {
+            it(`Should return 401 and ${rt.unauthorized}`, async () => {
                 const { body, statusCode } = await request.get(adminsPath)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", "Bearer invalidAccessToken");
 
                 expect(statusCode).toBe(401);
-                expect(body).toEqual(createSingleResponse(rt.invalidAccessToken));
+                expect(body).toEqual(createSingleResponse(rt.unauthorized));
             });
         });
 
         describe("Given invalid access token (non-admin)", () => {
-            it(`Should return 401 and ${rt.invalidAccessToken}`, async () => {
+            it(`Should return 401 and ${rt.unauthorized}`, async () => {
                 const invalidUser = new User({ userId: "invalidUserId", userType: User.userTypes.Affiliate });
                 const invalidAccessToken = invalidUser.createAccessToken();
                 const { body, statusCode } = await request.get(adminsPath)
@@ -77,7 +77,7 @@ describe("Miscellaneous", () => {
                     .set("Authorization", `Bearer ${invalidAccessToken}`);
 
                 expect(statusCode).toBe(401);
-                expect(body).toEqual(createSingleResponse(rt.invalidAccessToken));
+                expect(body).toEqual(createSingleResponse(rt.unauthorized));
             });
         });
     });

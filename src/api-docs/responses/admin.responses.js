@@ -12,7 +12,7 @@ module.exports = {
     "/admin": {
         "GET": {
             200: ["<adminDataObject>"],
-            401: [createSingleResponse(rt.invalidAccessToken)],
+            401: [createSingleResponse(rt.unauthorized)],
             404: [createSingleResponse(rt.userNotFound)]
         }
     },
@@ -22,7 +22,7 @@ module.exports = {
             400: [
                 createSingleResponse(rt.invalidInput),
             ],
-            401: [createSingleResponse(rt.invalidAccessToken)],
+            401: [createSingleResponse(rt.unauthorized)],
             404: [createSingleResponse(rt.userNotFound)]
         }
     },
@@ -33,14 +33,14 @@ module.exports = {
                 createSingleResponse(rt.invalidInput),
                 createSingleResponse(rt.wrongPasswordHash)
             ],
-            401: [createSingleResponse(rt.invalidAccessToken)],
+            401: [createSingleResponse(rt.unauthorized)],
             404: [createSingleResponse(rt.userNotFound)]
         }
     },
     "/admin/settings": {
         "GET": {
             200: ["<adminSettingsObject>"],
-            401: [createSingleResponse(rt.invalidAccessToken)],
+            401: [createSingleResponse(rt.unauthorized)],
             404: [createSingleResponse(rt.userNotFound)]
         },
         "PATCH": {
@@ -49,7 +49,7 @@ module.exports = {
                 createSingleResponse(rt.invalidInput),
                 createSingleResponse(rt.invalidCommissionRate)
             ],
-            401: [createSingleResponse(rt.invalidAccessToken)],
+            401: [createSingleResponse(rt.unauthorized)],
             404: [createSingleResponse(rt.userNotFound)]
         }
     },
@@ -62,7 +62,7 @@ module.exports = {
                 createSingleResponse(rt.invalidInput),
                 createSingleResponse(rt.invalidEmail)
             ],
-            401: [createSingleResponse(rt.invalidAccessToken)],
+            401: [createSingleResponse(rt.unauthorized)],
             404: [createSingleResponse(rt.userNotFound)]
         }
     },
@@ -76,7 +76,7 @@ module.exports = {
                 createSingleResponse(rt.invalidVerificationCode),
                 createSingleResponse(rt.userNotFound)
             ],
-            401: [createSingleResponse(rt.invalidAccessToken)],
+            401: [createSingleResponse(rt.unauthorized)],
             408: [createSingleResponse(rt.expiredToken)]
         }
     },

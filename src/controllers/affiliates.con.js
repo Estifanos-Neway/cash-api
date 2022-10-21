@@ -4,7 +4,7 @@ const streamifier = require("streamifier");
 const rc = require("../commons/response-codes");
 const sc = require("./controller-commons/status-codes");
 const { affiliatesRepo } = require("../repositories");
-const { catchInternalError, createSingleResponse, sendSuccessResponse, sendInvalidInputResponse, sendUnauthorizedResponse } = require("./controller-commons/functions");
+const { catchInternalError, createSingleResponse, sendSuccessResponse, sendInvalidInputResponse } = require("./controller-commons/functions");
 
 const catchAvatarMid = multer().single("avatar");
 module.exports = Object.freeze({
@@ -109,41 +109,58 @@ module.exports = Object.freeze({
     updateAvatar: (req, res) => {
         catchInternalError(res, async () => {
             const { userId } = req.params;
-            if (userId !== req.user.userId) {
-                sendUnauthorizedResponse(res);
-            } else {
-                catchAvatarMid(req, res, (error) => {
-                    catchInternalError(res, async () => {
-                        if (error && error.message !== "Unexpected field") {
-                            if (error.message === "Unexpected end of form") {
-                                sendInvalidInputResponse(res);
-                            } else {
-                                throw error;
-                            }
+            catchAvatarMid(req, res, (error) => {
+                catchInternalError(res, async () => {
+                    if (error && error.message !== "Unexpected field") {
+                        if (error.message === "Unexpected end of form") {
+                            sendInvalidInputResponse(res);
                         } else {
-                            const imageBuffer = req.file?.buffer;
-                            if (!imageBuffer) {
-                                sendInvalidInputResponse(res);
-                            } else {
-                                const imageReadStream = streamifier.createReadStream(imageBuffer);
-                                const avatar = await affiliatesRepo.updateAvatar({ userId, imageReadStream });
-                                res.json({ avatar });
-                            }
+                            throw error;
                         }
-                    });
+                    } else {
+                        const imageBuffer = req.file?.buffer;
+                        if (!imageBuffer) {
+                            sendInvalidInputResponse(res);
+                        } else {
+                            const imageReadStream = streamifier.createReadStream(imageBuffer);
+                            const avatar = await affiliatesRepo.updateAvatar({ userId, imageReadStream });
+                            res.json({ avatar });
+                        }
+                    }
                 });
-            }
+            });
+
         });
     },
     deleteAvatar: (req, res) => {
         catchInternalError(res, async () => {
             const userId = req.params.userId;
-            if (userId !== req.user.userId) {
-                sendUnauthorizedResponse(res);
-            } else {
-                await affiliatesRepo.deleteAvatar({ userId });
-                sendSuccessResponse(res);
+            await affiliatesRepo.deleteAvatar({ userId });
+            sendSuccessResponse(res);
+        });
+    },
+    getOne: (req, res) => {
+        catchInternalError(res, async () => {
+            const userId = req.params.userId;
+            try {
+                const affiliate = await affiliatesRepo.getOne({ userId });
+                res.json(affiliate);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.notFound:
+                        res.status(sc.notFound).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
             }
         });
-    }
+    },
+    getMany: (req, res) => {
+        catchInternalError(res, async () => {
+            const getManyQueries = req.query;
+            const affiliates = await affiliatesRepo.getMany(getManyQueries);
+            res.json(affiliates);
+        });
+    },
 });

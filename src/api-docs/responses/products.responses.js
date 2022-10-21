@@ -10,7 +10,7 @@ module.exports = {
                 createSingleResponse(rt.invalidInput),
                 createSingleResponse(rt.requiredParamsNotFound)
             ],
-            401: [createSingleResponse(rt.invalidAccessToken)],
+            401: [createSingleResponse(rt.unauthorized)],
             409: [createSingleResponse(rt.productNameAlreadyExist)]
         },
         "GET": {
@@ -38,13 +38,13 @@ module.exports = {
                 createSingleResponse(rt.invalidJsonString),
                 createSingleResponse(rt.invalidInput)
             ],
-            401: [createSingleResponse(rt.invalidAccessToken)],
+            401: [createSingleResponse(rt.unauthorized)],
             404: [createSingleResponse(rt.productNotFound)],
             409: [createSingleResponse(rt.productNameAlreadyExist)]
         },
         "DELETE": {
             200: [createSingleResponse(rt.success)],
-            401: [createSingleResponse(rt.invalidAccessToken)],
+            401: [createSingleResponse(rt.unauthorized)],
             404: [createSingleResponse(rt.productNotFound)]
         }
     }

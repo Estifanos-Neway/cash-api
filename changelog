@@ -1,3 +1,4 @@
 v-
 - /tokens is changed to /sessions
 - cors whitelist is moved from `.env` to `config.json`
+- changed "Invalid_Access_Token" to "Not_Authorized" for status code 401

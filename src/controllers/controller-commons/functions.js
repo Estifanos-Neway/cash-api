@@ -10,43 +10,37 @@ function createSingleResponse(response) {
     return { message: response };
 }
 
-function getAccessToken(authHeader) {
-    if (utils.isNonEmptyString(authHeader)) {
-        return authHeader.split(" ")[1];
-    } else {
-        return null;
-    }
-}
-
 function sendInternalErrorResponse(error, res) {
     utils.errorLog("Internal_Error", error);
     res.status(sc.internalError).json(createSingleResponse(rt.internalError));
 }
 
-async function sendEmailVerificationCode({ email, subject, html }) {
-    const verificationCode = utils["createVerificationCode"]();
-    html = html.replaceAll("__verificationCode__", verificationCode);
-    await utils["sendEmail"]({ subject, html, to: email });
-    const validUntil = new Date().getTime() + verificationTokenExpiresIn;
-    const verificationObject = { email, verificationCode, validUntil };
-    return utils.encrypt(JSON.stringify(verificationObject));
-}
-
-async function sendEmailVerification({ email, path, subject, html }) {
-    const validUntil = new Date().getTime() + verificationTokenExpiresIn;
-    const verificationObject = { email, validUntil };
-    // @ts-ignore
-    const verificationToken = jwt.sign(verificationObject, env.JWT_SECRETE);
-    const verificationLink = `${urls.baseUrl}${path}?t=${verificationToken}`;
-    html = html.replaceAll("__verificationLink__", verificationLink);
-    await utils["sendEmail"]({ subject, html, to: email });
-}
-
 module.exports = {
     createSingleResponse,
-    getAccessToken,
-    sendEmailVerificationCode,
-    sendEmailVerification,
+    getAccessToken: (authHeader) => {
+        if (utils.isNonEmptyString(authHeader)) {
+            return authHeader.split(" ")[1];
+        } else {
+            return null;
+        }
+    },
+    sendEmailVerificationCode: async ({ email, subject, html }) => {
+        const verificationCode = utils["createVerificationCode"]();
+        html = html.replaceAll("__verificationCode__", verificationCode);
+        await utils["sendEmail"]({ subject, html, to: email });
+        const validUntil = new Date().getTime() + verificationTokenExpiresIn;
+        const verificationObject = { email, verificationCode, validUntil };
+        return utils.encrypt(JSON.stringify(verificationObject));
+    },
+    sendEmailVerification: async ({ email, path, subject, html }) => {
+        const validUntil = new Date().getTime() + verificationTokenExpiresIn;
+        const verificationObject = { email, validUntil };
+        // @ts-ignore
+        const verificationToken = jwt.sign(verificationObject, env.JWT_SECRETE);
+        const verificationLink = `${urls.baseUrl}${path}?t=${verificationToken}`;
+        html = html.replaceAll("__verificationLink__", verificationLink);
+        await utils["sendEmail"]({ subject, html, to: email });
+    },
     sendSuccessResponse: (res) => {
         res.json(createSingleResponse(rt.success));
     },

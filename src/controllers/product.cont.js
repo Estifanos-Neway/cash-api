@@ -121,8 +121,6 @@ async function validateProductMid(req, res, next) {
     });
 }
 
-const findManyDefaultLimit = 8;
-const findManyMaxLimit = 20;
 module.exports = Object.freeze({
     create: async (req, res) => {
         catchInternalError(res, async () => {
@@ -152,25 +150,7 @@ module.exports = Object.freeze({
     },
     getMany: async (req, res) => {
         catchInternalError(res, async () => {
-            let { search, filter, categories, skip, limit, select, sort } = req.query;
-
-            try {
-                search = _.isUndefined(search) ? {} : JSON.parse(search);
-            } catch (error) {
-                res.status(400).json(createSingleResponse(rt.invalidSearchQuery));
-                return;
-            }
-            for (let key of Object.keys(search)) {
-                search[key] = new RegExp(search[key].toString(), "i");
-            }
-
-            try {
-                filter = _.isUndefined(filter) ? {} : JSON.parse(filter);
-            } catch (error) {
-                res.status(400).json(createSingleResponse(rt.invalidFilterQuery));
-                return;
-            }
-            filter = { ...search, ...filter };
+            let { filter, categories, skip, limit, select, sort } = req.query;
 
             try {
                 categories = _.isUndefined(categories) ? [] : JSON.parse(categories);
@@ -188,47 +168,6 @@ module.exports = Object.freeze({
                 return;
             }
 
-            try {
-                select = _.isUndefined(select) ? [] : JSON.parse(select);
-                if (!_.isArray(select)) {
-                    throw new Error();
-                } else {
-                    for (const element of select) {
-                        if (!_.isString(element)) {
-                            throw new Error();
-                        }
-                    }
-                }
-            } catch (error) {
-                res.status(400).json(createSingleResponse(rt.invalidSelectQuery));
-                return;
-            }
-
-            skip = _.isUndefined(skip) ? undefined : Number.parseInt(skip);
-            if (!_.isUndefined(skip) && !isPositiveNumber(skip)) {
-                res.status(400).json(createSingleResponse(rt.invalidSkipQuery));
-                return;
-            }
-
-            limit = _.isUndefined(limit) ? undefined : Number.parseInt(limit);
-            if (!_.isUndefined(limit) && !isPositiveNumber(limit)) {
-                res.status(400).json(createSingleResponse(rt.invalidLimitQuery));
-                return;
-            }
-            limit = _.isUndefined(limit) ? findManyDefaultLimit : limit < findManyMaxLimit ? limit : findManyMaxLimit;
-
-            try {
-                sort = _.isUndefined(sort) ? {} : JSON.parse(sort);
-                for (let key of Object.keys(sort)) {
-                    if (sort[key] !== -1 && sort[key] !== 1) {
-                        throw new Error();
-                    }
-                }
-            } catch (error) {
-                res.status(400).json(createSingleResponse(rt.invalidSortQuery));
-                return;
-            }
-            sort = _.isEmpty(sort) ? { createdAt: -1 } : sort;
             const products = await productsRepo.getMany({ filter, categories, skip, limit, select, sort });
             res.json(products.map(product => product.toJson()));
         });

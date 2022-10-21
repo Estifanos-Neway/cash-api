@@ -1,5 +1,4 @@
 module.exports = {
-    invalidAccessToken: "Invalid_Access_Token",
     invalidInput: "Invalid_Input",
     invalidRefreshToken: "Invalid_Refresh_Token",
     invalidCommissionRate: "Invalid_Commission_Rate",
