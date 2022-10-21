@@ -158,9 +158,40 @@ module.exports = Object.freeze({
     },
     getMany: (req, res) => {
         catchInternalError(res, async () => {
+            try {
+                const getManyQueries = req.query;
+                const affiliates = await affiliatesRepo.getMany({ getManyQueries });
+                res.json(affiliates);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
+    },
+    getChildren: (req, res) => {
+        catchInternalError(res, async () => {
+            const userId = req.params.userId;
             const getManyQueries = req.query;
-            const affiliates = await affiliatesRepo.getMany(getManyQueries);
-            res.json(affiliates);
+            try {
+                const children = await affiliatesRepo.getChildren({ userId, getManyQueries });
+                res.json(children);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.notFound:
+                        res.status(sc.notFound).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
         });
     },
 });

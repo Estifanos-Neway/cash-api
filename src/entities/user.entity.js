@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const utils = require("../commons/functions");
 const vars = require("../commons/variables");
@@ -59,5 +60,9 @@ module.exports = class User {
         const userJson = jwt.verify(refreshToken, env.JWT_REFRESH_SECRETE);
         // @ts-ignore
         return new User(userJson);
+    }
+
+    static isValidUserId(userId) {
+        return mongoose.Types.ObjectId.isValid(userId);
     }
 };

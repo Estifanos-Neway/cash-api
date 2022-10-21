@@ -127,6 +127,12 @@ module.exports = Object.freeze({
             } else {
                 const affiliate = new Affiliate(signUpVerificationObject.affiliate);
                 try {
+                    if (affiliate.parentId) {
+                        const parentExists = await affiliatesDb.exists({ id: affiliate.parentId });
+                        if (!parentExists) {
+                            affiliate.parentId = undefined;
+                        }
+                    }
                     const signedUpAffiliate = await affiliatesDb.create(affiliate);
                     const { refreshToken, accessToken } = await repoUtils.startSession({ userId: signedUpAffiliate.userId, userType: User.userTypes.Affiliate });
                     return {
@@ -255,8 +261,37 @@ module.exports = Object.freeze({
             return adaptAffiliate(affiliate);
         }
     },
-    getMany: async ({ filter, skip, limit, select, sort }) => {
+    getMany: async ({ getManyQueries }) => {
+        let { filter, skip, limit, select, sort } = repoUtils.validateGetManyQuery({ getManyQueries, defaultLimit: 8, maxLimit: 20 });
+        sort = _.isEmpty(sort) ? { memberSince: -1 } : sort;
         const affiliatesList = await affiliatesDb.findMany({ filter, skip, limit, select, sort });
         return affiliatesList.map(affiliate => adaptAffiliate(affiliate));
+    },
+    getChildren: async ({ userId, getManyQueries }) => {
+        let { skip, limit, sort } = repoUtils.validateGetManyQuery({ getManyQueries, defaultLimit: 8, maxLimit: 20 });
+        sort = _.isEmpty(sort) ? { memberSince: -1 } : sort;
+        if (!User.isValidUserId(userId)) {
+            throw utils.createError(rt.invalidUserId, rc.invalidInput);
+        } else {
+            const affiliate = await affiliatesDb.findOne({ id: userId });
+            if (!affiliate) {
+                throw utils.createError(rt.userNotFound, rc.notFound);
+            } else {
+                const childrenList = [];
+                // @ts-ignore
+                const children = await affiliatesDb.findMany({ filter: { parentId: userId }, select: ["fullName"], sort });
+                for (let child of children) {
+                    child = child.toJson();
+                    child.childrenCount = await affiliatesDb.count({ parentId: child.userId });
+                    childrenList.push(child);
+                }
+                if ("childrenCount" in sort) {
+                    childrenList.sort((child1, child2) => {
+                        return child1.childrenCount < child2.childrenCount ? -sort.childrenCount : sort.childrenCount;
+                    });
+                }
+                return childrenList.splice(skip, limit);
+            }
+        }
     }
 });

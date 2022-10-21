@@ -151,7 +151,8 @@ module.exports = Object.freeze({
     getMany: async (req, res) => {
         catchInternalError(res, async () => {
             let { filter, categories, skip, limit, select, sort } = req.query;
-
+            sort = _.isEmpty(sort) ? { createdAt: -1 } : sort;
+            
             try {
                 categories = _.isUndefined(categories) ? [] : JSON.parse(categories);
                 if (!_.isArray(categories)) {

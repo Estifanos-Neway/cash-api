@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const utils = require("../commons/functions");
 const Image = require("./image.entity");
+const User = require("./user.entity");
 
 module.exports = class Affiliate {
     // userId
@@ -71,7 +72,7 @@ module.exports = class Affiliate {
     parentId;
     hasValidParentId() {
         const parentId = this.parentId;
-        return utils.isNonEmptyString(parentId) || _.isUndefined(parentId);
+        return User.isValidUserId(parentId) || _.isUndefined(parentId);
     }
 
     // memberSince

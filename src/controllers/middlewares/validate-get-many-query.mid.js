@@ -83,7 +83,6 @@ module.exports = ({ findManyDefaultLimit, findManyMaxLimit }) => {
                 res.end();
                 return;
             }
-            sort = _.isEmpty(sort) ? { createdAt: -1 } : sort;
             req.query.sort = sort;
 
             next();
