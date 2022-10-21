@@ -22,5 +22,7 @@ affiliatesRouter.get("/:userId/children", forceUserMid, forceSameAffiliateMid, a
 affiliatesRouter.patch("/:userId/password", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updatePasswordHash);
 affiliatesRouter.patch("/:userId/email", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updateEmail);
 affiliatesRouter.patch("/:userId/verify-email", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.verifyEmail);
+affiliatesRouter.patch("/:userId/phone", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updatePhone);
+affiliatesRouter.patch("/:userId/full-name", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updateFullName);
 
 module.exports = affiliatesRouter;

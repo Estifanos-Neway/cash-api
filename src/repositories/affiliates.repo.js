@@ -315,7 +315,7 @@ module.exports = Object.freeze({
         const { userId, email } = repoUtils.validateEmailVerification({ verificationToken, verificationCode });
         try {
             await affiliatesDb.updateOne({ id: userId }, { email });
-            return email;
+            return true;
         } catch (error) {
             switch (error.message) {
                 case rt.affiliateEmailAlreadyExist:
@@ -323,6 +323,37 @@ module.exports = Object.freeze({
                 default:
                     throw error;
             }
+        }
+    },
+    updatePhone: async ({ userId, newPhone }) => {
+        await validateUserIdExistence({ userId });
+        // @ts-ignore
+        const affiliate = new Affiliate({ phone: newPhone });
+        if (!affiliate.hasValidPhone(strict)) {
+            throw utils.createError(rt.invalidPhone, rc.invalidInput);
+        } else {
+            try {
+                await affiliatesDb.updateOne({ id: userId }, { phone: affiliate.phone });
+                return true;
+            } catch (error) {
+                switch (error.message) {
+                    case rt.affiliatePhoneAlreadyExist:
+                        throw utils.createError(rt.affiliatePhoneAlreadyExist, rc.alreadyExist);
+                    default:
+                        throw error;
+                }
+            }
+        }
+    },
+    updateFullName: async ({ userId, newFullName }) => {
+        await validateUserIdExistence({ userId });
+        // @ts-ignore
+        const affiliate = new Affiliate({ fullName: newFullName });
+        if (!affiliate.hasValidFullName(strict)) {
+            throw utils.createError(rt.invalidFullName, rc.invalidInput);
+        } else {
+            await affiliatesDb.updateOne({ id: userId }, { fullName: affiliate.fullName });
+            return true;
         }
     },
 });

@@ -271,8 +271,8 @@ module.exports = Object.freeze({
     verifyEmail: (req, res) => {
         catchInternalError(res, async () => {
             try {
-                const newEmail = await affiliatesRepo.verifyEmail(req.body);
-                res.json({ newEmail });
+                await affiliatesRepo.verifyEmail(req.body);
+                sendSuccessResponse(res);
             } catch (error) {
                 switch (error.code) {
                     case rc.invalidInput:
@@ -283,6 +283,51 @@ module.exports = Object.freeze({
                         break;
                     case rc.alreadyExist:
                         res.status(sc.alreadyExist).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
+    },
+    updatePhone: (req, res) => {
+        catchInternalError(res, async () => {
+            const userId = req.params.userId;
+            const { newPhone } = req.body;
+            try {
+                await affiliatesRepo.updatePhone({ userId, newPhone });
+                sendSuccessResponse(res);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.notFound:
+                        res.status(sc.notFound).json(createSingleResponse(error.message));
+                        break;
+                    case rc.alreadyExist:
+                        res.status(sc.alreadyExist).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
+    },
+    updateFullName: (req, res) => {
+        catchInternalError(res, async () => {
+            const userId = req.params.userId;
+            const { newFullName } = req.body;
+            try {
+                await affiliatesRepo.updateFullName({ userId, newFullName });
+                sendSuccessResponse(res);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.notFound:
+                        res.status(sc.notFound).json(createSingleResponse(error.message));
                         break;
                     default:
                         throw error;

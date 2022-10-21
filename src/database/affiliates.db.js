@@ -6,7 +6,7 @@ const { db } = require("./db.commons");
 function catchUniquenessErrors(error) {
     if (error.errors?.email?.kind === "unique") {
         throw new Error(rt.affiliateEmailAlreadyExist);
-    } else if (error.errors?.email?.kind === "phone") {
+    } else if (error.errors?.phone?.kind === "unique") {
         throw new Error(rt.affiliatePhoneAlreadyExist);
     }
 }
