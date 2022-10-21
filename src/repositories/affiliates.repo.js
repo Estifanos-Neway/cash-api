@@ -10,7 +10,7 @@ const configs = require("../config.json");
 const { affiliatesDb, filesDb } = require("../database");
 const { Affiliate, User, Image } = require("../entities");
 const repoUtils = require("./repo.utils");
-const signUpVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-sign-up-verification-email.html"), { encoding: "utf-8" });
+const verificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-sign-up-verification-email.html"), { encoding: "utf-8" });
 const passwordRecoveryEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-password-recovery.html"), { encoding: "utf-8" });
 
 const avatarBasePath = "/images/avatars";
@@ -57,8 +57,17 @@ class passwordRecoveryObject {
             validUntil: this.validUntil
         });
     }
+}
 
-
+async function validateUserIdExistence({ userId }) {
+    if (!User.isValidUserId(userId)) {
+        throw utils.createError(rt.invalidUserId, rc.invalidInput);
+    } else {
+        const affiliate = await affiliatesDb.findOne({ id: userId });
+        if (!affiliate) {
+            throw utils.createError(rt.userNotFound, rc.notFound);
+        }
+    }
 }
 const strict = true;
 module.exports = Object.freeze({
@@ -84,74 +93,46 @@ module.exports = Object.freeze({
                 if (phoneAlreadyExist) {
                     throw utils.createError(rt.affiliatePhoneAlreadyExist, rc.alreadyExist);
                 } else {
-                    const verificationCode = utils["createVerificationCode"]();
-                    const subject = "Email Verification";
-                    // @ts-ignore
-                    const html = signUpVerificationEmail.replaceAll("__verificationCode__", verificationCode);
-                    await utils.sendEmail({ subject, html, to: email });
-                    const validUntil = new Date().getTime() + vars.verificationTokenExpiresIn;
-                    const signUpVerificationToken = utils.encrypt(JSON.stringify({
+                    const verificationObject = {
                         affiliate: {
                             fullName,
                             phone,
                             email,
                             passwordHash,
                             parentId
-                        },
-                        verificationCode,
-                        validUntil
-                    }));
-                    // clean
-                    console.log("verificationCode: " + verificationCode);
-                    return signUpVerificationToken;
+                        }
+                    };
+                    return await repoUtils.sendEmailVerificationCode({ verificationEmail: verificationEmail, email, verificationObject });
                 }
             }
         }
     },
-    verifySignUp: async ({ signUpVerificationToken, verificationCode }) => {
-        if (!utils.isNonEmptyString(signUpVerificationToken)) {
-            throw utils.createError(rt.invalidToken, rc.invalidInput);
-        } else if (!utils.isNonEmptyString(verificationCode)) {
-            throw utils.createError(rt.invalidVerificationCode, rc.invalidInput);
-        } else {
-            let signUpVerificationObject;
-            try {
-                signUpVerificationObject = JSON.parse(utils.decrypt(signUpVerificationToken));
-            } catch (error) {
-                throw utils.createError(rt.invalidToken, rc.invalidInput);
-            }
-            if (new Date().getTime() > signUpVerificationObject.validUntil) {
-                throw utils.createError(rt.expiredToken, rc.timeout);
-            } else if (verificationCode !== signUpVerificationObject.verificationCode) {
-                throw utils.createError(rt.invalidVerificationCode, rc.invalidInput);
-            } else {
-                const affiliate = new Affiliate(signUpVerificationObject.affiliate);
-                try {
-                    if (affiliate.parentId) {
-                        const parentExists = await affiliatesDb.exists({ id: affiliate.parentId });
-                        if (!parentExists) {
-                            affiliate.parentId = undefined;
-                        }
-                    }
-                    const signedUpAffiliate = await affiliatesDb.create(affiliate);
-                    const { refreshToken, accessToken } = await repoUtils.startSession({ userId: signedUpAffiliate.userId, userType: User.userTypes.Affiliate });
-                    return {
-                        affiliate: adaptAffiliate(signedUpAffiliate),
-                        accessToken,
-                        refreshToken
-                    };
-                } catch (error) {
-                    switch (error.message) {
-                        case rt.affiliateEmailAlreadyExist:
-                            throw utils.createError(rt.affiliateEmailAlreadyExist, rc.alreadyExist);
-                        case rt.affiliatePhoneAlreadyExist:
-                            throw utils.createError(rt.affiliatePhoneAlreadyExist, rc.alreadyExist);
-                        default:
-                            throw error;
-                    }
+    verifySignUp: async ({ verificationToken, verificationCode }) => {
+        const verificationObject = repoUtils.validateEmailVerification({ verificationToken, verificationCode });
+        const affiliate = new Affiliate(verificationObject.affiliate);
+        try {
+            if (affiliate.parentId) {
+                const parentExists = await affiliatesDb.exists({ id: affiliate.parentId });
+                if (!parentExists) {
+                    affiliate.parentId = undefined;
                 }
             }
-
+            const signedUpAffiliate = await affiliatesDb.create(affiliate);
+            const { refreshToken, accessToken } = await repoUtils.startSession({ userId: signedUpAffiliate.userId, userType: User.userTypes.Affiliate });
+            return {
+                affiliate: adaptAffiliate(signedUpAffiliate),
+                accessToken,
+                refreshToken
+            };
+        } catch (error) {
+            switch (error.message) {
+                case rt.affiliateEmailAlreadyExist:
+                    throw utils.createError(rt.affiliateEmailAlreadyExist, rc.alreadyExist);
+                case rt.affiliatePhoneAlreadyExist:
+                    throw utils.createError(rt.affiliatePhoneAlreadyExist, rc.alreadyExist);
+                default:
+                    throw error;
+            }
         }
     },
     signIn: async ({ phoneOrEmail, passwordHash }) => {
@@ -237,6 +218,7 @@ module.exports = Object.freeze({
         }
     },
     updateAvatar: async ({ userId, imageReadStream }) => {
+        await validateUserIdExistence({ userId });
         const fileName = userId;
         const bucketName = filesDb.bucketNames.avatars;
         await filesDb.delete({ fileName, bucketName });
@@ -247,6 +229,7 @@ module.exports = Object.freeze({
         return avatar;
     },
     deleteAvatar: async ({ userId }) => {
+        await validateUserIdExistence({ userId });
         const fileName = userId;
         const bucketName = filesDb.bucketNames.avatars;
         await filesDb.delete({ fileName, bucketName });
@@ -254,6 +237,7 @@ module.exports = Object.freeze({
         return true;
     },
     getOne: async ({ userId }) => {
+        await validateUserIdExistence({ userId });
         const affiliate = await affiliatesDb.findOne({ id: userId });
         if (!affiliate) {
             throw utils.createError(rt.userNotFound, rc.notFound);
@@ -270,28 +254,75 @@ module.exports = Object.freeze({
     getChildren: async ({ userId, getManyQueries }) => {
         let { skip, limit, sort } = repoUtils.validateGetManyQuery({ getManyQueries, defaultLimit: 8, maxLimit: 20 });
         sort = _.isEmpty(sort) ? { memberSince: -1 } : sort;
-        if (!User.isValidUserId(userId)) {
-            throw utils.createError(rt.invalidUserId, rc.invalidInput);
+        await validateUserIdExistence({ userId });
+        const childrenList = [];
+        // @ts-ignore
+        const children = await affiliatesDb.findMany({ filter: { parentId: userId }, select: ["fullName"], sort });
+        for (let child of children) {
+            child = child.toJson();
+            child.childrenCount = await affiliatesDb.count({ parentId: child.userId });
+            childrenList.push(child);
+        }
+        if ("childrenCount" in sort) {
+            childrenList.sort((child1, child2) => {
+                return child1.childrenCount < child2.childrenCount ? -sort.childrenCount : sort.childrenCount;
+            });
+        }
+        return childrenList.splice(skip, limit);
+    },
+    updatePasswordHash: async ({ userId, oldPasswordHash, newPasswordHash }) => {
+        await validateUserIdExistence({ userId });
+        // @ts-ignore
+        const affiliateWithOldPasswordHash = new Affiliate({ passwordHash: oldPasswordHash });
+        if (!affiliateWithOldPasswordHash.hasValidPasswordHash(strict)) {
+            throw utils.createError(rt.invalidPasswordHash, rc.invalidInput);
         } else {
-            const affiliate = await affiliatesDb.findOne({ id: userId });
-            if (!affiliate) {
-                throw utils.createError(rt.userNotFound, rc.notFound);
+            // @ts-ignore
+            const affiliateWithNewPasswordHash = new Affiliate({ passwordHash: newPasswordHash });
+            if (!affiliateWithNewPasswordHash.hasValidPasswordHash(strict)) {
+                throw utils.createError(rt.invalidPasswordHash, rc.invalidInput);
             } else {
-                const childrenList = [];
-                // @ts-ignore
-                const children = await affiliatesDb.findMany({ filter: { parentId: userId }, select: ["fullName"], sort });
-                for (let child of children) {
-                    child = child.toJson();
-                    child.childrenCount = await affiliatesDb.count({ parentId: child.userId });
-                    childrenList.push(child);
+                const correctOldPasswordHash = await affiliatesDb.exists({ id: userId, passwordHash: affiliateWithOldPasswordHash.passwordHash });
+                if (!correctOldPasswordHash) {
+                    throw utils.createError(rt.wrongPasswordHash, rc.invalidInput);
+                } else {
+                    await affiliatesDb.updateOne({ id: userId }, { passwordHash: affiliateWithNewPasswordHash.passwordHash });
+                    return true;
                 }
-                if ("childrenCount" in sort) {
-                    childrenList.sort((child1, child2) => {
-                        return child1.childrenCount < child2.childrenCount ? -sort.childrenCount : sort.childrenCount;
-                    });
-                }
-                return childrenList.splice(skip, limit);
             }
         }
-    }
+    },
+    updateEmail: async ({ userId, newEmail }) => {
+        await validateUserIdExistence({ userId });
+        // @ts-ignore
+        const affiliate = new Affiliate({ email: newEmail });
+        if (!affiliate.hasValidEmail(strict)) {
+            throw utils.createError(rt.invalidEmail, rc.invalidInput);
+        } else {
+            const emailAlreadyExist = await affiliatesDb.exists({ sanitizedEmail: utils.sanitizeEmail(affiliate.email) });
+            if (emailAlreadyExist) {
+                throw utils.createError(rt.affiliateEmailAlreadyExist, rc.alreadyExist);
+            } else {
+                const verificationObject = {
+                    userId,
+                    email: affiliate.email
+                };
+                return await repoUtils.sendEmailVerificationCode({ verificationEmail: verificationEmail, email: affiliate.email, verificationObject });
+            }
+        }
+    },
+    verifyEmail: async ({ verificationToken, verificationCode }) => {
+        const { userId, email } = repoUtils.validateEmailVerification({ verificationToken, verificationCode });
+        try {
+            await affiliatesDb.updateOne({ id: userId }, { email });
+            return email;
+        } catch (error) {
+            switch (error.message) {
+                case rt.affiliateEmailAlreadyExist:
+                    throw utils.createError(rt.affiliateEmailAlreadyExist, rc.alreadyExist);
+                default:
+                    throw error;
+            }
+        }
+    },
 });

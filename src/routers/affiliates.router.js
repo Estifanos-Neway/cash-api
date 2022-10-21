@@ -19,5 +19,8 @@ affiliatesRouter.delete("/:userId/avatar", forceAffiliateMid, forceSameAffiliate
 affiliatesRouter.get("/:userId", forceUserMid, forceSameAffiliateMid, affiliatesCont.getOne);
 affiliatesRouter.get("/", forceAdminMid, affiliatesCont.getMany);
 affiliatesRouter.get("/:userId/children", forceUserMid, forceSameAffiliateMid, affiliatesCont.getChildren);
+affiliatesRouter.patch("/:userId/password", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updatePasswordHash);
+affiliatesRouter.patch("/:userId/email", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updateEmail);
+affiliatesRouter.patch("/:userId/verify-email", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.verifyEmail);
 
 module.exports = affiliatesRouter;

@@ -1,5 +1,6 @@
 const _ = require("lodash");
 const utils = require("../commons/functions");
+const vars = require("../commons/variables");
 const rc = require("../commons/response-codes");
 const rt = require("../commons/response-texts");
 const { sessionsDb } = require("../database");
@@ -14,7 +15,7 @@ module.exports = {
         await sessionsDb.create(session);
         return { refreshToken, accessToken };
     },
-    validateGetManyQuery: ({getManyQueries, defaultLimit, maxLimit}) => {
+    validateGetManyQuery: ({ getManyQueries, defaultLimit, maxLimit }) => {
         let { search, filter, skip, limit, select, sort } = getManyQueries;
 
         // search
@@ -81,5 +82,40 @@ module.exports = {
         }
         getManyQueries.sort = sort;
         return getManyQueries;
+    },
+    sendEmailVerificationCode: async ({ verificationEmail, email, verificationObject }) => {
+        const verificationCode = utils["createVerificationCode"]();
+        const subject = "Email Verification";
+        // @ts-ignore
+        const html = verificationEmail.replaceAll("__verificationCode__", verificationCode);
+        await utils.sendEmail({ subject, html, to: email });
+        const validUntil = new Date().getTime() + vars.verificationTokenExpiresIn;
+        verificationObject.verificationCode = verificationCode;
+        verificationObject.validUntil = validUntil;
+        const verificationToken = utils.encrypt(JSON.stringify(verificationObject));
+        // clean
+        console.log("verificationCode: " + verificationCode);
+        return verificationToken;
+    },
+    validateEmailVerification: ({ verificationToken, verificationCode }) => {
+        if (!utils.isNonEmptyString(verificationToken)) {
+            throw utils.createError(rt.invalidToken, rc.invalidInput);
+        } else if (!utils.isNonEmptyString(verificationCode)) {
+            throw utils.createError(rt.invalidVerificationCode, rc.invalidInput);
+        } else {
+            let verificationObject;
+            try {
+                verificationObject = JSON.parse(utils.decrypt(verificationToken));
+            } catch (error) {
+                throw utils.createError(rt.invalidToken, rc.invalidInput);
+            }
+            if (new Date().getTime() > verificationObject.validUntil) {
+                throw utils.createError(rt.expiredToken, rc.timeout);
+            } else if (verificationCode !== verificationObject.verificationCode) {
+                throw utils.createError(rt.invalidVerificationCode, rc.invalidInput);
+            } else {
+                return verificationObject;
+            }
+        }
     }
 };

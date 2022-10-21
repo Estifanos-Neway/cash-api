@@ -123,8 +123,21 @@ module.exports = Object.freeze({
                             sendInvalidInputResponse(res);
                         } else {
                             const imageReadStream = streamifier.createReadStream(imageBuffer);
-                            const avatar = await affiliatesRepo.updateAvatar({ userId, imageReadStream });
-                            res.json({ avatar });
+                            try {
+                                const avatar = await affiliatesRepo.updateAvatar({ userId, imageReadStream });
+                                res.json({ avatar });
+                            } catch (error) {
+                                switch (error.code) {
+                                    case rc.invalidInput:
+                                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                        break;
+                                    case rc.notFound:
+                                        res.status(sc.notFound).json(createSingleResponse(error.message));
+                                        break;
+                                    default:
+                                        throw error;
+                                }
+                            }
                         }
                     }
                 });
@@ -135,8 +148,21 @@ module.exports = Object.freeze({
     deleteAvatar: (req, res) => {
         catchInternalError(res, async () => {
             const userId = req.params.userId;
-            await affiliatesRepo.deleteAvatar({ userId });
-            sendSuccessResponse(res);
+            try {
+                await affiliatesRepo.deleteAvatar({ userId });
+                sendSuccessResponse(res);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.notFound:
+                        res.status(sc.notFound).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
         });
     },
     getOne: (req, res) => {
@@ -147,6 +173,9 @@ module.exports = Object.freeze({
                 res.json(affiliate);
             } catch (error) {
                 switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
                     case rc.notFound:
                         res.status(sc.notFound).json(createSingleResponse(error.message));
                         break;
@@ -187,6 +216,73 @@ module.exports = Object.freeze({
                         break;
                     case rc.notFound:
                         res.status(sc.notFound).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
+    },
+    updatePasswordHash: (req, res) => {
+        catchInternalError(res, async () => {
+            const userId = req.params.userId;
+            const { oldPasswordHash, newPasswordHash } = req.body;
+            try {
+                await affiliatesRepo.updatePasswordHash({ userId, oldPasswordHash, newPasswordHash });
+                sendSuccessResponse(res);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.notFound:
+                        res.status(sc.notFound).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
+    },
+    updateEmail: (req, res) => {
+        catchInternalError(res, async () => {
+            const userId = req.params.userId;
+            const { newEmail } = req.body;
+            try {
+                const verificationToken = await affiliatesRepo.updateEmail({ userId, newEmail });
+                res.json({ verificationToken });
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.notFound:
+                        res.status(sc.notFound).json(createSingleResponse(error.message));
+                        break;
+                    case rc.alreadyExist:
+                        res.status(sc.alreadyExist).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
+    },
+    verifyEmail: (req, res) => {
+        catchInternalError(res, async () => {
+            try {
+                const newEmail = await affiliatesRepo.verifyEmail(req.body);
+                res.json({ newEmail });
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.timeout:
+                        res.status(sc.timeout).json(createSingleResponse(error.message));
+                        break;
+                    case rc.alreadyExist:
+                        res.status(sc.alreadyExist).json(createSingleResponse(error.message));
                         break;
                     default:
                         throw error;
