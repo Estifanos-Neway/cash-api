@@ -16,15 +16,17 @@ const {
     numberOfMaxApiRequestsPerMin } = require("./commons/variables");
 const apiResponses = require("./api-docs/responses");
 const { adminRouter, sessionsRouter, productsRouter, imagesRouter, productCategoriesRouter, affiliatesRouter } = require("./routers");
+const { createSingleResponse } = require("./controllers/controller-commons/functions");
 
 exports.makeApp = () => {
     const app = express();
     app.set("port", env.PORT || defaultPort);
 
+    app.use(morgan("dev"));
     app.use(express.static("src/public"));
+    
     // swagger
     const swaggerDoc = require("./api-docs/swagger.json");
-    const { createSingleResponse } = require("./controllers/controller-commons/functions");
     const swaggerOptions = {
         // explorer: true,
         customCssUrl: "/swagger.css"
@@ -34,6 +36,7 @@ exports.makeApp = () => {
         res.json(apiResponses);
     });
     app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, swaggerOptions));
+
     // Security
     app.set("trust proxy", 1);
     // @ts-ignore
@@ -45,16 +48,13 @@ exports.makeApp = () => {
         legacyHeaders: false
     });
     app.use(helmet.hidePoweredBy());
-    app.use(limiter);
     app.use(cors(
         {
             origin: config.corsWhiteList,
             optionsSuccessStatus: 200
         }
     ));
-
-    // middleware configurations
-    app.use(morgan("dev"));
+    app.use(limiter);
     app.use(express.json());
 
     // Routes

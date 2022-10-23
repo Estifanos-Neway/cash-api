@@ -12,51 +12,44 @@ const responses = {
 };
 exports.db = {
     responses,
-    exists: async (model, conditions = {}) => {
+    exists: async (model, conditions = {}, options = {}) => {
         adaptConditions(conditions);
-        return await model.exists(conditions);
+        return await model.exists(conditions, options);
     },
-    count: async (model, conditions = {}) => {
-        return await model.count(conditions);
+    count: async (model, conditions = {}, options = {}) => {
+        return await _.isEmpty(conditions) ? model.estimatedDocumentCount(options) : model.countDocuments(conditions, options);
     },
-    create: async (model, doc) => {
-        return await model.create(doc);
+    create: async (model, doc, options = {}) => {
+        const isDocArray = _.isArray(doc);
+        doc = isDocArray ? doc : [doc];
+        const createdDoc = await model.create(doc, options);
+        return isDocArray ? createdDoc : createdDoc[0];
     },
-    findOne: async (model, conditions = {}, select) => {
+    findOne: async (model, conditions = {}, select, options = {}) => {
         adaptConditions(conditions);
-        return await model.findOne(conditions).select(select).exec();
+        return await model.findOne(conditions, null, options).select(select).exec();
     },
-    findMany: async ({ model, conditions = {}, filter = {}, select = [], skip = 0, limit, sort = {} }) => {
+    findMany: async ({ model, conditions = {}, filter = {}, select = [], skip = 0, limit, sort = {}, options = {} }) => {
         adaptConditions(conditions);
-        return await model.find(conditions).where(filter).select(select).skip(skip).limit(limit).sort(sort).exec();
+        return await model.find(conditions, null, options).where(filter).select(select).skip(skip).limit(limit).sort(sort).exec();
     },
-    deleteOne: async (model, conditions = {}) => {
+    deleteOne: async (model, conditions = {}, options = {}) => {
         adaptConditions(conditions);
-        return await model.findOneAndDelete(conditions);
+        return await model.findOneAndDelete(conditions, options);
     },
-    updateOne: async (model, conditions = {}, updates) => {
+    deleteMany: async (model, conditions = {}, options = {}) => {
         adaptConditions(conditions);
-        let doc = await model.findOne(conditions);
-        if (doc) {
-            Object.entries(updates).forEach(update => {
-                if (update[0] in doc) {
-                    doc[update[0]] = update[1];
-                }
-            });
-            return await doc.save();
-        } else {
-            throw new Error(responses.docNotFound);
-        }
+        return await model.deleteMany(conditions, options);
     },
-    increment: async (model, conditions = {}, incrementor) => {
+    updateOne: async (model, conditions = {}, updates, options = {}) => {
         adaptConditions(conditions);
-        const doc = await model.findOne(conditions);
-        if (doc) {
-            doc.$inc(...incrementor);
-            return await doc.save();
-        } else {
-            throw new Error(responses.docNotFound);
-        }
+        options = { ...options, runValidators: true };
+        return await model.updateOne(conditions, updates, options);
+    },
+    increment: async (model, conditions = {}, incrementor, options = {}) => {
+        adaptConditions(conditions);
+        const update = { $inc: incrementor };
+        return await model.updateOne(conditions, update, options);
     },
     adaptEntity: (Entity, dbDoc, idName = "id") => {
         dbDoc = dbDoc.toJSON();

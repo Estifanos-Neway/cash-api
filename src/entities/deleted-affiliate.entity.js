@@ -1,3 +1,4 @@
+const utils = require("../commons/functions");
 const Affiliate = require("./affiliate.entity");
 
 module.exports = class DeletedAffiliate {
@@ -16,9 +17,17 @@ module.exports = class DeletedAffiliate {
     // #deletedAt
     deletedAt;
 
-    constructor({ deletedAffiliateId, affiliate, deletedAt }) {
+    constructor({ deletedAffiliateId, affiliateJson, deletedAt }) {
         this.deletedAffiliateId = deletedAffiliateId;
-        this.affiliate = affiliate;
+        this.affiliate = affiliateJson;
         this.deletedAt = deletedAt;
+    }
+
+    toJson() {
+        return utils.removeUndefined({
+            deletedAffiliateId: this.deletedAffiliateId,
+            affiliate: this.affiliate,
+            deletedAt: this.deletedAt
+        });
     }
 };

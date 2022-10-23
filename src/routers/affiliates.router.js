@@ -24,5 +24,6 @@ affiliatesRouter.patch("/:userId/email", forceAffiliateMid, forceSameAffiliateMi
 affiliatesRouter.patch("/:userId/verify-email", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.verifyEmail);
 affiliatesRouter.patch("/:userId/phone", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updatePhone);
 affiliatesRouter.patch("/:userId/full-name", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updateFullName);
+affiliatesRouter.delete("/:userId", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.delete);
 
 module.exports = affiliatesRouter;

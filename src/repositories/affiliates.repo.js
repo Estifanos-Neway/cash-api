@@ -356,4 +356,24 @@ module.exports = Object.freeze({
             return true;
         }
     },
+    delete: async ({ userId, passwordHash }) => {
+        await validateUserIdExistence({ userId });
+        // @ts-ignore
+        const affiliateWithPasswordHash = new Affiliate({ passwordHash });
+        if (!affiliateWithPasswordHash.hasValidPasswordHash(strict)) {
+            throw utils.createError(rt.invalidPasswordHash, rc.invalidInput);
+        } else {
+            const correctPasswordHash = await affiliatesDb.exists({ id: userId, passwordHash: affiliateWithPasswordHash.passwordHash });
+            if (!correctPasswordHash) {
+                throw utils.createError(rt.wrongPasswordHash, rc.invalidInput);
+            } else {
+                const affiliate = await affiliatesDb.deleteOne({ id: userId });
+                if (!affiliate) {
+                    throw utils.createError(rt.userNotFound, rc.notFound);
+                } else {
+                    return true;
+                }
+            }
+        }
+    }
 });

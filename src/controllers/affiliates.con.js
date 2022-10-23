@@ -335,4 +335,25 @@ module.exports = Object.freeze({
             }
         });
     },
+    delete: (req, res) => {
+        catchInternalError(res, async () => {
+            const userId = req.params.userId;
+            const { passwordHash } = req.body;
+            try {
+                await affiliatesRepo.delete({ userId, passwordHash });
+                sendSuccessResponse(res);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.notFound:
+                        res.status(sc.notFound).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
+    }
 });

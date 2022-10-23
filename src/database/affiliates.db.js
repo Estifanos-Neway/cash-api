@@ -1,6 +1,7 @@
+const mongoose = require("mongoose");
 const rt = require("../commons/response-texts");
 const { Affiliate } = require("../entities");
-const { affiliateDbModel } = require("./db-models");
+const { affiliateDbModel, deletedAffiliateDbModel, sessionDbModel } = require("./db-models");
 const { db } = require("./db.commons");
 
 function catchUniquenessErrors(error) {
@@ -48,7 +49,18 @@ module.exports = Object.freeze({
         }
     },
     deleteOne: async (conditions) => {
-        const affiliateDoc = await db.deleteOne(affiliateDbModel, conditions);
-        return affiliateDoc ? db.adaptEntity(Affiliate, affiliateDoc, idName) : null;
+        const session = await mongoose.startSession();
+        const result = await session.withTransaction(async () => {
+            const affiliateDoc = await db.deleteOne(affiliateDbModel, conditions, { session });
+            if (!affiliateDoc) {
+                return null;
+            } else {
+                await db.deleteMany(sessionDbModel, { "user.userId": affiliateDoc._id }, { session });
+                await db.create(deletedAffiliateDbModel, { affiliate: affiliateDoc }, { session });
+                return db.adaptEntity(Affiliate, affiliateDoc, idName);
+            }
+        });
+        await session.endSession();
+        return result;
     }
 });
