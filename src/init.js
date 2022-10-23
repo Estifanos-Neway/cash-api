@@ -10,7 +10,8 @@ const { env } = require("./env");
 async function init() {
     // @ts-ignore
     await mongoose.connect(env.DB_URL);
-    // Adding the default admin
+    // Creating the default admin
+    console.log("Creating the default admin");
     const adminsCount = await adminsDb.count();
     if (adminsCount === 0) {
         const passwordHash = hash(defaultAdmin.password);
