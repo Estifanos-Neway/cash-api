@@ -11,8 +11,8 @@ module.exports = Object.freeze({
     signUp: (req, res) => {
         catchInternalError(res, async () => {
             try {
-                const signUpVerificationToken = await affiliatesRepo.signUp(req.body);
-                res.json({ signUpVerificationToken });
+                const verificationToken = await affiliatesRepo.signUp(req.body);
+                res.json({ verificationToken });
             } catch (error) {
                 switch (error.code) {
                     case rc.invalidInput:
@@ -147,7 +147,7 @@ module.exports = Object.freeze({
     },
     deleteAvatar: (req, res) => {
         catchInternalError(res, async () => {
-            const userId = req.params.userId;
+            const { userId } = req.params;
             try {
                 await affiliatesRepo.deleteAvatar({ userId });
                 sendSuccessResponse(res);
@@ -167,7 +167,7 @@ module.exports = Object.freeze({
     },
     getOne: (req, res) => {
         catchInternalError(res, async () => {
-            const userId = req.params.userId;
+            const { userId } = req.params;
             try {
                 const affiliate = await affiliatesRepo.getOne({ userId });
                 res.json(affiliate);
@@ -204,7 +204,7 @@ module.exports = Object.freeze({
     },
     getChildren: (req, res) => {
         catchInternalError(res, async () => {
-            const userId = req.params.userId;
+            const { userId } = req.params;
             const getManyQueries = req.query;
             try {
                 const children = await affiliatesRepo.getChildren({ userId, getManyQueries });
@@ -225,7 +225,7 @@ module.exports = Object.freeze({
     },
     updatePasswordHash: (req, res) => {
         catchInternalError(res, async () => {
-            const userId = req.params.userId;
+            const { userId } = req.params;
             const { oldPasswordHash, newPasswordHash } = req.body;
             try {
                 await affiliatesRepo.updatePasswordHash({ userId, oldPasswordHash, newPasswordHash });
@@ -246,7 +246,7 @@ module.exports = Object.freeze({
     },
     updateEmail: (req, res) => {
         catchInternalError(res, async () => {
-            const userId = req.params.userId;
+            const { userId } = req.params;
             const { newEmail } = req.body;
             try {
                 const verificationToken = await affiliatesRepo.updateEmail({ userId, newEmail });
@@ -292,7 +292,7 @@ module.exports = Object.freeze({
     },
     updatePhone: (req, res) => {
         catchInternalError(res, async () => {
-            const userId = req.params.userId;
+            const { userId } = req.params;
             const { newPhone } = req.body;
             try {
                 await affiliatesRepo.updatePhone({ userId, newPhone });
@@ -316,7 +316,7 @@ module.exports = Object.freeze({
     },
     updateFullName: (req, res) => {
         catchInternalError(res, async () => {
-            const userId = req.params.userId;
+            const { userId } = req.params;
             const { newFullName } = req.body;
             try {
                 await affiliatesRepo.updateFullName({ userId, newFullName });
@@ -337,7 +337,7 @@ module.exports = Object.freeze({
     },
     delete: (req, res) => {
         catchInternalError(res, async () => {
-            const userId = req.params.userId;
+            const { userId } = req.params;
             const { passwordHash } = req.body;
             try {
                 await affiliatesRepo.delete({ userId, passwordHash });

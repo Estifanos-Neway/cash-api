@@ -86,6 +86,7 @@ async function validateProductMid(req, res, next) {
                         commissionRate,
                         published,
                         featured,
+                        topSeller,
                         viewCount
                     } = req.body;
                     if (
@@ -96,6 +97,7 @@ async function validateProductMid(req, res, next) {
                         !isValidCategoryList(categories) ||
                         (!_.isUndefined(published) && !_.isBoolean(published)) ||
                         (!_.isUndefined(featured) && !_.isBoolean(featured)) ||
+                        (!_.isUndefined(topSeller) && !_.isBoolean(topSeller)) ||
                         (!_.isUndefined(viewCount) && !isPositiveNumber(viewCount))) {
                         sendInvalidInputResponse(res);
                         res.end();
@@ -152,7 +154,7 @@ module.exports = Object.freeze({
         catchInternalError(res, async () => {
             let { filter, categories, skip, limit, select, sort } = req.query;
             sort = _.isEmpty(sort) ? { createdAt: -1 } : sort;
-            
+
             try {
                 categories = _.isUndefined(categories) ? [] : JSON.parse(categories);
                 if (!_.isArray(categories)) {
@@ -171,6 +173,30 @@ module.exports = Object.freeze({
 
             const products = await productsRepo.getMany({ filter, categories, skip, limit, select, sort });
             res.json(products.map(product => product.toJson()));
+        });
+    },
+    count: async (req, res) => {
+        catchInternalError(res, async () => {
+            let { filter, categories } = req.query;
+
+            try {
+                categories = _.isUndefined(categories) ? [] : JSON.parse(categories);
+                if (!_.isArray(categories)) {
+                    throw new Error();
+                } else {
+                    for (const element of categories) {
+                        if (!_.isString(element)) {
+                            throw new Error();
+                        }
+                    }
+                }
+            } catch (error) {
+                res.status(400).json(createSingleResponse(rt.invalidCategoriesQuery));
+                return;
+            }
+
+            const count = await productsRepo.count({ filter, categories });
+            res.json({ count });
         });
     },
     getOne: async (req, res) => {

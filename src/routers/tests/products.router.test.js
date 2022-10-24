@@ -30,8 +30,9 @@ describe("/products", () => {
         price: 200,
         commissionRate: 25,
         categories: ["Small", "White"],
-        featured: true,
         published: true,
+        featured: true,
+        topSeller: true,
         viewCount: 220
     };
     const imageData = { path: expect.stringMatching(/^\/images\/products\/.+$/) };
@@ -82,8 +83,9 @@ describe("/products", () => {
                         productId: expect.any(String),
                         moreImages: [],
                         categories: [],
-                        featured: false,
                         published: false,
+                        featured: false,
+                        topSeller: false,
                         viewCount: 0,
                         createdAt: dateData,
                         updatedAt: dateData,
@@ -349,8 +351,9 @@ describe("/products", () => {
                                 price: productA.price + 100,
                                 commissionRate: 80,
                                 categories: ["Big", "Blue"],
-                                featured: true,
                                 published: true,
+                                featured: true,
+                                topSeller: true,
                                 viewCount: productA.viewCount + 200
                             }
                         ))
@@ -368,8 +371,9 @@ describe("/products", () => {
                         categories: ["Big", "Blue"],
                         mainImage: imageData,
                         moreImages: [imageData, imageData],
-                        featured: true,
                         published: true,
+                        featured: true,
+                        topSeller: true,
                         viewCount: productA.viewCount + 200,
                         createdAt: dateData,
                         updatedAt: dateData,
@@ -400,12 +404,12 @@ describe("/products", () => {
                     expect(body).toEqual(createSingleResponse(rt.invalidJsonString));
                 });
             });
-            describe("Given invalid input (ex: non-boolean featured)", () => {
+            describe("Given invalid input (ex: non-boolean published)", () => {
                 it(`Should return 400 and ${rt.invalidInput}`, async () => {
                     const { body, statusCode } = await request.patch(`${mainPath}/${productB.productId}`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
-                        .field("productDetails", JSON.stringify({ featured: "not-boolean" }));
+                        .field("productDetails", JSON.stringify({ published: "not-boolean" }));
                     expect(statusCode).toBe(400);
                     expect(body).toEqual(createSingleResponse(rt.invalidInput));
                 });
@@ -415,7 +419,7 @@ describe("/products", () => {
                     const { body, statusCode } = await request.patch(`${mainPath}/invalid-product-id`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
-                        .field("productDetails", JSON.stringify({ featured: true }));
+                        .field("productDetails", JSON.stringify({ published: true }));
 
                     expect(statusCode).toBe(404);
                     expect(body).toEqual(createSingleResponse(rt.productNotFound));

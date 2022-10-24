@@ -10,6 +10,9 @@ module.exports = Object.freeze({
         const product = new Product(jsonProduct);
         return await productsDb.create(product);
     },
+    count: async ({ filter, categories }) => {
+        return await productsDb.count({ filter, categories });
+    },
     getMany: async ({ filter, categories, skip, limit, select, sort }) => {
         return await productsDb.findMany({ filter, categories, skip, limit, sort, select });
     },
@@ -52,7 +55,7 @@ module.exports = Object.freeze({
                 }
             }
             for (const fileName of filesToBeDeleted) {
-                await filesDb.delete(fileName, filesDb.bucketNames.productImages);
+                await filesDb.delete({ fileName, bucketName: filesDb.bucketNames.productImages });
             }
         }
     },

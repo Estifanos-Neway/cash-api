@@ -9,6 +9,7 @@ const findManyMaxLimit = 20;
 const validateGetManyQueryMid = mids.validateGetManyQuery({ findManyDefaultLimit, findManyMaxLimit });
 
 const productsRouter = express.Router();
+productsRouter.get("/count", validateGetManyQueryMid, productsCont.count);
 productsRouter.get("/", validateGetManyQueryMid, productsCont.getMany);
 productsRouter.get("/:productId", productsCont.getOne);
 productsRouter.use(mids.forceAccessToken(User.userTypes.Admin));

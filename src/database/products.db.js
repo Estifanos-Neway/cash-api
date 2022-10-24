@@ -15,7 +15,10 @@ module.exports = Object.freeze({
             return false;
         }
     },
-    count: () => db.count(productDbModel),
+    count: async ({filter = {}, categories = {}}) => {
+        const conditions = { ...filter, ...(_.isEmpty(categories) ? {} : { categories: { $all: categories } }) };
+        return await db.count(productDbModel, conditions);
+    },
     create: async (product) => {
         try {
             const productDoc = await db.create(productDbModel, product.toJson());

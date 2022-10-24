@@ -13,6 +13,7 @@ module.exports = class Product {
     categories;
     published;
     featured;
+    topSeller;
     viewCount;
     #createdAt;
     #updatedAt;
@@ -83,6 +84,7 @@ module.exports = class Product {
         categories,
         published,
         featured,
+        topSeller,
         viewCount,
         createdAt,
         updatedAt }) {
@@ -96,6 +98,7 @@ module.exports = class Product {
         this.categories = categories;
         this.published = published;
         this.featured = featured;
+        this.topSeller = topSeller;
         this.viewCount = viewCount;
         this.#createdAt = createdAt;
         this.#updatedAt = updatedAt;
@@ -114,6 +117,7 @@ module.exports = class Product {
                 categories: this.categories,
                 published: this.published,
                 featured: this.featured,
+                topSeller: this.topSeller,
                 viewCount: this.viewCount,
                 createdAt: this.createdAt,
                 updatedAt: this.updatedAt

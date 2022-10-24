@@ -339,7 +339,7 @@
             "$ref": "#/components/responses/unauthorized"
           },
           "408": {
-            "$ref": "#/components/responses/timeOut"
+            "$ref": "#/components/responses/timeout"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -463,7 +463,7 @@
             "$ref": "#/components/responses/notFound"
           },
           "408": {
-            "$ref": "#/components/responses/timeOut"
+            "$ref": "#/components/responses/timeout"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -687,13 +687,16 @@
           "401": {
             "$ref": "#/components/responses/unauthorized"
           },
+          "409": {
+            "$ref": "#/components/responses/alreadyExist"
+          },
           "500": {
             "$ref": "#/components/responses/internalError"
           }
         }
       },
       "get": {
-        "summary": "Get list of product.",
+        "summary": "Get list of products.",
         "tags": ["Products"],
         "parameters": [
           {
@@ -797,6 +800,72 @@
         }
       }
     },
+    "/products/count": {
+      "get": {
+        "summary": "Get count of products.",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "name": "search",
+            "description": "Search by Regex",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productName": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "filter",
+            "description": "Filter by exact match. (properties in filter overrides properties in search)",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/productOutput"
+            }
+          },
+          {
+            "name": "categories",
+            "description": "Search entities under these categories.",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns count of products.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
     "/products/{productId}": {
       "get": {
         "summary": "Get a product by id (this will increment the products 'viewCount' by 1).",
@@ -878,6 +947,358 @@
           }
         }
       }
+    },
+    "/affiliates/sign-up": {
+      "post": {
+        "summary":"Send sign up verification code to the given email.",
+        "tags": ["Affiliates"],
+        "requestBody":{
+          "required": true,
+          "content": {
+              "application/json": {
+                "schema": {
+                  "required":["fullName","phone","email","passwordHash"],
+                  "type": "object",
+                  "properties": {
+                    "fullName": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "description":"must be unique."
+                    },
+                    "email": {
+                      "type": "string",
+                      "description":"must be unique."
+                    },
+                    "passwordHash": {
+                      "type": "string"
+                    },
+                    "parentId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+        },
+        "responses":{
+          "200":{
+            "description": "Returns a sign up verification token that must be sent back when verifying the sign up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties":{
+                    "verificationToken":{
+                      "type":"string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "409": {
+            "$ref": "#/components/responses/alreadyExist"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/affiliates/verify-sign-up": {
+      "post": {
+        "summary":"Verify affiliate sign up.",
+        "tags": ["Affiliates"],
+        "requestBody":{
+          "required": true,
+          "content": {
+              "application/json": {
+                "schema": {
+                  "required":["verificationToken","verificationCode"],
+                  "type": "object",
+                  "properties": {
+                    "verificationToken": {
+                      "type": "string",
+                      "description":"From the sign up request"
+                    },
+                    "verificationCode": {
+                      "type": "string",
+                      "description":"From the affiliates email"
+                    }
+                  }
+                }
+              }
+            }
+        },
+        "responses":{
+          "200":{
+            "description": "Returns a signed in affiliate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref":"#/components/schemas/affiliateSignIn"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "408": {
+            "$ref": "#/components/responses/timeout"
+          },
+          "409": {
+            "$ref": "#/components/responses/alreadyExist"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/affiliates/sign-in": {
+      "post": {
+        "summary":"Sign in an affiliate",
+        "tags": ["Affiliates"],
+        "requestBody":{
+          "required": true,
+          "content": {
+              "application/json": {
+                "schema": {
+                  "required":["phoneOrEmail","passwordHash"],
+                  "type": "object",
+                  "properties": {
+                    "phoneOrEmail": {
+                      "type": "string"
+                    },
+                    "passwordHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+        },
+        "responses":{
+          "200":{
+            "description": "Returns a signed in affiliate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref":"#/components/schemas/affiliateSignIn"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/affiliates": {
+      "get": {
+       "summary": "Get list of affiliates. [Requires_Admin_Access_Token]",
+        "tags": ["Affiliates"],
+        "parameters": [
+          {
+            "name": "search",
+            "description": "Search by Regex",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fullName": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "filter",
+            "description": "Filter by exact match. (properties in filter overrides properties in search)",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Affiliate"
+            }
+          },
+          {
+            "name": "skip",
+            "description": "Number of entities to skip (Must be positive)",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "description": "Number of entities to get back (Default:8, Max: 20) (Must be positive).",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "select",
+            "description": "Which properties to get back.",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "sort",
+            "description": "Default: {\"memberSince\":-1}",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "property name": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+
+        "responses": {
+          "200": {
+            "description": "Returns list of affiliates.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Affiliate"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/affiliates/{userId}": {
+      "get": {
+        "summary": "Get an affiliate by its id. [Requires_Admin_Or_Same_Affiliate_Access_Token]",
+        "tags": ["Affiliates"],
+        "parameters": [{ "$ref": "#/components/parameters/userId" }],
+        "responses": {
+          "200": {
+            "description": "Returns an affiliate.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Affiliate"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an affiliate by its id. [Requires_Same_Affiliate_Access_Token]",
+        "tags": ["Affiliates"],
+        "parameters": [{ "$ref": "#/components/parameters/userId" }],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/success"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/affiliates/{userId}/children": {
+      "get": {
+        "tags": ["Affiliates"]
+      }
+    },
+    "/affiliates/{userId}/avatar": {
+      "put": {
+        "tags": ["Affiliates"]
+      },
+      "delete": {
+        "tags": ["Affiliates"]
+      }
+    },
+    "/affiliates/{userId}/password": {
+      "patch": {
+        "tags": ["Affiliates"]
+      }
+    },
+    "/affiliates/{userId}/phone": {
+      "patch": {
+        "tags": ["Affiliates"]
+      }
+    },
+    "/affiliates/{userId}/full-name": {
+      "patch": {
+        "tags": ["Affiliates"]
+      }
+    },
+    "/affiliates/{userId}/email": {
+      "patch": {
+        "tags": ["Affiliates"]
+      }
+    },
+    "/affiliates/{userId}/recover-email": {
+      "patch": {
+        "tags": ["Affiliates"]
+      }
+    },
+    "/affiliates/forgot-password": {
+      "patch": {
+        "tags": ["Affiliates"]
+      }
+    },
+    "/affiliates/recover-password": {
+      "patch": {
+        "tags": ["Affiliates"]
+      }
     }
   },
   "components": {
@@ -905,6 +1326,47 @@
           "settings": {
             "$ref": "#/components/schemas/adminSettings"
           }
+        }
+      },
+      "Affiliate": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "avatar": {
+            "$ref": "#/components/schemas/image"
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "memberSince": {
+            "type": "string"
+          }
+        }
+      },
+      "affiliateSignIn":{
+        "type":"object",
+        "properties":{
+          "affiliate":{
+            "$ref": "#/components/schemas/Affiliate"
+          },
+          "accessToken":{
+            "type": "string"
+          },
+          "refreshToken":{
+            "type": "string"
+          }
+          
         }
       },
       "adminSettings": {
@@ -970,6 +1432,9 @@
               "featured": {
                 "type": "boolean"
               },
+              "topSeller": {
+                "type": "boolean"
+              },
               "viewCount": {
                 "type": "integer",
                 "description": "Must be positive"
@@ -1028,6 +1493,9 @@
           "featured": {
             "type": "boolean"
           },
+          "topSeller": {
+            "type": "boolean"
+          },
           "viewCount": {
             "type": "integer"
           },
@@ -1070,6 +1538,14 @@
       },
       "productId": {
         "name": "productId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "userId": {
+        "name": "userId",
         "in": "path",
         "required": true,
         "schema": {
@@ -1128,7 +1604,7 @@
           }
         }
       },
-      "timeOut": {
+      "timeout": {
         "description": "Timeout or token expired.",
         "content": {
           "application/json": {

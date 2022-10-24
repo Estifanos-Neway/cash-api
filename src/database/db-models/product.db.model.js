@@ -37,6 +37,10 @@ const productSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
+        topSeller: {
+            type: Boolean,
+            default: false
+        },
         viewCount: {
             type: Number,
             validate: {

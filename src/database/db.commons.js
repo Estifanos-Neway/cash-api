@@ -43,8 +43,17 @@ exports.db = {
     },
     updateOne: async (model, conditions = {}, updates, options = {}) => {
         adaptConditions(conditions);
-        options = { ...options, runValidators: true };
-        return await model.updateOne(conditions, updates, options);
+        let doc = await model.findOne(conditions,null,options);
+        if (doc) {
+            Object.entries(updates).forEach(update => {
+                if (update[0] in doc) {
+                    doc[update[0]] = update[1];
+                }
+            });
+            return await doc.save(options);
+        } else {
+            throw new Error(responses.docNotFound);
+        }
     },
     increment: async (model, conditions = {}, incrementor, options = {}) => {
         adaptConditions(conditions);

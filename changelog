@@ -1,4 +1,5 @@
 v-
 - /tokens is changed to /sessions
+- removed "Authorization" header from /sessions requests (/refresh and /sign-out)
 - cors whitelist is moved from `.env` to `config.json`
 - changed "Invalid_Access_Token" to "Not_Authorized" for status code 401
