@@ -2,6 +2,7 @@ const adminResponses = require("./admin.responses");
 const sessionsResponses = require("./sessions.responses");
 const productCategoriesResponses = require("./product-categories.responses");
 const productResponses = require("./products.responses");
+const affiliateResponses = require("./affiliates.responses");
 const rt = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
@@ -13,5 +14,6 @@ exports.Responses = {
     ...adminResponses,
     ...sessionsResponses,
     ...productCategoriesResponses,
-    ...productResponses
+    ...productResponses,
+    ...affiliateResponses
 };

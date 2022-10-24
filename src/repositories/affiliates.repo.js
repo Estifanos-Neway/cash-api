@@ -163,59 +163,52 @@ module.exports = Object.freeze({
         }
     },
     forgotPassword: async ({ email }) => {
-        if (!utils.isNonEmptyString(email)) {
-            throw utils.createError(rt.invalidInput, rc.invalidInput);
+        // @ts-ignore
+        const affiliate = new Affiliate({ email });
+        if (!affiliate.hasValidEmail(strict)) {
+            throw utils.createError(rt.invalidEmail, rc.invalidInput);
         } else {
-            // @ts-ignore
-            const affiliate = new Affiliate({ email });
-            if (!affiliate.hasValidEmail(strict)) {
-                throw utils.createError(rt.invalidEmail, rc.invalidInput);
+            const emailExist = await affiliatesDb.exists({ sanitizedEmail: utils.sanitizeEmail(affiliate.email) });
+            if (!emailExist) {
+                throw utils.createError(rt.userNotFound, rc.notFound);
             } else {
-                const emailExist = await affiliatesDb.exists({ sanitizedEmail: utils.sanitizeEmail(affiliate.email) });
-                if (!emailExist) {
-                    throw utils.createError(rt.userNotFound, rc.notFound);
-                } else {
-                    const userId = emailExist.userId;
-                    const validUntil = new Date().getTime() + vars.verificationTokenExpiresIn;
-                    const recoveryObject = new passwordRecoveryObject({ userId, validUntil });
-                    const recoveryToken = utils.encrypt(JSON.stringify(recoveryObject.toJson()));
-                    // clean
-                    console.dir(recoveryToken, { depth: null });
-                    const recoveryLink = `${configs.urls.baseUrl}${configs.urls.passwordRecoveryPath}?u=affiliate&t=${recoveryToken}`;
-                    const subject = "Password Recovery";
-                    // @ts-ignore
-                    const html = passwordRecoveryEmail.replaceAll("__recoveryLink__", recoveryLink);
-                    await utils.sendEmail({ subject, html, to: email });
-                    return true;
-                }
+                const userId = emailExist.userId;
+                const validUntil = new Date().getTime() + vars.verificationTokenExpiresIn;
+                const recoveryObject = new passwordRecoveryObject({ userId, validUntil });
+                const recoveryToken = utils.encrypt(JSON.stringify(recoveryObject.toJson()));
+                // clean
+                console.dir(recoveryToken, { depth: null });
+                const recoveryLink = `${configs.urls.baseUrl}${configs.urls.passwordRecoveryPath}?u=affiliate&t=${recoveryToken}`;
+                const subject = "Password Recovery";
+                // @ts-ignore
+                const html = passwordRecoveryEmail.replaceAll("__recoveryLink__", recoveryLink);
+                await utils.sendEmail({ subject, html, to: email });
+                return true;
             }
         }
 
     },
     recoverPassword: async ({ recoveryToken, newPasswordHash }) => {
-        if (!utils.isNonEmptyString(recoveryToken) || !utils.isNonEmptyString(newPasswordHash)) {
-            throw utils.createError(rt.invalidInput, rc.invalidInput);
+        // @ts-ignore
+        const affiliate = new Affiliate({ passwordHash: newPasswordHash });
+        if (!affiliate.hasValidPasswordHash(strict)) {
+            throw utils.createError(rt.invalidPasswordHash, rc.invalidInput);
         } else {
-            // @ts-ignore
-            const affiliate = new Affiliate({ passwordHash: newPasswordHash });
-            if (!affiliate.hasValidPasswordHash(strict)) {
-                throw utils.createError(rt.invalidPasswordHash, rc.invalidInput);
+            let recoveryObject;
+            try {
+                const recoveryObjectJson = JSON.parse(utils.decrypt(recoveryToken));
+                recoveryObject = new passwordRecoveryObject(recoveryObjectJson);
+            } catch (error) {
+                throw utils.createError(rt.invalidToken, rc.invalidInput);
+            }
+            if (recoveryObject.validUntil < new Date().getTime()) {
+                throw utils.createError(rt.expiredToken, rc.timeout);
             } else {
-                let recoveryObject;
-                try {
-                    const recoveryObjectJson = JSON.parse(utils.decrypt(recoveryToken));
-                    recoveryObject = new passwordRecoveryObject(recoveryObjectJson);
-                } catch (error) {
-                    throw utils.createError(rt.invalidToken, rc.invalidInput);
-                }
-                if (recoveryObject.validUntil < new Date().getTime()) {
-                    throw utils.createError(rt.expiredToken, rc.timeout);
-                } else {
-                    await affiliatesDb.updateOne({ id: recoveryObject.userId }, { passwordHash: newPasswordHash });
-                    return true;
-                }
+                await affiliatesDb.updateOne({ id: recoveryObject.userId }, { passwordHash: newPasswordHash });
+                return true;
             }
         }
+
     },
     updateAvatar: async ({ userId, imageReadStream }) => {
         await validateUserIdExistence({ userId });
