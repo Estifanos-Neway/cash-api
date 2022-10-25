@@ -112,7 +112,7 @@ module.exports = {
             if (new Date().getTime() > verificationObject.validUntil) {
                 throw utils.createError(rt.expiredToken, rc.timeout);
             } else if (verificationCode !== verificationObject.verificationCode) {
-                throw utils.createError(rt.invalidVerificationCode, rc.invalidInput);
+                throw utils.createError(rt.wrongVerificationCode, rc.unauthorized);
             } else {
                 return verificationObject;
             }

@@ -6,6 +6,7 @@ module.exports = {
     invalidUsername: "Invalid_Username",
     invalidUserId: "Invalid_User_Id",
     invalidVerificationCode: "Invalid_Verification_Code",
+    wrongVerificationCode: "Wrong_Verification_Code",
     invalidToken: "Invalid_Token",
     invalidEmail: "Invalid_Email",
     invalidPhone: "Invalid_Phone",

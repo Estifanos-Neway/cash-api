@@ -24,8 +24,9 @@ module.exports = {
                 200: ["<affiliateSignInObject>"],
                 400: [
                     createSingleResponse(rt.invalidToken),
-                    createSingleResponse(rt.invalidVerificationCode),
+                    createSingleResponse(rt.invalidVerificationCode)
                 ],
+                401: [createSingleResponse(rt.wrongVerificationCode)],
                 408: [createSingleResponse(rt.expiredToken)],
                 409: [
                     createSingleResponse(rt.affiliateEmailAlreadyExist),
@@ -70,10 +71,12 @@ module.exports = {
                 200: [createSingleResponse(rt.success)],
                 400: [
                     createSingleResponse(rt.invalidUserId),
-                    createSingleResponse(rt.invalidPasswordHash),
-                    createSingleResponse(rt.wrongPasswordHash),
+                    createSingleResponse(rt.invalidPasswordHash)
                 ],
-                401: [createSingleResponse(rt.unauthorized)],
+                401: [
+                    createSingleResponse(rt.unauthorized),
+                    createSingleResponse(rt.wrongPasswordHash)
+                ],
                 404: [createSingleResponse(rt.userNotFound)]
             }
         },

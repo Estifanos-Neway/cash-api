@@ -358,7 +358,7 @@ module.exports = Object.freeze({
         } else {
             const correctPasswordHash = await affiliatesDb.exists({ id: userId, passwordHash: affiliateWithPasswordHash.passwordHash });
             if (!correctPasswordHash) {
-                throw utils.createError(rt.wrongPasswordHash, rc.invalidInput);
+                throw utils.createError(rt.wrongPasswordHash, rc.unauthorized);
             } else {
                 const affiliate = await affiliatesDb.deleteOne({ id: userId });
                 if (!affiliate) {

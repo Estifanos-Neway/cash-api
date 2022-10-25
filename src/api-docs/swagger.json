@@ -1039,6 +1039,9 @@
           "400": {
             "$ref": "#/components/responses/invalidInput"
           },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
           "408": {
             "$ref": "#/components/responses/timeout"
           },

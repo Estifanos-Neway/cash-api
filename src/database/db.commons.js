@@ -57,8 +57,13 @@ exports.db = {
     },
     increment: async (model, conditions = {}, incrementor, options = {}) => {
         adaptConditions(conditions);
-        const update = { $inc: incrementor };
-        return await model.updateOne(conditions, update, options);
+        const doc = await model.findOne(conditions,null,options);
+        if (doc) {
+            doc.$inc(...incrementor);
+            return await doc.save(options);
+        } else {
+            throw new Error(responses.docNotFound);
+        }
     },
     adaptEntity: (Entity, dbDoc, idName = "id") => {
         dbDoc = dbDoc.toJSON();

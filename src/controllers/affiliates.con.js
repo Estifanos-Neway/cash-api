@@ -37,6 +37,9 @@ module.exports = Object.freeze({
                     case rc.invalidInput:
                         res.status(sc.invalidInput).json(createSingleResponse(error.message));
                         break;
+                    case rc.unauthorized:
+                        res.status(sc.unauthorized).json(createSingleResponse(error.message));
+                        break;
                     case rc.timeout:
                         res.status(sc.timeout).json(createSingleResponse(error.message));
                         break;
@@ -346,6 +349,9 @@ module.exports = Object.freeze({
                 switch (error.code) {
                     case rc.invalidInput:
                         res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.unauthorized:
+                        res.status(sc.unauthorized).json(createSingleResponse(error.message));
                         break;
                     case rc.notFound:
                         res.status(sc.notFound).json(createSingleResponse(error.message));
