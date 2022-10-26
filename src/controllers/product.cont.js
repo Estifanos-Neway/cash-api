@@ -40,7 +40,6 @@ async function uploadProductImage(image) {
     const fileReadStream = streamifier.createReadStream(image.buffer);
     await filesRepo.uploadProductImage(fileName, fileReadStream);
     return `${productImageBasePath}/${fileName}`;
-
 }
 
 async function uploadAttachedImagesMid(req, res, next) {

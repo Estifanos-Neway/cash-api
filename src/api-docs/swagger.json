@@ -1269,7 +1269,41 @@
       "get": {
         "summary": "Get children of an affiliate. [Requires_Admin_Or_Same_Affiliate_Access_Token]",
         "tags": ["Affiliates"],
-        "parameters": [{ "$ref": "#/components/parameters/userId" }],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          },
+          {
+            "name": "skip",
+            "description": "Number of entities to skip (Must be positive)",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "description": "Number of entities to get back (Default:8, Max: 20) (Must be positive).",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "sort",
+            "description": "Default: {\"memberSince\":-1}",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "property name": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Returns an affiliate.",
@@ -1556,11 +1590,10 @@
         }
       }
     },
-    "/affiliates/{userId}/verify-email": {
+    "/affiliates/verify-email": {
       "patch": {
         "summary": "Verify and update affiliates email. [Requires_Same_Affiliate_Access_Token]",
         "tags": ["Affiliates"],
-        "parameters": [{ "$ref": "#/components/parameters/userId" }],
         "requestBody": {
           "content": {
             "application/json": {

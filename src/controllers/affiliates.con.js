@@ -1,8 +1,10 @@
 /* eslint-disable indent */
 const multer = require("multer");
 const streamifier = require("streamifier");
+const rt = require("../commons/response-texts");
 const rc = require("../commons/response-codes");
 const sc = require("./controller-commons/status-codes");
+const utils = require("../commons/functions");
 const { affiliatesRepo } = require("../repositories");
 const { catchInternalError, createSingleResponse, sendSuccessResponse, sendInvalidInputResponse } = require("./controller-commons/functions");
 
@@ -123,22 +125,26 @@ module.exports = Object.freeze({
                     } else {
                         const imageBuffer = req.file?.buffer;
                         if (!imageBuffer) {
-                            sendInvalidInputResponse(res);
+                            res.status(sc.invalidInput).json(createSingleResponse(rt.requiredParamsNotFound));
                         } else {
-                            const imageReadStream = streamifier.createReadStream(imageBuffer);
-                            try {
-                                const avatar = await affiliatesRepo.updateAvatar({ userId, imageReadStream });
-                                res.json({ avatar });
-                            } catch (error) {
-                                switch (error.code) {
-                                    case rc.invalidInput:
-                                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
-                                        break;
-                                    case rc.notFound:
-                                        res.status(sc.notFound).json(createSingleResponse(error.message));
-                                        break;
-                                    default:
-                                        throw error;
+                            if (!utils.isImageMime(req.file.mimetype)) {
+                                res.status(sc.invalidInput).json(createSingleResponse(rt.invalidFileFormat));
+                            } else {
+                                const imageReadStream = streamifier.createReadStream(imageBuffer);
+                                try {
+                                    const avatar = await affiliatesRepo.updateAvatar({ userId, imageReadStream });
+                                    res.json({ avatar });
+                                } catch (error) {
+                                    switch (error.code) {
+                                        case rc.invalidInput:
+                                            res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                            break;
+                                        case rc.notFound:
+                                            res.status(sc.notFound).json(createSingleResponse(error.message));
+                                            break;
+                                        default:
+                                            throw error;
+                                    }
                                 }
                             }
                         }
@@ -280,6 +286,9 @@ module.exports = Object.freeze({
                 switch (error.code) {
                     case rc.invalidInput:
                         res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.unauthorized:
+                        res.status(sc.unauthorized).json(createSingleResponse(error.message));
                         break;
                     case rc.timeout:
                         res.status(sc.timeout).json(createSingleResponse(error.message));

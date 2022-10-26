@@ -300,7 +300,7 @@ module.exports = Object.freeze({
                     userId,
                     email: affiliate.email
                 };
-                return await repoUtils.sendEmailVerificationCode({ verificationEmail: verificationEmail, email: affiliate.email, verificationObject });
+                return await repoUtils.sendEmailVerificationCode({ verificationEmail, email: affiliate.email, verificationObject });
             }
         }
     },

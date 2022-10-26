@@ -21,7 +21,7 @@ affiliatesRouter.patch("/:userId/password", forceAffiliateMid, forceSameAffiliat
 affiliatesRouter.patch("/:userId/phone", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updatePhone);
 affiliatesRouter.patch("/:userId/full-name", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updateFullName);
 affiliatesRouter.patch("/:userId/email", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updateEmail);
-affiliatesRouter.patch("/:userId/verify-email", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.verifyEmail);
+affiliatesRouter.patch("/verify-email", forceAffiliateMid, affiliatesCont.verifyEmail);
 affiliatesRouter.patch("/forgot-password", affiliatesCont.forgotPassword);
 affiliatesRouter.patch("/recover-password", affiliatesCont.recoverPassword);
 affiliatesRouter.delete("/:userId", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.delete);

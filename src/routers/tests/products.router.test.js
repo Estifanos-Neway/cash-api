@@ -35,9 +35,9 @@ describe("/products", () => {
         topSeller: true,
         viewCount: 220
     };
-    const imageData = { path: expect.stringMatching(/^\/images\/products\/.+$/) };
+    const expectProductImage = { path: expect.stringMatching(/^\/images\/products\/.+$/) };
     const today = new Date().toISOString().split("T")[0];
-    const dateData = expect.stringMatching(`^${today}T.+$`);
+    const expectToday = expect.stringMatching(`^${today}T.+$`);
     let request, accessToken;
 
     beforeAll(async () => {
@@ -87,17 +87,26 @@ describe("/products", () => {
                         featured: false,
                         topSeller: false,
                         viewCount: 0,
-                        createdAt: dateData,
-                        updatedAt: dateData,
+                        createdAt: expectToday,
+                        updatedAt: expectToday,
                     });
                     expect(bodyB).toEqual({
                         ...productB,
                         productId: expect.any(String),
-                        mainImage: imageData,
-                        moreImages: [imageData, imageData],
-                        createdAt: dateData,
-                        updatedAt: dateData,
+                        mainImage: expectProductImage,
+                        moreImages: [expectProductImage, expectProductImage],
+                        createdAt: expectToday,
+                        updatedAt: expectToday,
                     });
+                    const { statusCode: imageStatusCode1, text: imageText1 } = await request.get(bodyB.mainImage.path);
+                    expect(imageStatusCode1).toBe(200);
+                    expect(imageText1).toBeDefined();
+                    const { statusCode: imageStatusCode2, text: imageText2 } = await request.get(bodyB.moreImages[0].path);
+                    expect(imageStatusCode2).toBe(200);
+                    expect(imageText2).toBeDefined();
+                    const { statusCode: imageStatusCode3, text: imageText3 } = await request.get(bodyB.moreImages[1].path);
+                    expect(imageStatusCode3).toBe(200);
+                    expect(imageText3).toBeDefined();
 
                     productA = bodyA;
                     productB = bodyB;
@@ -151,15 +160,6 @@ describe("/products", () => {
                         .set("Api-Key", env.API_KEY);
                     expect(statusCode).toBe(200);
                     expect(body).toEqual([productB, productA]);
-                });
-            });
-            describe("Given query filter={productName:'Product-b'}", () => {
-                it("Should return []", async () => {
-                    const { body, statusCode } = await request.get(mainPath)
-                        .set("Api-Key", env.API_KEY)
-                        .query({ filter: JSON.stringify({ productName: "Product-b" }) });
-                    expect(statusCode).toBe(200);
-                    expect(body).toEqual([]);
                 });
             });
             describe("Given query filter={productName:'Product-B'}", () => {
@@ -314,14 +314,14 @@ describe("/products", () => {
                         {
                             ...productA,
                             viewCount: productA.viewCount + 1,
-                            updatedAt: dateData
+                            updatedAt: expectToday
                         }
                     );
                     expect(statusCodeB).toBe(200);
                     expect(bodyB).toEqual(
                         {
                             ...productB,
-                            updatedAt: dateData
+                            updatedAt: expectToday
                         }
                     );
                     productA = bodyA;
@@ -369,14 +369,14 @@ describe("/products", () => {
                         price: productA.price + 100,
                         commissionRate: 80,
                         categories: ["Big", "Blue"],
-                        mainImage: imageData,
-                        moreImages: [imageData, imageData],
+                        mainImage: expectProductImage,
+                        moreImages: [expectProductImage, expectProductImage],
                         published: true,
                         featured: true,
                         topSeller: true,
                         viewCount: productA.viewCount + 200,
-                        createdAt: dateData,
-                        updatedAt: dateData,
+                        createdAt: expectToday,
+                        updatedAt: expectToday,
                     });
 
                     productA = body;
@@ -389,7 +389,7 @@ describe("/products", () => {
                         .set("Authorization", `Bearer ${accessToken}`)
                         .field("productDetails", JSON.stringify({ productName: productB.productName }));
                     expect(statusCode).toBe(200);
-                    expect(body).toEqual({ ...productB, updatedAt: dateData });
+                    expect(body).toEqual({ ...productB, updatedAt: expectToday });
 
                     productB = body;
                 });

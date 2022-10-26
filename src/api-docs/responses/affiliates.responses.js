@@ -100,7 +100,9 @@ module.exports = {
                 200: ["<avatarObject>"],
                 400: [
                     createSingleResponse(rt.invalidInput),
-                    createSingleResponse(rt.invalidUserId)
+                    createSingleResponse(rt.invalidUserId),
+                    createSingleResponse(rt.requiredParamsNotFound),
+                    createSingleResponse(rt.invalidFileFormat)
                 ],
                 401: [createSingleResponse(rt.unauthorized)],
                 404: [createSingleResponse(rt.userNotFound)]
@@ -159,15 +161,17 @@ module.exports = {
                 409: [createSingleResponse(rt.affiliateEmailAlreadyExist)]
             }
         },
-        "/{userId}/verify-email": {
+        "/verify-email": {
             "PATCH": {
                 200: [createSingleResponse(rt.success)],
                 400: [
-                    createSingleResponse(rt.invalidUserId),
                     createSingleResponse(rt.invalidToken),
                     createSingleResponse(rt.invalidVerificationCode),
                 ],
-                401: [createSingleResponse(rt.unauthorized)],
+                401: [
+                    createSingleResponse(rt.unauthorized),
+                    createSingleResponse(rt.wrongVerificationCode)
+                ],
                 408: [createSingleResponse(rt.expiredToken)],
                 409: [createSingleResponse(rt.affiliateEmailAlreadyExist)]
             }

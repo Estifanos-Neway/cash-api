@@ -13,7 +13,7 @@ const { adminsRepo } = require("../../repositories");
 
 describe("/admin", () => {
     const mainPath = "/admin";
-    const newEmail = "estifanos.neway.d@gmail.com";
+    const newEmail = "cashmart.et@gmail.com";
     let emailVerificationCode = "VCODE";
     const adminCredentials = {
         username: defaultAdmin.username,

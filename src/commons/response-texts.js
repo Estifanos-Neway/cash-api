@@ -15,7 +15,9 @@ module.exports = {
     invalidPrice: "Invalid_Price",
     invalidViewCount: "Invalid_View_Count",
     invalidJsonString: "Invalid_Json_String",
+    invalidFileFormat:"Invalid_File_Format",
 
+    // Query
     invalidSearchQuery: "Invalid_Search_Query",
     invalidFilterQuery: "Invalid_Filter_Query",
     invalidCategoriesQuery: "Invalid_Categories_Query",
