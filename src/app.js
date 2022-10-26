@@ -22,9 +22,6 @@ exports.makeApp = () => {
     const app = express();
     app.set("port", env.PORT || defaultPort);
 
-    app.use(morgan("dev"));
-    app.use(express.static("src/public"));
-    
     // swagger
     const swaggerDoc = require("./api-docs/swagger.json");
     const swaggerOptions = {
@@ -32,10 +29,13 @@ exports.makeApp = () => {
         customCssUrl: "/swagger.css"
     };
 
+    app.use(morgan("dev"));
+    app.use(express.static("src/public"));
     app.get("/docs/responses", (req, res) => {
         res.json(apiResponses);
     });
     app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, swaggerOptions));
+    app.use("/images", imagesRouter);
 
     // Security
     app.set("trust proxy", 1);
@@ -58,7 +58,6 @@ exports.makeApp = () => {
     app.use(express.json());
 
     // Routes
-    app.use("/images", imagesRouter);
     app.use(forceApiKey);
     app.use(authenticateByToken);
     app.use("/sessions", sessionsRouter);

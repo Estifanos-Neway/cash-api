@@ -94,7 +94,7 @@ module.exports = {
         verificationObject.validUntil = validUntil;
         const verificationToken = utils.encrypt(JSON.stringify(verificationObject));
         // clean
-        console.log("verificationCode: " + verificationCode);
+        console.dir("verificationCode: " + verificationCode);
         return verificationToken;
     },
     validateEmailVerification: ({ verificationToken, verificationCode }) => {

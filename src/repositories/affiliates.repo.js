@@ -177,7 +177,7 @@ module.exports = Object.freeze({
                 const recoveryObject = new passwordRecoveryObject({ userId, validUntil });
                 const recoveryToken = utils.encrypt(JSON.stringify(recoveryObject.toJson()));
                 // clean
-                console.dir(recoveryToken, { depth: null });
+                console.dir(`recoveryToken: ${recoveryToken}`, { depth: null });
                 const recoveryLink = `${configs.urls.baseUrl}${configs.urls.passwordRecoveryPath}?u=affiliate&t=${recoveryToken}`;
                 const subject = "Password Recovery";
                 // @ts-ignore

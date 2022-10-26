@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const { makeApp } = require("../../app");
@@ -9,10 +10,13 @@ const { createSingleResponse } = require("../../controllers/controller-commons/f
 const { User } = require("../../entities");
 const { env } = require("../../env");
 const { adminsRepo } = require("../../repositories");
+const verificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-sign-up-verification-email.html"), { encoding: "utf-8" });
 
 describe("/affiliates", () => {
     const mainPath = "/affiliates";
-    let verificationCode = "VCODE";
+    const verificationCode = "vCODE";
+    // @ts-ignore
+    const verificationEmailHtml = verificationEmail.replaceAll("__verificationCode__", verificationCode);
     const passwordHash = "pwh";
     const newPasswordHash = "n-pwh";
     const newPasswordHash2 = "n-pwh-2";
@@ -148,7 +152,7 @@ describe("/affiliates", () => {
                     .set("Api-Key", env.API_KEY)
                     .send(affiliateA);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledTimes(1);
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: affiliateA.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
                 signUpVerificationTokenA = body.verificationToken;
@@ -183,7 +187,7 @@ describe("/affiliates", () => {
                     .set("Api-Key", env.API_KEY)
                     .send(affiliateB);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledTimes(1);
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: affiliateB.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
                 signUpVerificationTokenB = body.verificationToken;
@@ -218,7 +222,7 @@ describe("/affiliates", () => {
                     .set("Api-Key", env.API_KEY)
                     .send(affiliateC);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledTimes(1);
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: affiliateC.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
                 signUpVerificationTokenC = body.verificationToken;
@@ -991,7 +995,7 @@ describe("/affiliates", () => {
                         .set("Authorization", `Bearer ${accessTokenA}`)
                         .send(
                             {
-                                newPhone:affiliateB.phone
+                                newPhone: affiliateB.phone
                             }
                         );
                     expect(statusCode).toBe(409);
@@ -1050,7 +1054,7 @@ describe("/affiliates", () => {
                             }
                         );
                     expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
-                    expect(sendEmailMock).toHaveBeenCalledTimes(1);
+                    expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: newEmail });
                     expect(statusCode).toBe(200);
                     expect(body).toEqual({ verificationToken: expect.any(String) });
 
@@ -1173,7 +1177,7 @@ describe("/affiliates", () => {
         });
         describe("Given existing new email", () => {
             it(`Should return 409 and ${rt.affiliateEmailAlreadyExist}`, async () => {
-                const verificationToken  = utils.encrypt(JSON.stringify(
+                const verificationToken = utils.encrypt(JSON.stringify(
                     {
                         userId: affiliateA.userId,
                         email: affiliateB.email,
@@ -1260,7 +1264,7 @@ describe("/affiliates", () => {
 
                 const { statusCode: statusCodeSignIn1 } = await req.post(`${mainPath}/sign-in`)
                     .set("Api-Key", env.API_KEY)
-                    .send({ phoneOrEmail: affiliateA.email, passwordHash:newPasswordHash });
+                    .send({ phoneOrEmail: affiliateA.email, passwordHash: newPasswordHash });
                 expect(statusCodeSignIn1).toBe(401);
 
                 const { statusCode: statusCodeSignIn2 } = await req.post(`${mainPath}/sign-in`)
