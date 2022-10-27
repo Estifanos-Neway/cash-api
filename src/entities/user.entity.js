@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const utils = require("../commons/functions");
 const vars = require("../commons/variables");
@@ -63,6 +62,6 @@ module.exports = class User {
     }
 
     static isValidUserId(userId) {
-        return mongoose.Types.ObjectId.isValid(userId);
+        return utils.isValidDbId(userId);
     }
 };

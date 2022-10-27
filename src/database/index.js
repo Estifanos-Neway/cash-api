@@ -6,3 +6,4 @@ exports.sessionsDb = require("./sessions.db");
 exports.productsDb = require("./products.db");
 exports.filesDb = require("./files.db");
 exports.productCategoriesDb = require("./product-categories.db");
+exports.ordersDb = require("./orders.db");

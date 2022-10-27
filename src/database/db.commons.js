@@ -1,8 +1,8 @@
 const _ = require("lodash");
-const mongoose = require("mongoose");
+const utils = require("../commons/functions");
 
 function adaptConditions(conditions = {}) {
-    if (!_.isUndefined(conditions) && "id" in conditions && mongoose.Types.ObjectId.isValid(conditions.id)) {
+    if (!_.isUndefined(conditions) && "id" in conditions && utils.isValidDbId(conditions.id)) {
         conditions._id = conditions.id;
         delete conditions.id;
     }
@@ -43,7 +43,7 @@ exports.db = {
     },
     updateOne: async (model, conditions = {}, updates, options = {}) => {
         adaptConditions(conditions);
-        let doc = await model.findOne(conditions,null,options);
+        let doc = await model.findOne(conditions, null, options);
         if (doc) {
             Object.entries(updates).forEach(update => {
                 if (update[0] in doc) {
@@ -57,7 +57,7 @@ exports.db = {
     },
     increment: async (model, conditions = {}, incrementor, options = {}) => {
         adaptConditions(conditions);
-        const doc = await model.findOne(conditions,null,options);
+        const doc = await model.findOne(conditions, null, options);
         if (doc) {
             doc.$inc(...incrementor);
             return await doc.save(options);

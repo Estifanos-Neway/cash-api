@@ -15,7 +15,7 @@ module.exports = {
     invalidPrice: "Invalid_Price",
     invalidViewCount: "Invalid_View_Count",
     invalidJsonString: "Invalid_Json_String",
-    invalidFileFormat:"Invalid_File_Format",
+    invalidFileFormat: "Invalid_File_Format",
 
     // Query
     invalidSearchQuery: "Invalid_Search_Query",
@@ -43,6 +43,10 @@ module.exports = {
     categoryNameAlreadyExist: "Category_Name_Already_Exist",
     categoryNotFound: "Category_Not_Found",
 
+    // product
+    invalidProductId: "Invalid_Product_Id",
+    invalidProduct: "Invalid_Product",
+
     // Not_Found
     fileNotFound: "File_Not_Found",
     userNotFound: "User_Not_Found",
@@ -59,5 +63,9 @@ module.exports = {
     invalidAffiliateId: "Invalid_Affiliate_Id",
     invalidParentId: "Invalid_Parent_Id",
     affiliateEmailAlreadyExist: "Affiliate_Email_Already_Exist",
-    affiliatePhoneAlreadyExist: "Affiliate_Phone_Already_Exist"
+    affiliatePhoneAlreadyExist: "Affiliate_Phone_Already_Exist",
+
+    // Orders
+    invalidCompanyName: "Invalid_Company_Name",
+    invalidOrderedBy: "Invalid_Ordered_BY",
 };

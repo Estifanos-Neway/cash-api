@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { phone } = require("phone");
 const { createHash } = require("crypto");
 const validator = require("validator");
@@ -145,9 +146,10 @@ module.exports = {
             let sanitized = originalEmail.split("@")[0];
             sanitized = sanitized.split("+")[0];
             sanitized = sanitized.replaceAll(".", "");
-            return sanitized+"@gmail.com";
+            return sanitized + "@gmail.com";
         } else {
             return originalEmail;
         }
-    }
+    },
+    isValidDbId: (value) => mongoose.Types.ObjectId.isValid(value)
 };

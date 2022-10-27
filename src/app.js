@@ -15,7 +15,7 @@ const {
     defaultPort,
     numberOfMaxApiRequestsPerMin } = require("./commons/variables");
 const apiResponses = require("./api-docs/responses");
-const { adminRouter, sessionsRouter, productsRouter, imagesRouter, productCategoriesRouter, affiliatesRouter } = require("./routers");
+const { adminRouter, sessionsRouter, productsRouter, imagesRouter, productCategoriesRouter, affiliatesRouter, ordersRouter } = require("./routers");
 const { createSingleResponse } = require("./controllers/controller-commons/functions");
 
 exports.makeApp = () => {
@@ -30,6 +30,12 @@ exports.makeApp = () => {
     };
 
     app.use(morgan("dev"));
+    app.use(cors(
+        {
+            origin: config.corsWhiteList,
+            optionsSuccessStatus: 200
+        }
+    ));
     app.use(express.static("src/public"));
     app.get("/docs/responses", (req, res) => {
         res.json(apiResponses);
@@ -47,14 +53,8 @@ exports.makeApp = () => {
         standardHeaders: true,
         legacyHeaders: false
     });
-    app.use(helmet.hidePoweredBy());
-    app.use(cors(
-        {
-            origin: config.corsWhiteList,
-            optionsSuccessStatus: 200
-        }
-    ));
     app.use(limiter);
+    app.use(helmet.hidePoweredBy());
     app.use(express.json());
 
     // Routes
@@ -65,6 +65,7 @@ exports.makeApp = () => {
     app.use("/product-categories", productCategoriesRouter);
     app.use("/products", productsRouter);
     app.use("/affiliates", affiliatesRouter);
+    app.use("/orders", ordersRouter);
 
     app.use("*", (req, res) => {
         res.status(404).json(createSingleResponse(rt.pathNotFound));

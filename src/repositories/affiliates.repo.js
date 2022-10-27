@@ -110,13 +110,13 @@ module.exports = Object.freeze({
     verifySignUp: async ({ verificationToken, verificationCode }) => {
         const verificationObject = repoUtils.validateEmailVerification({ verificationToken, verificationCode });
         const affiliate = new Affiliate(verificationObject.affiliate);
-        try {
-            if (affiliate.parentId) {
-                const parentExists = await affiliatesDb.exists({ id: affiliate.parentId });
-                if (!parentExists) {
-                    affiliate.parentId = undefined;
-                }
+        if (affiliate.parentId) {
+            const parentExists = await affiliatesDb.exists({ id: affiliate.parentId });
+            if (!parentExists) {
+                affiliate.parentId = undefined;
             }
+        }
+        try {
             const signedUpAffiliate = await affiliatesDb.create(affiliate);
             const { refreshToken, accessToken } = await repoUtils.startSession({ userId: signedUpAffiliate.userId, userType: User.userTypes.Affiliate });
             return {

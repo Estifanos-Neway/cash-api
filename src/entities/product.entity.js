@@ -1,9 +1,14 @@
 const _ = require("lodash");
 const Image = require("./image.entity");
-const { hasValue, removeUndefined } = require("../commons/functions");
+const utils = require("../commons/functions");
 
 module.exports = class Product {
+    static idName = "productId";
+
     productId;
+    hasValidProductId(strict) {
+        return utils.isValidDbId(this.productId) || (!strict && _.isUndefined(this.productId));
+    }
     #productName;
     #description;
     #mainImage;
@@ -35,7 +40,7 @@ module.exports = class Product {
     }
 
     set mainImage(jsonImage) {
-        if (hasValue(jsonImage)) {
+        if (utils.hasValue(jsonImage)) {
             this.#mainImage = new Image({ ...jsonImage });
         }
     }
@@ -105,7 +110,7 @@ module.exports = class Product {
     }
 
     toJson() {
-        return removeUndefined(
+        return utils.removeUndefined(
             {
                 productId: this.productId,
                 productName: this.productName,
