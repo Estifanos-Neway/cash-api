@@ -4,7 +4,7 @@ const { orderDbModel, productDbModel } = require("./db-models");
 
 async function populateProduct(order) {
     const productDoc = await db.findOne(productDbModel, { id: order.product.productId });
-    order.product = productDoc ? db.adaptEntity(Product, productDoc, Product.idName).toJson() : null;
+    order.product = productDoc ? db.adaptEntity(Product, productDoc, Product.idName).toJson() : undefined;
 }
 const idName = Order.idName;
 module.exports = {
@@ -25,11 +25,22 @@ module.exports = {
     },
     findOne: async (conditions, select) => {
         const orderDoc = await db.findOne(orderDbModel, conditions, select);
-        return orderDoc ? db.adaptEntity(Order, orderDoc, idName) : null;
+        const order = orderDoc ? db.adaptEntity(Order, orderDoc, idName) : null;
+        if (order) {
+            await populateProduct(order);
+        }
+        return order;
+
     },
     findMany: async ({ filter = {}, select = [], skip = 0, limit, sort = {} }) => {
         const orderDocList = await db.findMany({ model: orderDbModel, filter, skip, limit, select, sort });
-        return orderDocList.map(orderDoc => db.adaptEntity(Order, orderDoc, idName));
+        const orderList = [];
+        for (const orderDoc of orderDocList) {
+            const order = db.adaptEntity(Order, orderDoc, idName);
+            await populateProduct(order);
+            orderList.push(order);
+        }
+        return orderList;
     },
     updateOne: async (conditions, updates) => {
         const orderDoc = await db.updateOne(orderDbModel, conditions, updates);

@@ -65,6 +65,8 @@ module.exports = class Order {
     set product(productJson) {
         if (_.isPlainObject(productJson)) {
             this.#product = new Product(productJson);
+        } else if (_.isUndefined(productJson)) {
+            this.#product = undefined;
         }
     }
     get product() {
@@ -76,6 +78,8 @@ module.exports = class Order {
     set orderedBy(orderedByJson) {
         if (_.isPlainObject(orderedByJson)) {
             this.#orderedBy = new OrderedBy(orderedByJson);
+        } else if (_.isUndefined(orderedByJson)) {
+            this.#orderedBy = undefined;
         }
     }
     get orderedBy() {
@@ -118,5 +122,8 @@ module.exports = class Order {
             orderedAt: this.orderedAt,
             status: this.status
         });
+    }
+    static isValidOrderId(userId) {
+        return utils.isValidDbId(userId);
     }
 };

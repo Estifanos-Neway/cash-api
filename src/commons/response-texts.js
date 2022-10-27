@@ -66,6 +66,8 @@ module.exports = {
     affiliatePhoneAlreadyExist: "Affiliate_Phone_Already_Exist",
 
     // Orders
+    invalidOrderId: "Invalid_Order_Id",
+    orderNotFound: "Order_Not_Found",
     invalidCompanyName: "Invalid_Company_Name",
-    invalidOrderedBy: "Invalid_Ordered_BY",
+    invalidOrderedBy: "Invalid_Ordered_By",
 };
