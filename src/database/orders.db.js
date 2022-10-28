@@ -9,6 +9,7 @@ async function populateOrder(order, options) {
         const affiliateDoc = await db.findOne(affiliateDbModel, { id: order.affiliate.userId }, ["fullName"], options);
         order.affiliate = affiliateDoc ? db.adaptEntity(Affiliate, affiliateDoc, Affiliate.idName).toJson() : undefined;
     }
+    return order;
 }
 const idName = Order.idName;
 module.exports = {
@@ -35,7 +36,6 @@ module.exports = {
             await populateOrder(order);
         }
         return order;
-
     },
     findMany: async ({ filter = {}, select = [], skip = 0, limit, sort = {} }) => {
         const orderDocList = await db.findMany({ model: orderDbModel, filter, skip, limit, select, sort });
@@ -47,12 +47,18 @@ module.exports = {
         }
         return orderList;
     },
-    updateOne: async (conditions, updates) => {
-        const orderDoc = await db.updateOne(orderDbModel, conditions, updates);
-        return db.adaptEntity(Order, orderDoc, idName);
+    updateOne: async (conditions, updates, options) => {
+        db.sanitizeOptions(options);
+        const orderDoc = await db.updateOne(orderDbModel, conditions, updates, options);
+        const order = db.adaptEntity(Order, orderDoc, idName);
+        return await populateOrder(order);
     },
     deleteOne: async (conditions) => {
         const orderDoc = await db.deleteOne(orderDbModel, conditions);
-        return orderDoc ? db.adaptEntity(Order, orderDoc, idName) : null;
+        const order = orderDoc ? db.adaptEntity(Order, orderDoc, idName) : null;
+        if (order) {
+            await populateOrder(order);
+        }
+        return order;
     }
 };

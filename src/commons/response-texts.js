@@ -68,7 +68,9 @@ module.exports = {
 
     // Orders
     invalidOrderId: "Invalid_Order_Id",
-    orderNotFound: "Order_Not_Found",
     invalidCompanyName: "Invalid_Company_Name",
     invalidOrderedBy: "Invalid_Ordered_By",
+    orderNotFound: "Order_Not_Found",
+    orderAlreadyUnpended: "Order_Already_Unpended",
+    pendingOrder: "Pending_Order",
 };

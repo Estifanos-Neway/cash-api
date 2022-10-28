@@ -20,8 +20,8 @@ module.exports = Object.freeze({
                     case rc.invalidInput:
                         res.status(sc.invalidInput).json(createSingleResponse(error.message));
                         break;
-                    case rc.alreadyExist:
-                        res.status(sc.alreadyExist).json(createSingleResponse(error.message));
+                    case rc.conflict:
+                        res.status(sc.conflict).json(createSingleResponse(error.message));
                         break;
                     default:
                         throw error;
@@ -45,8 +45,8 @@ module.exports = Object.freeze({
                     case rc.timeout:
                         res.status(sc.timeout).json(createSingleResponse(error.message));
                         break;
-                    case rc.alreadyExist:
-                        res.status(sc.alreadyExist).json(createSingleResponse(error.message));
+                    case rc.conflict:
+                        res.status(sc.conflict).json(createSingleResponse(error.message));
                         break;
                     default:
                         throw error;
@@ -268,8 +268,8 @@ module.exports = Object.freeze({
                     case rc.notFound:
                         res.status(sc.notFound).json(createSingleResponse(error.message));
                         break;
-                    case rc.alreadyExist:
-                        res.status(sc.alreadyExist).json(createSingleResponse(error.message));
+                    case rc.conflict:
+                        res.status(sc.conflict).json(createSingleResponse(error.message));
                         break;
                     default:
                         throw error;
@@ -293,8 +293,8 @@ module.exports = Object.freeze({
                     case rc.timeout:
                         res.status(sc.timeout).json(createSingleResponse(error.message));
                         break;
-                    case rc.alreadyExist:
-                        res.status(sc.alreadyExist).json(createSingleResponse(error.message));
+                    case rc.conflict:
+                        res.status(sc.conflict).json(createSingleResponse(error.message));
                         break;
                     default:
                         throw error;
@@ -317,8 +317,8 @@ module.exports = Object.freeze({
                     case rc.notFound:
                         res.status(sc.notFound).json(createSingleResponse(error.message));
                         break;
-                    case rc.alreadyExist:
-                        res.status(sc.alreadyExist).json(createSingleResponse(error.message));
+                    case rc.conflict:
+                        res.status(sc.conflict).json(createSingleResponse(error.message));
                         break;
                     default:
                         throw error;

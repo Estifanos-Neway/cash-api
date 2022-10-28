@@ -549,7 +549,7 @@
             "$ref": "#/components/responses/unauthorized"
           },
           "409": {
-            "$ref": "#/components/responses/alreadyExist"
+            "$ref": "#/components/responses/conflict"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -619,7 +619,7 @@
             "$ref": "#/components/responses/notFound"
           },
           "409": {
-            "$ref": "#/components/responses/alreadyExist"
+            "$ref": "#/components/responses/conflict"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -677,7 +677,7 @@
             "$ref": "#/components/responses/unauthorized"
           },
           "409": {
-            "$ref": "#/components/responses/alreadyExist"
+            "$ref": "#/components/responses/conflict"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -992,7 +992,7 @@
             "$ref": "#/components/responses/invalidInput"
           },
           "409": {
-            "$ref": "#/components/responses/alreadyExist"
+            "$ref": "#/components/responses/conflict"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -1046,7 +1046,7 @@
             "$ref": "#/components/responses/timeout"
           },
           "409": {
-            "$ref": "#/components/responses/alreadyExist"
+            "$ref": "#/components/responses/conflict"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -1490,7 +1490,7 @@
             "$ref": "#/components/responses/notFound"
           },
           "409": {
-            "$ref": "#/components/responses/alreadyExist"
+            "$ref": "#/components/responses/conflict"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -1582,7 +1582,7 @@
             "$ref": "#/components/responses/notFound"
           },
           "409": {
-            "$ref": "#/components/responses/alreadyExist"
+            "$ref": "#/components/responses/conflict"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -1625,7 +1625,7 @@
             "$ref": "#/components/responses/timeout"
           },
           "409": {
-            "$ref": "#/components/responses/alreadyExist"
+            "$ref": "#/components/responses/conflict"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -2011,7 +2011,7 @@
           }
         }
       },
-      "alreadyExist": {
+      "conflict": {
         "description": "The entity already exist",
         "content": {
           "application/json": {

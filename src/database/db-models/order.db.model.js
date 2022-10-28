@@ -44,7 +44,7 @@ const orderSchema = new mongoose.Schema(
     {
         timestamps: {
             createdAt: "orderedAt",
-            updatedAt: false
+            updatedAt: "updatedAt"
         },
         strictQuery: false
     }

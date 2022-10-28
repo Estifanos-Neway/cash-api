@@ -10,10 +10,16 @@ async function validateOrderIdExistence({ id }) {
     if (!Order.isValidOrderId(id)) {
         throw utils.createError(rt.invalidOrderId, rc.invalidInput);
     } else {
-        const orderExist = await ordersDb.findOne({ id });
+        const orderExist = await ordersDb.exists({ id });
         if (!orderExist) {
             throw utils.createError(rt.orderNotFound, rc.notFound);
         }
+    }
+}
+async function validateOrderPending({ id }) {
+    const orderIsPending = await ordersDb.exists({ id, status: Order.statuses.Pending });
+    if (!orderIsPending) {
+        throw utils.createError(rt.orderAlreadyUnpended, rc.conflict);
     }
 }
 
@@ -78,7 +84,52 @@ module.exports = {
         const orderList = await ordersDb.findMany({ filter, skip, limit, select, sort });
         return orderList.map(order => order.toJson());
     },
-    acceptOrder: async ({ orderId }) => {
+    accept: async ({ orderId }) => {
         await validateOrderIdExistence({ id: orderId });
+        await validateOrderPending({ id: orderId });
+        const dbSession = new db.DbSession();
+        await dbSession.startSession();
+        const sessionOption = { session: dbSession.session };
+        let updatedOrder;
+        await dbSession.withTransaction(async () => {
+            updatedOrder = await ordersDb.updateOne({ id: orderId }, { status: Order.statuses.Accepted }, sessionOption);
+            if (updatedOrder.affiliate) {
+                await affiliatesDb.increment({ id: updatedOrder.affiliate.userId }, { "affiliationSummary.acceptedRequests": 1 }, sessionOption);
+            }
+        });
+        await dbSession.endSession();
+        // @ts-ignore
+        return updatedOrder.toJson();
+    },
+    reject: async ({ orderId }) => {
+        await validateOrderIdExistence({ id: orderId });
+        await validateOrderPending({ id: orderId });
+        const dbSession = new db.DbSession();
+        await dbSession.startSession();
+        const sessionOption = { session: dbSession.session };
+        let updatedOrder;
+        await dbSession.withTransaction(async () => {
+            updatedOrder = await ordersDb.updateOne({ id: orderId }, { status: Order.statuses.Rejected }, sessionOption);
+            if (updatedOrder.affiliate) {
+                await affiliatesDb.increment({ id: updatedOrder.affiliate.userId }, { "affiliationSummary.rejectedRequests": 1 }, sessionOption);
+            }
+        });
+        await dbSession.endSession();
+        // @ts-ignore
+        return updatedOrder.toJson();
+    },
+    delete: async ({ orderId }) => {
+        await validateOrderIdExistence({ id: orderId });
+        const orderIsPending = await ordersDb.exists({ id: orderId, status: Order.statuses.Pending });
+        if (orderIsPending) {
+            throw utils.createError(rt.pendingOrder, rc.conflict);
+        } else {
+            const deletedOrder = await ordersDb.deleteOne({ id: orderId });
+            if (!deletedOrder) {
+                throw utils.createError(rt.orderNotFound, rc.notFound);
+            } else {
+                return true;
+            }
+        }
     }
 };

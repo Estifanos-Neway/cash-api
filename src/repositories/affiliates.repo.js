@@ -63,7 +63,7 @@ async function validateUserIdExistence({ userId }) {
     if (!User.isValidUserId(userId)) {
         throw utils.createError(rt.invalidUserId, rc.invalidInput);
     } else {
-        const affiliate = await affiliatesDb.findOne({ id: userId });
+        const affiliate = await affiliatesDb.exists({ id: userId });
         if (!affiliate) {
             throw utils.createError(rt.userNotFound, rc.notFound);
         }
@@ -87,11 +87,11 @@ module.exports = Object.freeze({
         } else {
             const emailAlreadyExist = await affiliatesDb.exists({ sanitizedEmail: utils.sanitizeEmail(affiliate.email) });
             if (emailAlreadyExist) {
-                throw utils.createError(rt.affiliateEmailAlreadyExist, rc.alreadyExist);
+                throw utils.createError(rt.affiliateEmailAlreadyExist, rc.conflict);
             } else {
                 const phoneAlreadyExist = await affiliatesDb.exists({ phone: affiliate.phone });
                 if (phoneAlreadyExist) {
-                    throw utils.createError(rt.affiliatePhoneAlreadyExist, rc.alreadyExist);
+                    throw utils.createError(rt.affiliatePhoneAlreadyExist, rc.conflict);
                 } else {
                     const verificationObject = {
                         affiliate: {
@@ -127,9 +127,9 @@ module.exports = Object.freeze({
         } catch (error) {
             switch (error.message) {
                 case rt.affiliateEmailAlreadyExist:
-                    throw utils.createError(rt.affiliateEmailAlreadyExist, rc.alreadyExist);
+                    throw utils.createError(rt.affiliateEmailAlreadyExist, rc.conflict);
                 case rt.affiliatePhoneAlreadyExist:
-                    throw utils.createError(rt.affiliatePhoneAlreadyExist, rc.alreadyExist);
+                    throw utils.createError(rt.affiliatePhoneAlreadyExist, rc.conflict);
                 default:
                     throw error;
             }
@@ -294,7 +294,7 @@ module.exports = Object.freeze({
         } else {
             const emailAlreadyExist = await affiliatesDb.exists({ sanitizedEmail: utils.sanitizeEmail(affiliate.email) });
             if (emailAlreadyExist) {
-                throw utils.createError(rt.affiliateEmailAlreadyExist, rc.alreadyExist);
+                throw utils.createError(rt.affiliateEmailAlreadyExist, rc.conflict);
             } else {
                 const verificationObject = {
                     userId,
@@ -312,7 +312,7 @@ module.exports = Object.freeze({
         } catch (error) {
             switch (error.message) {
                 case rt.affiliateEmailAlreadyExist:
-                    throw utils.createError(rt.affiliateEmailAlreadyExist, rc.alreadyExist);
+                    throw utils.createError(rt.affiliateEmailAlreadyExist, rc.conflict);
                 default:
                     throw error;
             }
@@ -331,7 +331,7 @@ module.exports = Object.freeze({
             } catch (error) {
                 switch (error.message) {
                     case rt.affiliatePhoneAlreadyExist:
-                        throw utils.createError(rt.affiliatePhoneAlreadyExist, rc.alreadyExist);
+                        throw utils.createError(rt.affiliatePhoneAlreadyExist, rc.conflict);
                     default:
                         throw error;
                 }

@@ -4,7 +4,7 @@ module.exports = {
     unauthorized: 401,
     notFound: 404,
     timeout: 408,
-    alreadyExist: 409,
+    conflict: 409,
     tooManyRequests: 429,
     internalError: 500
 };
