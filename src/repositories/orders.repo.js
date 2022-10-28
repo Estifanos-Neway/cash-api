@@ -29,11 +29,11 @@ module.exports = {
         // @ts-ignore
         const order = new Order({ product, orderedBy, affiliate });
         if (!order.product) {
-            throw utils.createError(rt.invalidProduct, rc.invalidInput);
+            throw utils.createError(rt.requiredParamsNotFound, rc.invalidInput);
         } else if (!order.product?.hasValidProductId(strict)) {
             throw utils.createError(rt.invalidProductId, rc.invalidInput);
         } else if (!order.orderedBy) {
-            throw utils.createError(rt.invalidOrderedBy, rc.invalidInput);
+            throw utils.createError(rt.requiredParamsNotFound, rc.invalidInput);
         } else if (!order.orderedBy.hasValidFullName(strict)) {
             throw utils.createError(rt.invalidFullName, rc.invalidInput);
         } else if (!order.orderedBy.hasValidPhone(strict)) {

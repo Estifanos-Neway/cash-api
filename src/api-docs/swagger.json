@@ -45,7 +45,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Admin Sign In"
+                  "$ref": "#/components/schemas/Admin-Sign-In"
                 }
               }
             }
@@ -177,7 +177,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Admin Settings"
+                  "$ref": "#/components/schemas/Admin-Settings"
                 }
               }
             }
@@ -200,7 +200,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Admin Settings"
+                "$ref": "#/components/schemas/Admin-Settings"
               }
             }
           }
@@ -211,7 +211,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Admin Settings"
+                  "$ref": "#/components/schemas/Admin-Settings"
                 }
               }
             }
@@ -537,7 +537,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Products Category"
+                  "$ref": "#/components/schemas/Products-Category"
                 }
               }
             }
@@ -567,7 +567,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Products Category"
+                    "$ref": "#/components/schemas/Products-Category"
                   }
                 }
               }
@@ -604,7 +604,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Products Category"
+                  "$ref": "#/components/schemas/Products-Category"
                 }
               }
             }
@@ -654,7 +654,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Product Input"
+                "$ref": "#/components/schemas/Product-Input"
               }
             }
           }
@@ -887,7 +887,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Product Input"
+                "$ref": "#/components/schemas/Product-Input"
               }
             }
           }
@@ -1031,7 +1031,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Affiliate Sign In"
+                  "$ref": "#/components/schemas/Affiliate-Sign-In"
                 }
               }
             }
@@ -1083,7 +1083,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Affiliate Sign In"
+                  "$ref": "#/components/schemas/Affiliate-Sign-In"
                 }
               }
             }
@@ -1171,7 +1171,6 @@
             }
           }
         ],
-
         "responses": {
           "200": {
             "description": "Returns list of affiliates.",
@@ -1703,6 +1702,294 @@
           }
         }
       }
+    },
+    "/orders": {
+      "post": {
+        "summary": "Add new order to the system.",
+        "tags": ["Orders"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["product", "orderedBy"],
+                "properties": {
+                  "product": {
+                    "type": "object",
+                    "required": ["productId"],
+                    "properties": {
+                      "productId": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "orderedBy": {
+                    "type": "object",
+                    "required": ["fullName", "phone"],
+                    "properties": {
+                      "fullName": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "companyName": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "affiliate": {
+                    "type": "object",
+                    "required": ["userId"],
+                    "properties": {
+                      "userId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the new order.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get list of orders. [Requires_Admin_Access_Token]",
+        "tags": ["Orders"],
+        "parameters": [
+          {
+            "name": "search",
+            "description": "Search by Regex",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "property-name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "filter",
+            "description": "Filter by exact match. (properties in filter overrides properties in search)",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Order"
+            }
+          },
+          {
+            "name": "skip",
+            "description": "Number of entities to skip (Must be positive)",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "description": "Number of entities to get back (Default:8, Max: 20) (Must be positive).",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "select",
+            "description": "Which properties to get back.",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "sort",
+            "description": "Default: {\"orderedAt\":-1}",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "property name": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns list of affiliates.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Affiliate"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/orders/{orderId}": {
+      "get": {
+        "summary": "Get an order by its id. [Requires_Admin_Access_Token]",
+        "tags": ["Orders"],
+        "parameters": [{ "$ref": "#/components/parameters/orderId" }],
+        "responses": {
+          "200": {
+            "description": "Returns an order.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an order by its id. [Requires_Admin_Access_Token]",
+        "tags": ["Orders"],
+        "parameters": [{ "$ref": "#/components/parameters/orderId" }],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/success"
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/order/{orderId}/accept": {
+      "patch": {
+        "summary": "Accept an order. [Requires_Admin_Access_Token]",
+        "tags": ["Orders"],
+        "parameters": [{ "$ref": "#/components/parameters/orderId" }],
+        "responses": {
+          "200": {
+            "description": "Returns the updated order.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/order/{orderId}/reject": {
+      "patch": {
+        "summary": "Reject an order. [Requires_Admin_Access_Token]",
+        "tags": ["Orders"],
+        "parameters": [{ "$ref": "#/components/parameters/orderId" }],
+        "responses": {
+          "200": {
+            "description": "Returns the updated order.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1728,11 +2015,11 @@
             "type": "string"
           },
           "settings": {
-            "$ref": "#/components/schemas/Admin Settings"
+            "$ref": "#/components/schemas/Admin-Settings"
           }
         }
       },
-      "Admin Settings": {
+      "Admin-Settings": {
         "type": "object",
         "properties": {
           "commissionRate": {
@@ -1740,7 +2027,7 @@
           }
         }
       },
-      "Admin Sign In": {
+      "Admin-Sign-In": {
         "type": "object",
         "properties": {
           "Admin": {
@@ -1775,12 +2062,40 @@
           "parentId": {
             "type": "string"
           },
+          "wallet": {
+            "type": "object",
+            "properties": {
+              "totalMade": {
+                "type": "number"
+              },
+              "currentBalance": {
+                "type": "number"
+              },
+              "canWithdrawAfter": {
+                "type": "number"
+              }
+            }
+          },
+          "affiliationSummary": {
+            "type": "object",
+            "properties": {
+              "totalRequests": {
+                "type": "number"
+              },
+              "acceptedRequests": {
+                "type": "number"
+              },
+              "rejectedRequests": {
+                "type": "number"
+              }
+            }
+          },
           "memberSince": {
             "type": "string"
           }
         }
       },
-      "Affiliate Sign In": {
+      "Affiliate-Sign-In": {
         "type": "object",
         "properties": {
           "affiliate": {
@@ -1849,7 +2164,7 @@
           }
         }
       },
-      "Product Input": {
+      "Product-Input": {
         "type": "object",
         "required": ["productDetails"],
         "properties": {
@@ -1907,7 +2222,7 @@
           }
         }
       },
-      "Products Category": {
+      "Products-Category": {
         "type": "object",
         "properties": {
           "categoryId": {
@@ -1915,6 +2230,71 @@
           },
           "categoryName": {
             "type": "string"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "required": ["product", "orderedBy"],
+        "properties": {
+          "orderId": {
+            "type": "string"
+          },
+          "product": {
+            "type": "object",
+            "required": ["productId"],
+            "properties": {
+              "productId": {
+                "type": "string"
+              },
+              "productName": {
+                "type": "string"
+              },
+              "mainImage": {
+                "$ref": "#/components/schemas/Image"
+              },
+              "price": {
+                "type": "number"
+              },
+              "commission": {
+                "type": "number"
+              }
+            }
+          },
+          "orderedBy": {
+            "type": "object",
+            "required": ["fullName", "phone"],
+            "properties": {
+              "fullName": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "companyName": {
+                "type": "string"
+              }
+            }
+          },
+          "affiliate": {
+            "type": "object",
+            "required": ["userId"],
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "fullName": {
+                "type": "string"
+              }
+            }
+          },
+          "orderedAt": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Pending", "Accepted", "Rejected"],
+            "default": "Pending"
           }
         }
       },
@@ -1926,7 +2306,7 @@
           }
         }
       },
-      "Single Response": {
+      "Single-Response": {
         "type": "object",
         "properties": {
           "message": {
@@ -1968,6 +2348,14 @@
         "schema": {
           "type": "string"
         }
+      },
+      "orderId": {
+        "name": "orderId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "responses": {
@@ -1976,7 +2364,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Single Response"
+              "$ref": "#/components/schemas/Single-Response"
             }
           }
         }
@@ -1986,7 +2374,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Single Response"
+              "$ref": "#/components/schemas/Single-Response"
             }
           }
         }
@@ -1996,7 +2384,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Single Response"
+              "$ref": "#/components/schemas/Single-Response"
             }
           }
         }
@@ -2006,7 +2394,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Single Response"
+              "$ref": "#/components/schemas/Single-Response"
             }
           }
         }
@@ -2016,7 +2404,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Single Response"
+              "$ref": "#/components/schemas/Single-Response"
             }
           }
         }
@@ -2026,7 +2414,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Single Response"
+              "$ref": "#/components/schemas/Single-Response"
             }
           }
         }
