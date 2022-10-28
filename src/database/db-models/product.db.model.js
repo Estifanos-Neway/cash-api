@@ -2,9 +2,8 @@ const _ = require("lodash");
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 const rt = require("../../commons/response-texts");
-const {
-    imageJsonSchema,
-    commissionRateSchema } = require("./db-model.commons");
+const utils = require("../../commons/functions");
+const { imageJsonSchema } = require("./db-model.commons");
 
 const required = true;
 
@@ -22,12 +21,19 @@ const productSchema = new mongoose.Schema(
         price: {
             type: Number,
             validate: {
-                validator: (value) => value >= 0,
+                validator: utils.isPositiveNumber,
                 message: rt.invalidPrice
             },
             required
         },
-        commissionRate: commissionRateSchema,
+        commission: {
+            type: Number,
+            validate: {
+                validator: utils.isPositiveNumber,
+                message: rt.invalidCommission
+            },
+            required
+        },
         categories: [String],
         published: {
             type: Boolean,

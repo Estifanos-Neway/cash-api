@@ -1,10 +1,14 @@
-const { Order, Product } = require("../entities");
+const { Order, Product, Affiliate } = require("../entities");
 const { db } = require("./db.commons");
-const { orderDbModel, productDbModel } = require("./db-models");
+const { orderDbModel, productDbModel, affiliateDbModel } = require("./db-models");
 
-async function populateProduct(order) {
-    const productDoc = await db.findOne(productDbModel, { id: order.product.productId });
+async function populateOrder(order, options) {
+    const productDoc = await db.findOne(productDbModel, { id: order.product.productId }, ["productName", "mainImage", "price", "commission"], options);
     order.product = productDoc ? db.adaptEntity(Product, productDoc, Product.idName).toJson() : undefined;
+    if (order.affiliate) {
+        const affiliateDoc = await db.findOne(affiliateDbModel, { id: order.affiliate.userId }, ["fullName"], options);
+        order.affiliate = affiliateDoc ? db.adaptEntity(Affiliate, affiliateDoc, Affiliate.idName).toJson() : undefined;
+    }
 }
 const idName = Order.idName;
 module.exports = {
@@ -17,17 +21,18 @@ module.exports = {
         }
     },
     count: async (conditions) => await db.count(orderDbModel, conditions),
-    create: async (order) => {
-        const orderDoc = await db.create(orderDbModel, order.toJson());
+    create: async (order, options) => {
+        db.sanitizeOptions(options);
+        const orderDoc = await db.create(orderDbModel, order.toJson(), options);
         order = db.adaptEntity(Order, orderDoc, idName);
-        await populateProduct(order);
+        await populateOrder(order, options);
         return order;
     },
     findOne: async (conditions, select) => {
         const orderDoc = await db.findOne(orderDbModel, conditions, select);
         const order = orderDoc ? db.adaptEntity(Order, orderDoc, idName) : null;
         if (order) {
-            await populateProduct(order);
+            await populateOrder(order);
         }
         return order;
 
@@ -37,7 +42,7 @@ module.exports = {
         const orderList = [];
         for (const orderDoc of orderDocList) {
             const order = db.adaptEntity(Order, orderDoc, idName);
-            await populateProduct(order);
+            await populateOrder(order);
             orderList.push(order);
         }
         return orderList;

@@ -11,7 +11,7 @@ function catchUniquenessErrors(error) {
         throw new Error(rt.affiliatePhoneAlreadyExist);
     }
 }
-const idName = "userId";
+const idName = Affiliate.idName;
 module.exports = Object.freeze({
     exists: async (conditions) => {
         const docWithId = await db.exists(affiliateDbModel, conditions);
@@ -50,17 +50,23 @@ module.exports = Object.freeze({
     },
     deleteOne: async (conditions) => {
         const session = await mongoose.startSession();
-        const result = await session.withTransaction(async () => {
+        let affiliate;
+        await session.withTransaction(async () => {
             const affiliateDoc = await db.deleteOne(affiliateDbModel, conditions, { session });
             if (!affiliateDoc) {
-                return null;
+                affiliate = null;
             } else {
                 await db.deleteMany(sessionDbModel, { "user.userId": affiliateDoc._id }, { session });
                 await db.create(deletedAffiliateDbModel, { affiliate: affiliateDoc }, { session });
-                return db.adaptEntity(Affiliate, affiliateDoc, idName);
+                affiliate = db.adaptEntity(Affiliate, affiliateDoc, idName);
             }
         });
         await session.endSession();
-        return result;
+        return affiliate;
+    },
+    increment: async (conditions, incrementors, options) => {
+        db.sanitizeOptions(options);
+        const affiliateDoc = await db.increment(affiliateDbModel, conditions, incrementors, options);
+        return affiliateDoc ? db.adaptEntity(Affiliate, affiliateDoc, idName) : null;
     }
 });

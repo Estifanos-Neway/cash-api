@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const Product = require("./product.entity");
-const User = require("./user.entity");
 const utils = require("../commons/functions");
+const Affiliate = require("./affiliate.entity");
 
 class OrderedBy {
     // fullName
@@ -86,10 +86,17 @@ module.exports = class Order {
         return this.#orderedBy;
     }
 
-    // affiliateId;
-    affiliateId;
-    hasValidAffiliateId() {
-        return User.isValidUserId(this.affiliateId) || _.isUndefined(this.affiliateId);
+    // affiliate;
+    #affiliate;
+    set affiliate(affiliateJson) {
+        if (_.isPlainObject(affiliateJson)) {
+            this.#affiliate = new Affiliate(affiliateJson);
+        } else if (_.isUndefined(affiliateJson)) {
+            this.#affiliate = undefined;
+        }
+    }
+    get affiliate() {
+        return this.#affiliate;
     }
 
     // orderedAt;
@@ -104,11 +111,11 @@ module.exports = class Order {
         return this.#status;
     }
 
-    constructor({ orderId, product, orderedBy, affiliateId, orderedAt, status }) {
+    constructor({ orderId, product, orderedBy, affiliate, orderedAt, status }) {
         this.orderId = orderId;
         this.product = product;
         this.orderedBy = orderedBy;
-        this.affiliateId = affiliateId;
+        this.affiliate = affiliate;
         this.orderedAt = orderedAt;
         this.status = status;
     }
@@ -118,7 +125,7 @@ module.exports = class Order {
             orderId: this.orderId,
             product: this.product?.toJson(),
             orderedBy: this.orderedBy?.toJson(),
-            affiliateId: this.affiliateId,
+            affiliate: this.affiliate?.toJson(),
             orderedAt: this.orderedAt,
             status: this.status
         });

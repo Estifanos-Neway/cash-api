@@ -3,6 +3,7 @@ const uniqueValidator = require("mongoose-unique-validator");
 const utils = require("../../commons/functions");
 const { User } = require("../../entities");
 const { imageJsonSchema } = require("./db-model.commons");
+const config = require("../../config.json");
 
 const required = true;
 const unique = true;
@@ -17,9 +18,7 @@ const affiliateSchema = new mongoose.Schema(
             required,
             unique,
             validate: {
-                validator: (value) => {
-                    utils.isPhone(value);
-                },
+                validator: utils.isPhone,
                 message: "Invalid_Phone"
             }
         },
@@ -28,7 +27,7 @@ const affiliateSchema = new mongoose.Schema(
             unique,
             required,
             validate: {
-                validator: (value) => utils.isEmail(value),
+                validator: utils.isEmail,
                 message: "Invalid_Email"
             }
         },
@@ -36,7 +35,7 @@ const affiliateSchema = new mongoose.Schema(
             type: String,
             unique: true,
             validate: {
-                validator: (value) => utils.isEmail(value),
+                validator: utils.isEmail,
                 message: "Invalid_Email"
             }
         },
@@ -49,6 +48,58 @@ const affiliateSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Affiliate",
             immutable: true
+        },
+        wallet: {
+            totalMade: {
+                type: Number,
+                default: config.affiliateInitialBalance,
+                validate: {
+                    validator: utils.isPositiveNumber,
+                    message: "Total_Made_Can't_Be_Negative"
+                }
+            },
+            currentBalance: {
+                type: Number,
+                default: config.affiliateInitialBalance,
+                validate: {
+                    validator: utils.isPositiveNumber,
+                    message: "{KEY}_Can't_Be_Negative"
+                }
+            },
+            canWithdrawAfter: {
+                type: Number,
+                default: config.affiliateCanWithdrawAfter,
+                validate: {
+                    validator: utils.isPositiveNumber,
+                    message: "{KEY}_Can't_Be_Negative"
+                }
+            }
+        },
+        affiliationSummary: {
+            totalRequests: {
+                type: Number,
+                default: 0,
+                validate: {
+                    validator: utils.isPositiveNumber,
+                    message: "{KEY}_Can't_Be_Negative"
+                }
+            },
+            acceptedRequests: {
+                type: Number,
+                default: 0,
+                validate: {
+                    validator: utils.isPositiveNumber,
+                    message: "{KEY}_Can't_Be_Negative"
+                }
+            },
+            rejectedRequests: {
+                type: Number,
+                default: 0,
+                validate: {
+                    validator: utils.isPositiveNumber,
+                    message: "{KEY}_Can't_Be_Negative"
+                }
+            }
         }
     },
     {

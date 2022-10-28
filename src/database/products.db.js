@@ -15,7 +15,7 @@ module.exports = Object.freeze({
             return false;
         }
     },
-    count: async ({filter = {}, categories = {}}) => {
+    count: async ({ filter = {}, categories = {} }) => {
         const conditions = { ...filter, ...(_.isEmpty(categories) ? {} : { categories: { $all: categories } }) };
         return await db.count(productDbModel, conditions);
     },
@@ -47,8 +47,8 @@ module.exports = Object.freeze({
         const productDoc = await db.deleteOne(productDbModel, conditions);
         return productDoc ? db.adaptEntity(Product, productDoc, idName) : null;
     },
-    increment: async (conditions, incrementor) => {
-        const productDoc = await db.increment(productDbModel, conditions, incrementor);
+    increment: async (conditions, incrementors) => {
+        const productDoc = await db.increment(productDbModel, conditions, incrementors);
         return productDoc ? db.adaptEntity(Product, productDoc, idName) : null;
     }
 });

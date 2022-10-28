@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const mongoose = require("mongoose");
 const utils = require("../commons/functions");
 
 function adaptConditions(conditions = {}) {
@@ -55,19 +56,44 @@ exports.db = {
             throw new Error(responses.docNotFound);
         }
     },
-    increment: async (model, conditions = {}, incrementor, options = {}) => {
+    increment: async (model, conditions = {}, incrementors = {}, options = {}) => {
         adaptConditions(conditions);
         const doc = await model.findOne(conditions, null, options);
         if (doc) {
-            doc.$inc(...incrementor);
+            for (let [field, incBy] of Object.entries(incrementors)) {
+                doc.$inc(field, incBy);
+            }
             return await doc.save(options);
         } else {
             throw new Error(responses.docNotFound);
         }
     },
+    DbSession: class {
+        #session;
+        get session() {
+            return this.#session;
+        }
+
+        async startSession() {
+            this.#session = await mongoose.startSession();
+        }
+
+        async withTransaction(transactions) {
+            return await this.session.withTransaction(transactions);
+        }
+
+        async endSession() {
+            this.#session.endSession();
+        }
+
+    },
     adaptEntity: (Entity, dbDoc, idName = "id") => {
         dbDoc = dbDoc.toJSON();
         dbDoc[idName] = dbDoc._id.toString();
         return new Entity(dbDoc);
+    },
+    sanitizeOptions: (options = {}) => {
+        const { session } = options;
+        options = { session };
     }
 };

@@ -10,5 +10,7 @@
     "emailVerificationPath": "/verify-email"
   },
   "defaultCountryForPhone": "ETH",
-  "corsWhiteList": []
+  "corsWhiteList": [],
+  "affiliateInitialBalance": 100,
+  "affiliateCanWithdrawAfter": 200
 }

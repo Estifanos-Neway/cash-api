@@ -2,6 +2,7 @@ module.exports = {
     invalidInput: "Invalid_Input",
     invalidRefreshToken: "Invalid_Refresh_Token",
     invalidCommissionRate: "Invalid_Commission_Rate",
+    invalidCommission: "Invalid_Commission",
     invalidPasswordHash: "Invalid_Password_Hash",
     invalidUsername: "Invalid_Username",
     invalidUserId: "Invalid_User_Id",
@@ -60,7 +61,7 @@ module.exports = {
 
     // Affiliates
     invalidFullName: "Invalid_Full_Name",
-    invalidAffiliateId: "Invalid_Affiliate_Id",
+    invalidAffiliateId: "Invalid_User_Id_In_Affiliate",
     invalidParentId: "Invalid_Parent_Id",
     affiliateEmailAlreadyExist: "Affiliate_Email_Already_Exist",
     affiliatePhoneAlreadyExist: "Affiliate_Phone_Already_Exist",

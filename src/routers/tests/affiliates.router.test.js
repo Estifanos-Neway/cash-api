@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const { makeApp } = require("../../app");
 const utils = require("../../commons/functions");
+const config = require("../../config.json");
 const rt = require("../../commons/response-texts");
 const { defaultAdmin } = require("../../config.json");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
@@ -63,6 +64,18 @@ describe("/affiliates", () => {
         phone: "+251987222222",
         email: "affiliate.f@gmail.com",
         passwordHash
+    };
+    const walletAndAffiliations = {
+        wallet: {
+            totalMade: config.affiliateInitialBalance,
+            currentBalance: config.affiliateInitialBalance,
+            canWithdrawAfter: config.affiliateCanWithdrawAfter
+        },
+        affiliationSummary: {
+            totalRequests: 0,
+            acceptedRequests: 0,
+            rejectedRequests: 0
+        }
     };
     let
         accessTokenA,
@@ -167,6 +180,7 @@ describe("/affiliates", () => {
                 expect(body).toEqual({
                     affiliate: {
                         ...affiliateA,
+                        ...walletAndAffiliations,
                         userId: expect.any(String),
                         passwordHash: undefined,
                         memberSince: expectToday
@@ -202,6 +216,7 @@ describe("/affiliates", () => {
                 expect(body).toEqual({
                     affiliate: {
                         ...affiliateB,
+                        ...walletAndAffiliations,
                         userId: expect.any(String),
                         passwordHash: undefined,
                         parentId: affiliateA.userId,
@@ -237,6 +252,7 @@ describe("/affiliates", () => {
                 expect(body).toEqual({
                     affiliate: {
                         ...affiliateC,
+                        ...walletAndAffiliations,
                         userId: expect.any(String),
                         passwordHash: undefined,
                         parentId: undefined,

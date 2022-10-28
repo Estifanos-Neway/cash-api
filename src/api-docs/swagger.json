@@ -1824,7 +1824,7 @@
               "type": "string"
             }
           },
-          "commissionRate": {
+          "commission": {
             "type": "number"
           },
           "published": {
@@ -1856,7 +1856,7 @@
           "productDetails": {
             "description": "    must be stringified JSON",
             "type": "object",
-            "required": ["productName", "price", "commissionRate"],
+            "required": ["productName", "price", "commission"],
             "properties": {
               "productName": {
                 "type": "string",
@@ -1875,9 +1875,9 @@
                   "type": "string"
                 }
               },
-              "commissionRate": {
+              "commission": {
                 "type": "number",
-                "description": "Must be between 0 and 100"
+                "description": "Must be positive"
               },
               "published": {
                 "type": "boolean"

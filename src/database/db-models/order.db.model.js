@@ -29,7 +29,12 @@ const orderSchema = new mongoose.Schema(
             },
             companyName: String
         },
-        affiliateId: mongoose.Schema.Types.ObjectId,
+        affiliate: {
+            userId: {
+                type: mongoose.Types.ObjectId,
+                ref: "Affiliate"
+            }
+        },
         status: {
             type: String,
             enum: Object.keys(Order.statuses),

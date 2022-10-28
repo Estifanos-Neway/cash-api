@@ -82,7 +82,7 @@ async function validateProductMid(req, res, next) {
                         description,
                         price,
                         categories,
-                        commissionRate,
+                        commission,
                         published,
                         featured,
                         topSeller,
@@ -92,7 +92,7 @@ async function validateProductMid(req, res, next) {
                         (!_.isUndefined(productName) && !hasSingleValue(productName)) ||
                         (!_.isUndefined(description) && !hasSingleValue(description)) ||
                         (!_.isUndefined(price) && !isPositiveNumber(price)) ||
-                        (!_.isUndefined(commissionRate) && !(_.isNumber(commissionRate) && commissionRate >= 0 && commissionRate <= 100)) ||
+                        (!_.isUndefined(commission) && !isPositiveNumber(commission)) ||
                         !isValidCategoryList(categories) ||
                         (!_.isUndefined(published) && !_.isBoolean(published)) ||
                         (!_.isUndefined(featured) && !_.isBoolean(featured)) ||
@@ -126,10 +126,10 @@ module.exports = Object.freeze({
     create: async (req, res) => {
         catchInternalError(res, async () => {
             await validateProductMid(req, res, async () => {
-                const { productName, price, commissionRate } = req.body;
+                const { productName, price, commission } = req.body;
                 if (_.isUndefined(productName) ||
                     _.isUndefined(price) ||
-                    _.isUndefined(commissionRate)) {
+                    _.isUndefined(commission)) {
                     res.status(400).json(createSingleResponse(rt.requiredParamsNotFound));
                 } else {
                     await uploadAttachedImagesMid(req, res, async () => {

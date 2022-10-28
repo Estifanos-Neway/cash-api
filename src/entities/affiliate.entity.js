@@ -4,9 +4,12 @@ const Image = require("./image.entity");
 const User = require("./user.entity");
 
 module.exports = class Affiliate {
+    static idName = "userId";
     // userId
     userId;
-
+    hasValidUserId(strict) {
+        return utils.isValidDbId(this.userId) || (!strict && _.isUndefined(this.userId));
+    }
     // fullName
     fullName;
     hasValidFullName(strict) {
@@ -75,10 +78,16 @@ module.exports = class Affiliate {
         return User.isValidUserId(parentId) || _.isUndefined(parentId);
     }
 
+    // wallet
+    wallet;
+
+    // affiliationSummary
+    affiliationSummary;
+
     // memberSince
     memberSince;
 
-    constructor({ userId, fullName, phone, email, passwordHash, avatar, parentId, memberSince }) {
+    constructor({ userId, fullName, phone, email, passwordHash, avatar, parentId, wallet, affiliationSummary, memberSince }) {
         this.userId = userId;
         this.fullName = fullName;
         this.phone = phone;
@@ -87,6 +96,8 @@ module.exports = class Affiliate {
         this.avatar = avatar;
         this.parentId = parentId;
         this.memberSince = memberSince;
+        this.wallet = wallet;
+        this.affiliationSummary = affiliationSummary;
     }
 
     toJson() {
@@ -98,6 +109,8 @@ module.exports = class Affiliate {
             passwordHash: this.passwordHash,
             avatar: this.avatar,
             parentId: this.parentId,
+            wallet: this.wallet,
+            affiliationSummary: this.affiliationSummary,
             memberSince: this.memberSince
         });
     }

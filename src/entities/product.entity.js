@@ -14,7 +14,7 @@ module.exports = class Product {
     #mainImage;
     #moreImages;
     price;
-    commissionRate;
+    commission;
     categories;
     published;
     featured;
@@ -85,7 +85,7 @@ module.exports = class Product {
         mainImage,
         moreImages,
         price,
-        commissionRate,
+        commission,
         categories,
         published,
         featured,
@@ -99,7 +99,7 @@ module.exports = class Product {
         this.mainImage = mainImage;
         this.moreImages = moreImages;
         this.price = price;
-        this.commissionRate = commissionRate;
+        this.commission = commission;
         this.categories = categories;
         this.published = published;
         this.featured = featured;
@@ -118,7 +118,7 @@ module.exports = class Product {
                 mainImage: this.mainImage,
                 moreImages: this.moreImages,
                 price: this.price,
-                commissionRate: this.commissionRate,
+                commission: this.commission,
                 categories: this.categories,
                 published: this.published,
                 featured: this.featured,

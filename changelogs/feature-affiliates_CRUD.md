@@ -1,4 +1,3 @@
-v:0.3.0
 - /tokens is changed to /sessions
 - removed "Authorization" header from /sessions requests (/refresh and /sign-out)
 - cors whitelist is moved from `.env` to `config.json`

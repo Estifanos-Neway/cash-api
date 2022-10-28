@@ -21,14 +21,14 @@ describe("/products", () => {
         productId: undefined,
         productName: "Product-A",
         price: 200,
-        commissionRate: 25
+        commission: 25
     };
     let productB = {
         productId: undefined,
         productName: "Product-B",
         description: "Cool machine.",
         price: 200,
-        commissionRate: 25,
+        commission: 25,
         categories: ["Small", "White"],
         published: true,
         featured: true,
@@ -137,7 +137,7 @@ describe("/products", () => {
                     const { body, statusCode } = await request.post(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
-                        .field("productDetails", JSON.stringify({ ...productA, productName: "Non-Existing-Name", commissionRate: undefined }));
+                        .field("productDetails", JSON.stringify({ ...productA, productName: "Non-Existing-Name", commission: undefined }));
                     expect(statusCode).toBe(400);
                     expect(body).toEqual(createSingleResponse(rt.requiredParamsNotFound));
                 });
@@ -349,7 +349,7 @@ describe("/products", () => {
                                 productName: "Product-A-Updated",
                                 description: "New description",
                                 price: productA.price + 100,
-                                commissionRate: 80,
+                                commission: 80,
                                 categories: ["Big", "Blue"],
                                 published: true,
                                 featured: true,
@@ -367,7 +367,7 @@ describe("/products", () => {
                         productName: "Product-A-Updated",
                         description: "New description",
                         price: productA.price + 100,
-                        commissionRate: 80,
+                        commission: 80,
                         categories: ["Big", "Blue"],
                         mainImage: expectProductImage,
                         moreImages: [expectProductImage, expectProductImage],
