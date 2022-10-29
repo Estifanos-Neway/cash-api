@@ -1,3 +1,4 @@
 - Implemented /orders.
 - Added 'wallet' and 'affiliationSummary' to 'affiliate'.
 - Changed 'commissionRate' to 'commission' in 'products'. No need to be 'between 0 and 100' anymore, but must be positive number.
+- Removed 'Invalid_Parent_Id' response from '/affiliates/sign-up' (invalid parent ids will be ignored)

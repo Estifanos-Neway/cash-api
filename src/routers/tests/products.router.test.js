@@ -8,9 +8,10 @@ const supertest = require("supertest");
 const { makeApp } = require("../../app");
 const rt = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
-
+const testUtils = require("./test.utils");
 
 describe("/products", () => {
+    testUtils.setJestTimeout();
     const mainPath = "/products";
 
     const adminCredentials = {
@@ -55,8 +56,12 @@ describe("/products", () => {
         request = supertest(makeApp());
     });
 
-    afterAll(() => {
-        mongoose.connection.db.dropDatabase();
+    afterAll(async () => {
+        const db = mongoose.connection.db;
+        const collections = await db.listCollections().toArray();
+        for (let collection of collections) {
+            await db.dropCollection(collection.name);
+        }
     });
 
     describe("/", () => {

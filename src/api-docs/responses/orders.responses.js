@@ -7,15 +7,11 @@ module.exports = {
             "POST": {
                 200: ["<orderObject"],
                 400: [
-                    createSingleResponse(rt.requiredParamsNotFound),
                     createSingleResponse(rt.invalidProductId),
+                    createSingleResponse(rt.requiredParamsNotFound),
                     createSingleResponse(rt.invalidFullName),
                     createSingleResponse(rt.invalidPhone),
                     createSingleResponse(rt.invalidCompanyName),
-                    createSingleResponse(rt.invalidAffiliateId),
-                    createSingleResponse(rt.invalidAffiliateId),
-                    createSingleResponse(rt.invalidAffiliateId),
-                    createSingleResponse(rt.invalidAffiliateId),
                 ],
                 404: [createSingleResponse(rt.productNotFound)]
             },

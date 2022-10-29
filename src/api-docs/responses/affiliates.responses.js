@@ -10,8 +10,7 @@ module.exports = {
                     createSingleResponse(rt.invalidFullName),
                     createSingleResponse(rt.invalidPhone),
                     createSingleResponse(rt.invalidEmail),
-                    createSingleResponse(rt.invalidPasswordHash),
-                    createSingleResponse(rt.invalidParentId),
+                    createSingleResponse(rt.invalidPasswordHash)
                 ],
                 409: [
                     createSingleResponse(rt.affiliateEmailAlreadyExist),

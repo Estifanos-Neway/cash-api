@@ -40,9 +40,10 @@ module.exports = {
             throw utils.createError(rt.invalidPhone, rc.invalidInput);
         } else if (!order.orderedBy.hasValidCompanyName()) {
             throw utils.createError(rt.invalidCompanyName, rc.invalidInput);
-        } else if (!_.isUndefined(order.affiliate) && !order.affiliate.hasValidUserId(strict)) {
-            throw utils.createError(rt.invalidAffiliateId, rc.invalidInput);
         } else {
+            if (!_.isUndefined(order.affiliate) && !order.affiliate.hasValidUserId(strict)) {
+                order.affiliate = undefined;
+            }
             const productExist = await productsDb.exists({ id: product.productId });
             if (!productExist) {
                 throw utils.createError(rt.productNotFound, rc.notFound);

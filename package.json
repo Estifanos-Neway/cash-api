@@ -13,7 +13,8 @@
     "test-sessions.router": "jest sessions.router.test",
     "test-product-categories.router": "jest product-categories.router.test",
     "test-products.router": "jest products.router.test",
-    "test-affiliates.router": "jest affiliates.router.test"
+    "test-affiliates.router": "jest affiliates.router.test",
+    "test-orders.router": "jest orders.router.test"
   },
   "repository": {
     "type": "git",

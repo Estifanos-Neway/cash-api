@@ -82,9 +82,10 @@ module.exports = Object.freeze({
             throw utils.createError(rt.invalidEmail, rc.invalidInput);
         } else if (!affiliate.hasValidPasswordHash(strict)) {
             throw utils.createError(rt.invalidPasswordHash, rc.invalidInput);
-        } else if (!affiliate.hasValidParentId()) {
-            throw utils.createError(rt.invalidParentId, rc.invalidInput);
         } else {
+            if (!affiliate.hasValidParentId()) {
+                affiliate.parentId = undefined;
+            }
             const emailAlreadyExist = await affiliatesDb.exists({ sanitizedEmail: utils.sanitizeEmail(affiliate.email) });
             if (emailAlreadyExist) {
                 throw utils.createError(rt.affiliateEmailAlreadyExist, rc.conflict);
@@ -99,7 +100,7 @@ module.exports = Object.freeze({
                             phone,
                             email,
                             passwordHash,
-                            parentId
+                            parentId: affiliate.parentId
                         }
                     };
                     return await repoUtils.sendEmailVerificationCode({ verificationEmail: verificationEmail, email, verificationObject });

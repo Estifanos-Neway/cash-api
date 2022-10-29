@@ -5,8 +5,10 @@ const rt = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 const { User } = require("../../entities");
 const { env } = require("../../env");
+const testUtils = require("./test.utils");
 
-describe("Miscellaneous", () => {
+describe("/Miscellaneous", () => {
+    testUtils.setJestTimeout();
     let request;
     const adminsPath = "/admin";
     const somePath = "/some-path";
@@ -21,8 +23,12 @@ describe("Miscellaneous", () => {
         request = supertest(makeApp());
     });
 
-    afterAll(() => {
-        mongoose.connection.db.dropDatabase();
+    afterAll(async () => {
+        const db = mongoose.connection.db;
+        const collections = await db.listCollections().toArray();
+        for (let collection of collections) {
+            await db.dropCollection(collection.name);
+        }
     });
 
     describe(`Given no api key: ${somePath} GET`, () => {

@@ -3,9 +3,11 @@ const { db } = require("./db.commons");
 const { orderDbModel, productDbModel, affiliateDbModel } = require("./db-models");
 
 async function populateOrder(order, options) {
-    const productDoc = await db.findOne(productDbModel, { id: order.product.productId }, ["productName", "mainImage", "price", "commission"], options);
-    order.product = productDoc ? db.adaptEntity(Product, productDoc, Product.idName).toJson() : undefined;
-    if (order.affiliate) {
+    if (order.product?.productId) {
+        const productDoc = await db.findOne(productDbModel, { id: order.product.productId }, ["productName", "mainImage", "price", "commission"], options);
+        order.product = productDoc ? db.adaptEntity(Product, productDoc, Product.idName).toJson() : undefined;
+    }
+    if (order.affiliate?.userId) {
         const affiliateDoc = await db.findOne(affiliateDbModel, { id: order.affiliate.userId }, ["fullName"], options);
         order.affiliate = affiliateDoc ? db.adaptEntity(Affiliate, affiliateDoc, Affiliate.idName).toJson() : undefined;
     }

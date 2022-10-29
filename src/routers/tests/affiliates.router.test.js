@@ -12,8 +12,10 @@ const { User } = require("../../entities");
 const { env } = require("../../env");
 const { adminsRepo } = require("../../repositories");
 const verificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-sign-up-verification-email.html"), { encoding: "utf-8" });
+const testUtils = require("./test.utils");
 
 describe("/affiliates", () => {
+    testUtils.setJestTimeout();
     const mainPath = "/affiliates";
     const verificationCode = "vCODE";
     // @ts-ignore
@@ -115,7 +117,7 @@ describe("/affiliates", () => {
     let emailVerificationToken;
     let emailVerificationTokenFake = utils.encrypt(JSON.stringify(
         {
-            userId: mongoose.Types.ObjectId.generate().toString("hex"),
+            userId: utils.generateDbId(),
             email: "email@gmail.com",
             verificationCode,
             validUntil: new Date().getTime() + (60 * 60 * 1000)
@@ -123,7 +125,7 @@ describe("/affiliates", () => {
     ));
     let emailVerificationTokenExpired = utils.encrypt(JSON.stringify(
         {
-            userId: mongoose.Types.ObjectId.generate().toString("hex"),
+            userId: utils.generateDbId(),
             email: "email@gmail.com",
             verificationCode,
             validUntil: 0
@@ -150,8 +152,12 @@ describe("/affiliates", () => {
         req = supertest(makeApp());
     });
 
-    afterAll(() => {
-        mongoose.connection.db.dropDatabase();
+    afterAll(async () => {
+        const db = mongoose.connection.db;
+        const collections = await db.listCollections().toArray();
+        for (let collection of collections) {
+            await db.dropCollection(collection.name);
+        }
     });
 
     describe("/sign-up and /verify-sign-up POST", () => {
@@ -230,7 +236,7 @@ describe("/affiliates", () => {
         });
         describe("[/sign-up] Given valid affiliate data [with valid but non-existing parent id]", () => {
             it("Should send verification email and return verification token", async () => {
-                affiliateC.parentId = mongoose.Types.ObjectId.generate().toString("hex");
+                affiliateC.parentId = utils.generateDbId();
                 const sendEmailMock = jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
                 const createVerificationCodeMock = jest.spyOn(utils, "createVerificationCode").mockReturnValue(verificationCode);
                 const { statusCode, body } = await req.post(signUpPath)
@@ -319,24 +325,24 @@ describe("/affiliates", () => {
                 expect(body).toEqual(createSingleResponse(rt.invalidPasswordHash));
             });
         });
-        describe("[/sign-up] Given invalid parent id [1]", () => {
-            it(`Should return 400 and ${rt.invalidParentId}`, async () => {
-                const { statusCode, body } = await req.post(signUpPath)
-                    .set("Api-Key", env.API_KEY)
-                    .send({ ...affiliateD, parentId: "invalid-parent-id [1]" });
-                expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(rt.invalidParentId));
-            });
-        });
-        describe("[/sign-up] Given invalid parent id [2]", () => {
-            it(`Should return 400 and ${rt.invalidParentId}`, async () => {
-                const { statusCode, body } = await req.post(signUpPath)
-                    .set("Api-Key", env.API_KEY)
-                    .send({ ...affiliateD, parentId: ["invalid-parent-id [2]"] });
-                expect(statusCode).toBe(400);
-                expect(body).toEqual(createSingleResponse(rt.invalidParentId));
-            });
-        });
+        // describe("[/sign-up] Given invalid parent id [1]", () => {
+        //     it(`Should return 400 and ${rt.invalidParentId}`, async () => {
+        //         const { statusCode, body } = await req.post(signUpPath)
+        //             .set("Api-Key", env.API_KEY)
+        //             .send({ ...affiliateD, parentId: "invalid-parent-id [1]" });
+        //         expect(statusCode).toBe(400);
+        //         expect(body).toEqual(createSingleResponse(rt.invalidParentId));
+        //     });
+        // });
+        // describe("[/sign-up] Given invalid parent id [2]", () => {
+        //     it(`Should return 400 and ${rt.invalidParentId}`, async () => {
+        //         const { statusCode, body } = await req.post(signUpPath)
+        //             .set("Api-Key", env.API_KEY)
+        //             .send({ ...affiliateD, parentId: ["invalid-parent-id [2]"] });
+        //         expect(statusCode).toBe(400);
+        //         expect(body).toEqual(createSingleResponse(rt.invalidParentId));
+        //     });
+        // });
         describe("[/sign-up] Given existing email", () => {
             it(`Should return 409 and ${rt.affiliateEmailAlreadyExist}`, async () => {
                 const { statusCode, body } = await req.post(signUpPath)
@@ -504,7 +510,7 @@ describe("/affiliates", () => {
                 expect(body).toEqual([affiliateB]);
             });
         });
-        describe("Given query search={fullName:'affiliate-[a,c]'}", () => {
+        describe("Given query search={fullName:'[a,c]$'}", () => {
             it("Should return [affiliateA,affiliateC]", async () => {
                 const { body, statusCode } = await req.get(mainPath)
                     .set("Api-Key", env.API_KEY)
@@ -634,7 +640,7 @@ describe("/affiliates", () => {
     describe("/{userId}", () => {
         describe("Given valid but non-existing user id", () => {
             it(`Should return 404 and ${rt.userNotFound}`, async () => {
-                const userId = mongoose.Types.ObjectId.generate().toString("hex");
+                const userId = utils.generateDbId();
                 const accessTokenFake = new User({
                     userId,
                     userType: User.userTypes.Affiliate
@@ -660,14 +666,18 @@ describe("/affiliates", () => {
             });
             describe("DELETE", () => {
                 describe("Given valid and existing user id", () => {
-                    it("Should return the affiliate with that id", async () => {
+                    it("Should delete the affiliate", async () => {
                         const { body, statusCode } = await req.delete(`${mainPath}/${affiliateC.userId}`)
                             .set("Api-Key", env.API_KEY)
                             .set("Authorization", `Bearer ${accessTokenC}`)
                             .send({ passwordHash });
                         // TODO: /userId DELETE
-                        expect(statusCode).toBe(500);
-                        expect(body).toEqual(createSingleResponse(rt.internalError));
+                        expect(statusCode).toBe(200);
+                        expect(body).toEqual(createSingleResponse(rt.success));
+                        const { statusCode: statusCode2 } = await req.get(`${mainPath}/${affiliateC.userId}`)
+                            .set("Api-Key", env.API_KEY)
+                            .set("Authorization", `Bearer ${accessTokenC}`);
+                        expect(statusCode2).toBe(404);
                     });
                 });
                 describe("Given invalid password hash", () => {

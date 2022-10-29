@@ -7,8 +7,10 @@ const { defaultAdmin } = require("../../config.json");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 const { env } = require("../../env");
 const { adminsRepo } = require("../../repositories");
+const testUtils = require("./test.utils");
 
 describe("/sessions", () => {
+    testUtils.setJestTimeout();
     const mainPath = "/sessions";
     const adminCredentials = {
         username: defaultAdmin.username,
@@ -32,8 +34,12 @@ describe("/sessions", () => {
         request = supertest(makeApp());
     });
 
-    afterAll(() => {
-        mongoose.connection.db.dropDatabase();
+    afterAll(async () => {
+        const db = mongoose.connection.db;
+        const collections = await db.listCollections().toArray();
+        for (let collection of collections) {
+            await db.dropCollection(collection.name);
+        }
     });
 
     describe("/refresh GET", () => {

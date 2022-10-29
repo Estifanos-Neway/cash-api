@@ -151,5 +151,6 @@ module.exports = {
             return originalEmail;
         }
     },
-    isValidDbId: (value) => mongoose.Types.ObjectId.isValid(value)
+    isValidDbId: (value) => mongoose.Types.ObjectId.isValid(value),
+    generateDbId: () => mongoose.Types.ObjectId.generate().toString("hex")
 };
