@@ -79,12 +79,14 @@ async function sendEmail({ subject, html, to, from = env.EMAIL_FROM, smtpUrl = e
 
 function encrypt(original) {
     // @ts-ignore
-    return cryptoJS.AES.encrypt(original, env.PRIVATE_KEY).toString();
+    const base64String = cryptoJS.AES.encrypt(original, env.PRIVATE_KEY).toString();
+    return cryptoJS.enc.Hex.stringify(cryptoJS.enc.Base64.parse(base64String));
 }
 
 function decrypt(encrypted) {
+    const base64String = cryptoJS.enc.Base64.stringify(cryptoJS.enc.Hex.parse(encrypted));
     // @ts-ignore
-    return cryptoJS.AES.decrypt(encrypted, env.PRIVATE_KEY).toString(cryptoJS.enc.Utf8);
+    return cryptoJS.AES.decrypt(base64String, env.PRIVATE_KEY).toString(cryptoJS.enc.Utf8);
 }
 
 function hash(string) {

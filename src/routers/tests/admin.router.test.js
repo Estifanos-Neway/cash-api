@@ -26,6 +26,11 @@ describe("/admin", () => {
     beforeAll(async () => {
         // @ts-ignore
         await mongoose.connect(env.DB_URL_TEST, { keepAlive: true });
+        const db = mongoose.connection.db;
+        const collections = await db.listCollections().toArray();
+        for (let collection of collections) {
+            await db.dropCollection(collection.name);
+        }
         await adminsRepo.signUp(adminCredentials);
     });
 
