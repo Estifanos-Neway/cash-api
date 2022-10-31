@@ -69,9 +69,9 @@ describe("/affiliates", () => {
     };
     const walletAndAffiliations = {
         wallet: {
-            totalMade: config.affiliateInitialBalance,
-            currentBalance: config.affiliateInitialBalance,
-            canWithdrawAfter: config.affiliateCanWithdrawAfter
+            totalMade: config.affiliateWallet.initialBalance,
+            currentBalance: config.affiliateWallet.initialBalance,
+            canWithdrawAfter: config.affiliateWallet.canWithdrawAfter
         },
         affiliationSummary: {
             totalRequests: 0,

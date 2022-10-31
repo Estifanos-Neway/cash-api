@@ -52,26 +52,26 @@ const affiliateSchema = new mongoose.Schema(
         wallet: {
             totalMade: {
                 type: Number,
-                default: config.affiliateInitialBalance,
+                default: 0,
                 validate: {
                     validator: utils.isPositiveNumber,
-                    message: "Total_Made_Can't_Be_Negative"
+                    message: "Can't_Be_Negative"
                 }
             },
             currentBalance: {
                 type: Number,
-                default: config.affiliateInitialBalance,
+                default: 0,
                 validate: {
                     validator: utils.isPositiveNumber,
-                    message: "{KEY}_Can't_Be_Negative"
+                    message: "Can't_Be_Negative"
                 }
             },
             canWithdrawAfter: {
                 type: Number,
-                default: config.affiliateCanWithdrawAfter,
+                default: config.affiliatesWallet.canWithdrawAfter,
                 validate: {
                     validator: utils.isPositiveNumber,
-                    message: "{KEY}_Can't_Be_Negative"
+                    message: "Can't_Be_Negative"
                 }
             }
         },
@@ -81,7 +81,7 @@ const affiliateSchema = new mongoose.Schema(
                 default: 0,
                 validate: {
                     validator: utils.isPositiveNumber,
-                    message: "{KEY}_Can't_Be_Negative"
+                    message: "Can't_Be_Negative"
                 }
             },
             acceptedRequests: {
@@ -89,7 +89,7 @@ const affiliateSchema = new mongoose.Schema(
                 default: 0,
                 validate: {
                     validator: utils.isPositiveNumber,
-                    message: "{KEY}_Can't_Be_Negative"
+                    message: "Can't_Be_Negative"
                 }
             },
             rejectedRequests: {
@@ -97,7 +97,7 @@ const affiliateSchema = new mongoose.Schema(
                 default: 0,
                 validate: {
                     validator: utils.isPositiveNumber,
-                    message: "{KEY}_Can't_Be_Negative"
+                    message: "Can't_Be_Negative"
                 }
             }
         }

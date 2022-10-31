@@ -11,6 +11,13 @@
   },
   "defaultCountryForPhone": "ETH",
   "corsWhiteList": [],
-  "affiliateInitialBalance": 100,
-  "affiliateCanWithdrawAfter": 200
+  "affiliatesWallet": {
+    "initialBalance": 100,
+    "canWithdrawAfter": 200
+  },
+  "signingUpCredits": {
+    "maxNumberOfParentsToBeCredited": 3,
+    "initialCreditAmount": 0.04,
+    "creditDivider": 2
+  }
 }

@@ -5,3 +5,4 @@ exports.productCategoryDbModel = require("./product-category.db.model");
 exports.affiliateDbModel = require("./affiliate.db.model");
 exports.deletedAffiliateDbModel = require("./deleted-affiliate.db.model");
 exports.orderDbModel = require("./order.db.model");
+exports.transactionDbModel = require("./transaction.db.model");

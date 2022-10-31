@@ -13,8 +13,9 @@ module.exports = Object.freeze({
         }
     },
     count: async (conditions) => await db.count(sessionDbModel, conditions),
-    create: async (session) => {
-        const sessionDoc = await db.create(sessionDbModel, session.toJson());
+    create: async (session, options) => {
+        db.sanitizeOptions(options);
+        const sessionDoc = await db.create(sessionDbModel, session.toJson(), options);
         return db.adaptEntity(Session, sessionDoc, idName);
 
     },

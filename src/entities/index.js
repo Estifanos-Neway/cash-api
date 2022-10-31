@@ -8,3 +8,4 @@ exports.Image = require("./image.entity");
 exports.User = require("./user.entity");
 exports.User = require("./user.entity");
 exports.Order = require("./order.entity");
+exports.Transaction = require("./transaction.entity");

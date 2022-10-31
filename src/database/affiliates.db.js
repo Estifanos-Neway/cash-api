@@ -22,9 +22,10 @@ module.exports = Object.freeze({
         }
     },
     count: async (conditions) => await db.count(affiliateDbModel, conditions),
-    create: async (affiliate) => {
+    create: async (affiliate, options) => {
+        db.sanitizeOptions(options);
         try {
-            const affiliateDoc = await db.create(affiliateDbModel, affiliate.toJson());
+            const affiliateDoc = await db.create(affiliateDbModel, affiliate.toJson(), options);
             return db.adaptEntity(Affiliate, affiliateDoc, idName);
         } catch (error) {
             catchUniquenessErrors(error);

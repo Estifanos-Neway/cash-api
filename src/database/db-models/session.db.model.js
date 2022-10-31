@@ -13,7 +13,7 @@ const sessionsSchema = new mongoose.Schema(
             userType: {
                 type: String,
                 required,
-                enum: [User.userTypes.Admin, User.userTypes.Affiliate]
+                enum: Object.keys(User.userTypes)
             }
         },
         refreshToken: {

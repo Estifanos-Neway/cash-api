@@ -7,8 +7,8 @@ const rc = require("../commons/response-codes");
 const rt = require("../commons/response-texts");
 const vars = require("../commons/variables");
 const configs = require("../config.json");
-const { affiliatesDb, filesDb } = require("../database");
-const { Affiliate, User, Image } = require("../entities");
+const { affiliatesDb, filesDb, db, transactionsDb } = require("../database");
+const { Affiliate, User, Image, Transaction } = require("../entities");
 const repoUtils = require("./repo.utils");
 const verificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-sign-up-verification-email.html"), { encoding: "utf-8" });
 const passwordRecoveryEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-password-recovery.html"), { encoding: "utf-8" });
@@ -57,6 +57,51 @@ class passwordRecoveryObject {
             validUntil: this.validUntil
         });
     }
+}
+async function createSignUpTransactionList(signedUpAffiliate) {
+    const {
+        affiliatesWallet: { initialBalance },
+        signingUpCredits: { maxNumberOfParentsToBeCredited, initialCreditAmount, creditDivider } } = configs;
+    const transactionList = [];
+    const joiningBonus = new Transaction(
+        {
+            affiliate: {
+                userId: signedUpAffiliate.userId
+            },
+            amount: initialBalance,
+            reason: new Transaction.Reason({
+                kind: Transaction.Reason.kinds.JoiningBonus
+            }).toJson()
+        }
+    );
+    transactionList.push(joiningBonus);
+
+    let parentId = signedUpAffiliate.parentId;
+    let parentRank = 1;
+    let creditAmount = initialCreditAmount;
+    while (parentId && parentRank <= maxNumberOfParentsToBeCredited) {
+        const parent = await affiliatesDb.findOne({ id: parentId });
+        if (!parent) {
+            break;
+        }
+        const childBecomeParent = new Transaction(
+            {
+                affiliate: {
+                    userId: parent.userId
+                },
+                amount: creditAmount,
+                reason: new Transaction.Reason({
+                    kind: Transaction.Reason.kinds.ChildBecomeParent
+                }).toJson()
+            }
+        );
+        transactionList.push(childBecomeParent);
+
+        parentId = parent.parentId;
+        parentRank += 1;
+        creditAmount /= creditDivider;
+    }
+    return transactionList;
 }
 
 async function validateUserIdExistence({ userId }) {
@@ -118,13 +163,38 @@ module.exports = Object.freeze({
             }
         }
         try {
-            const signedUpAffiliate = await affiliatesDb.create(affiliate);
-            const { refreshToken, accessToken } = await repoUtils.startSession({ userId: signedUpAffiliate.userId, userType: User.userTypes.Affiliate });
-            return {
-                affiliate: adaptAffiliate(signedUpAffiliate),
-                accessToken,
-                refreshToken
-            };
+            const dbSession = new db.DbSession();
+            await dbSession.startSession();
+            const sessionOption = { session: dbSession.session };
+            let affiliateSignIn;
+            await dbSession.withTransaction(async () => {
+                let signedUpAffiliate = await affiliatesDb.create(affiliate, sessionOption);
+                const signUpTransactionList = await createSignUpTransactionList(signedUpAffiliate);
+                for (let transaction of signUpTransactionList) {
+                    const userId = transaction.affiliate.userId;
+                    const incrementor = { "wallet.totalMade": transaction.amount, "wallet.currentBalance": transaction.amount };
+                    const affiliate = await affiliatesDb.increment({ id: userId }, incrementor, sessionOption);
+                    await transactionsDb.create(transaction, sessionOption);
+                    if (userId === signedUpAffiliate.userId) {
+                        signedUpAffiliate = affiliate;
+                    }
+                }
+                const { refreshToken, accessToken } = await repoUtils.startSession(
+                    {
+                        userId: signedUpAffiliate.userId,
+                        userType: User.userTypes.Affiliate
+                    },
+                    sessionOption
+                );
+                affiliateSignIn = {
+                    affiliate: adaptAffiliate(signedUpAffiliate),
+                    accessToken,
+                    refreshToken
+                };
+            });
+            await dbSession.endSession();
+            // @ts-ignore
+            return affiliateSignIn;
         } catch (error) {
             switch (error.message) {
                 case rt.affiliateEmailAlreadyExist:
