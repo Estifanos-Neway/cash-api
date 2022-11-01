@@ -80,6 +80,7 @@ async function createSignUpTransactionList(signedUpAffiliate) {
     let parentId = signedUpAffiliate.parentId;
     let parentRank = 1;
     let creditAmount = initialCreditAmount;
+    let child = signedUpAffiliate;
     while (parentId && parentRank <= maxNumberOfParentsToBeCredited) {
         const parent = await affiliatesDb.findOne({ id: parentId });
         if (!parent) {
@@ -93,13 +94,17 @@ async function createSignUpTransactionList(signedUpAffiliate) {
                 amount: creditAmount,
                 // @ts-ignore
                 reason: new Transaction.Reason({
-                    kind: Transaction.Reason.kinds.ChildBecomeParent
+                    kind: Transaction.Reason.kinds.ChildBecomeParent,
+                    affiliate: {
+                        userId: child.userId
+                    }
                 }).toJson()
             }
         );
         transactionList.push(childBecomeParent);
 
         parentId = parent.parentId;
+        child = parent;
         parentRank += 1;
         creditAmount /= creditDivider;
     }

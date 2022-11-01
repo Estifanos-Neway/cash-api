@@ -11,7 +11,7 @@ const { createSingleResponse } = require("../../controllers/controller-commons/f
 const testUtils = require("./test.utils");
 
 describe("/products", () => {
-    testUtils.setJestTimeout(20);
+    testUtils.setJestTimeout();
     const mainPath = "/products";
 
     const adminCredentials = {

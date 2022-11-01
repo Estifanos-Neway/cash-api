@@ -69,9 +69,9 @@ describe("/affiliates", () => {
     };
     const walletAndAffiliations = {
         wallet: {
-            totalMade: config.affiliateWallet.initialBalance,
-            currentBalance: config.affiliateWallet.initialBalance,
-            canWithdrawAfter: config.affiliateWallet.canWithdrawAfter
+            totalMade: config.affiliatesWallet.initialBalance,
+            currentBalance: config.affiliatesWallet.initialBalance,
+            canWithdrawAfter: config.affiliatesWallet.canWithdrawAfter
         },
         affiliationSummary: {
             totalRequests: 0,
@@ -166,6 +166,23 @@ describe("/affiliates", () => {
     });
 
     describe("/sign-up and /verify-sign-up POST", () => {
+        afterAll(async () => {
+            const { body: bodyA, statusCode: statusCodeA } = await req.get(`${mainPath}/${affiliateA.userId}`)
+                .set("Api-Key", env.API_KEY)
+                .set("Authorization", `Bearer ${adminAccessToken}`);
+            expect(statusCodeA).toBe(200);
+            affiliateA = bodyA;
+            const { body: bodyB, statusCode: statusCodeB } = await req.get(`${mainPath}/${affiliateB.userId}`)
+                .set("Api-Key", env.API_KEY)
+                .set("Authorization", `Bearer ${adminAccessToken}`);
+            expect(statusCodeB).toBe(200);
+            affiliateB = bodyB;
+            const { body: bodyC, statusCode: statusCodeC } = await req.get(`${mainPath}/${affiliateC.userId}`)
+                .set("Api-Key", env.API_KEY)
+                .set("Authorization", `Bearer ${adminAccessToken}`);
+            expect(statusCodeC).toBe(200);
+            affiliateC = bodyC;
+        });
         const signUpPath = `${mainPath}/sign-up`;
         const verifySignUpPath = `${mainPath}/verify-sign-up`;
         describe("[/sign-up] Given valid affiliate data", () => {
@@ -219,7 +236,7 @@ describe("/affiliates", () => {
             });
         });
         describe("[/verify-sign-up] Given valid verification data [with parent id]", () => {
-            it("Should sign up and sin in the affiliate and return sign in data [with parent id]", async () => {
+            it("Should sign up and sign in the affiliate and return sign in data [with parent id]", async () => {
                 const { statusCode, body } = await req.post(verifySignUpPath)
                     .set("Api-Key", env.API_KEY)
                     .send({ verificationToken: signUpVerificationTokenB, verificationCode });
@@ -330,24 +347,6 @@ describe("/affiliates", () => {
                 expect(body).toEqual(createSingleResponse(rt.invalidPasswordHash));
             });
         });
-        // describe("[/sign-up] Given invalid parent id [1]", () => {
-        //     it(`Should return 400 and ${rt.invalidParentId}`, async () => {
-        //         const { statusCode, body } = await req.post(signUpPath)
-        //             .set("Api-Key", env.API_KEY)
-        //             .send({ ...affiliateD, parentId: "invalid-parent-id [1]" });
-        //         expect(statusCode).toBe(400);
-        //         expect(body).toEqual(createSingleResponse(rt.invalidParentId));
-        //     });
-        // });
-        // describe("[/sign-up] Given invalid parent id [2]", () => {
-        //     it(`Should return 400 and ${rt.invalidParentId}`, async () => {
-        //         const { statusCode, body } = await req.post(signUpPath)
-        //             .set("Api-Key", env.API_KEY)
-        //             .send({ ...affiliateD, parentId: ["invalid-parent-id [2]"] });
-        //         expect(statusCode).toBe(400);
-        //         expect(body).toEqual(createSingleResponse(rt.invalidParentId));
-        //     });
-        // });
         describe("[/sign-up] Given existing email", () => {
             it(`Should return 409 and ${rt.affiliateEmailAlreadyExist}`, async () => {
                 const { statusCode, body } = await req.post(signUpPath)
