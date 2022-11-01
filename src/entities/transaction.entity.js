@@ -43,7 +43,7 @@ module.exports = class Transaction {
         // productId
         productId;
 
-        constructor({ kind, affiliate = undefined, productId = undefined }) {
+        constructor({ kind, affiliate, productId }) {
             this.kind = kind;
             kind = this.kind;
             if (
@@ -121,5 +121,8 @@ module.exports = class Transaction {
             reason: this.reason?.toJson(),
             transactedAt: this.transactedAt
         });
+    }
+    static isValidTransactionId(transactionId) {
+        return utils.isValidDbId(transactionId);
     }
 };

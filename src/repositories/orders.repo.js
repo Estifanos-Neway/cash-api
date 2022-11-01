@@ -2,9 +2,10 @@ const _ = require("lodash");
 const utils = require("../commons/functions");
 const rt = require("../commons/response-texts");
 const rc = require("../commons/response-codes");
-const { Order } = require("../entities");
-const { db, ordersDb, productsDb, affiliatesDb } = require("../database");
+const { Order, Transaction } = require("../entities");
+const { db, ordersDb, productsDb, affiliatesDb, transactionsDb } = require("../database");
 const repoUtils = require("./repo.utils");
+const configs = require("../config.json");
 
 async function validateOrderIdExistence({ id }) {
     if (!Order.isValidOrderId(id)) {
@@ -21,6 +22,67 @@ async function validateOrderPending({ id }) {
     if (!orderIsPending) {
         throw utils.createError(rt.orderAlreadyUnpended, rc.conflict);
     }
+}
+
+async function createProductSellTransactionList(order) {
+    const { productSellCredits: { creditSubtractionPercent, minCredit } } = configs;
+    const transactionList = [];
+    let userId = order.affiliate.userId;
+    let { productId, commission: remainingCommission } = order.product;
+    let creditAmount = remainingCommission * creditSubtractionPercent;
+    if (creditAmount < minCredit) {
+        creditAmount = remainingCommission;
+        remainingCommission = 0;
+    } else {
+        remainingCommission -= creditAmount;
+    }
+    const soldProduct = new Transaction(
+        {
+            affiliate: {
+                userId
+            },
+            amount: creditAmount,
+            // @ts-ignore
+            reason: new Transaction.Reason({
+                kind: Transaction.Reason.kinds.SoldProduct,
+                productId
+            }).toJson()
+        }
+    );
+    transactionList.push(soldProduct);
+
+    while (remainingCommission > 0) {
+        creditAmount = remainingCommission * creditSubtractionPercent;
+        if (creditAmount < minCredit) {
+            creditAmount = remainingCommission;
+            remainingCommission = 0;
+        } else {
+            remainingCommission -= creditAmount;
+        }
+        const affiliate = await affiliatesDb.findOne({ id: userId });
+        userId = affiliate?.parentId;
+        if (!userId) {
+            break;
+        } else {
+            const childSoldProduct = new Transaction(
+                {
+                    affiliate: {
+                        userId
+                    },
+                    amount: creditAmount,
+                    reason: new Transaction.Reason({
+                        kind: Transaction.Reason.kinds.ChildSoldProduct,
+                        affiliate: {
+                            userId: affiliate.userId
+                        },
+                        productId
+                    }).toJson()
+                }
+            );
+            transactionList.push(childSoldProduct);
+        }
+    }
+    return transactionList;
 }
 
 const strict = true;
@@ -95,7 +157,15 @@ module.exports = {
         await dbSession.withTransaction(async () => {
             updatedOrder = await ordersDb.updateOne({ id: orderId }, { status: Order.statuses.Accepted }, sessionOption);
             if (updatedOrder.affiliate) {
-                await affiliatesDb.increment({ id: updatedOrder.affiliate.userId }, { "affiliationSummary.acceptedRequests": 1 }, sessionOption);
+                const userId = updatedOrder.affiliate.userId;
+                await affiliatesDb.increment({ id: userId }, { "affiliationSummary.acceptedRequests": 1 }, sessionOption);
+                const productSellTransactionList = await createProductSellTransactionList(updatedOrder);
+                for (let transaction of productSellTransactionList) {
+                    const userId = transaction.affiliate.userId;
+                    const incrementor = { "wallet.totalMade": transaction.amount, "wallet.currentBalance": transaction.amount };
+                    await affiliatesDb.increment({ id: userId }, incrementor, sessionOption);
+                    await transactionsDb.create(transaction, sessionOption);
+                }
             }
         });
         await dbSession.endSession();

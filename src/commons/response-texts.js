@@ -73,4 +73,8 @@ module.exports = {
     orderNotFound: "Order_Not_Found",
     orderAlreadyUnpended: "Order_Already_Unpended",
     pendingOrder: "Pending_Order",
+
+    // Transactions
+    invalidTransactionId:"Invalid_Transaction_Id",
+    TransactionNotFound:"Transaction_Not_Found",
 };

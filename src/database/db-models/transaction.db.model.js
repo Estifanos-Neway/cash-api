@@ -31,7 +31,7 @@ const transactionSchema = new mongoose.Schema(
                     type: mongoose.Types.ObjectId,
                     required: function () {
                         // @ts-ignore
-                        const kind = this.kind;
+                        const kind = this.reason.kind;
                         return (
                             kind === Transaction.Reason.kinds.BecomeParent ||
                             kind === Transaction.Reason.kinds.ChildBecomeParent ||
@@ -46,11 +46,8 @@ const transactionSchema = new mongoose.Schema(
                 type: mongoose.Types.ObjectId,
                 required: function () {
                     // @ts-ignore
-                    const kind = this.kind;
-                    return (
-                        kind === Transaction.Reason.kinds.SoldProduct ||
-                        kind === Transaction.Reason.kinds.ChildSoldProduct
-                    );
+                    const kind = this.reason.kind;
+                    return (kind === Transaction.Reason.kinds.SoldProduct || kind === Transaction.Reason.kinds.ChildSoldProduct);
                 },
                 ref: "Product"
             }

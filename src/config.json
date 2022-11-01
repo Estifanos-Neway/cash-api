@@ -19,5 +19,9 @@
     "maxNumberOfParentsToBeCredited": 3,
     "initialCreditAmount": 0.04,
     "creditDivider": 2
+  },
+  "productSellCredits": {
+    "creditSubtractionPercent": 0.5,
+    "minCredit": 100
   }
 }

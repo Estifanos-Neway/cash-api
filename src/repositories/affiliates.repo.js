@@ -69,6 +69,7 @@ async function createSignUpTransactionList(signedUpAffiliate) {
                 userId: signedUpAffiliate.userId
             },
             amount: initialBalance,
+            // @ts-ignore
             reason: new Transaction.Reason({
                 kind: Transaction.Reason.kinds.JoiningBonus
             }).toJson()
@@ -90,6 +91,7 @@ async function createSignUpTransactionList(signedUpAffiliate) {
                     userId: parent.userId
                 },
                 amount: creditAmount,
+                // @ts-ignore
                 reason: new Transaction.Reason({
                     kind: Transaction.Reason.kinds.ChildBecomeParent
                 }).toJson()
