@@ -1305,7 +1305,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns an affiliate.",
+            "description": "Returns children of an affiliate.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1323,6 +1323,106 @@
                         "type": "string"
                       }
                     }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/affiliates/{userId}/transactions": {
+      "get": {
+        "summary": "Get transactions by an affiliate. [Requires_Admin_Or_Same_Affiliate_Access_Token]",
+        "tags": ["Affiliates"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          },
+          {
+            "name": "search",
+            "description": "Search by Regex",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "property-name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "filter",
+            "description": "Filter by exact match. (properties in filter overrides properties in search)",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Transaction"
+            }
+          },
+          {
+            "name": "skip",
+            "description": "Number of entities to skip (Must be positive)",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "description": "Number of entities to get back (Default:8, Max: 20) (Must be positive).",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "select",
+            "description": "Which properties to get back.",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "sort",
+            "description": "Default: {\"transactedAt\":-1}",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "property name": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns list of transactions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
                   }
                 }
               }
@@ -1990,6 +2090,131 @@
           }
         }
       }
+    },
+    "/transactions": {
+      "get": {
+        "summary": "Get list of all transactions. [Requires_Admin_Access_Token]",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "search",
+            "description": "Search by Regex",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "property-name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "filter",
+            "description": "Filter by exact match. (properties in filter overrides properties in search)",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Transaction"
+            }
+          },
+          {
+            "name": "skip",
+            "description": "Number of entities to skip (Must be positive)",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "description": "Number of entities to get back (Default:8, Max: 20) (Must be positive).",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "select",
+            "description": "Which properties to get back.",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "sort",
+            "description": "Default: {\"transactedAt\":-1}",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "property name": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns list of transactions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/transactions/{transactionId}": {
+      "get": {
+        "summary": "Get a transaction by its id. [Requires_Admin_Access_Token]",
+        "tags": ["Transactions"],
+        "parameters": [{ "$ref": "#/components/parameters/transactionId" }],
+        "responses": {
+          "200": {
+            "description": "Returns a transaction.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2105,6 +2330,17 @@
             "type": "string"
           },
           "refreshToken": {
+            "type": "string"
+          }
+        }
+      },
+      "Affiliate-Display": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "fullName": {
             "type": "string"
           }
         }
@@ -2277,16 +2513,7 @@
             }
           },
           "affiliate": {
-            "type": "object",
-            "required": ["userId"],
-            "properties": {
-              "userId": {
-                "type": "string"
-              },
-              "fullName": {
-                "type": "string"
-              }
-            }
+            "$ref": "#/components/schemas/Affiliate-Display"
           },
           "orderedAt": {
             "type": "string"
@@ -2295,6 +2522,34 @@
             "type": "string",
             "enum": ["Pending", "Accepted", "Rejected"],
             "default": "Pending"
+          }
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string"
+          },
+          "affiliate": {
+            "$ref": "#/components/schemas/Affiliate-Display"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "affiliate": {
+                "$ref": "#/components/schemas/Affiliate-Display"
+              },
+              "productId": {
+                "type": "string"
+              }
+            }
           }
         }
       },
@@ -2351,6 +2606,14 @@
       },
       "orderId": {
         "name": "orderId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "transactionId": {
+        "name": "transactionId",
         "in": "path",
         "required": true,
         "schema": {
