@@ -15,6 +15,7 @@ affiliatesRouter.post("/sign-in", affiliatesCont.signIn);
 affiliatesRouter.get("/", forceAdminMid, affiliatesCont.getMany);
 affiliatesRouter.get("/:userId", forceUserMid, forceSameAffiliateMid, affiliatesCont.getOne);
 affiliatesRouter.get("/:userId/children", forceUserMid, forceSameAffiliateMid, affiliatesCont.getChildren);
+affiliatesRouter.get("/:userId/transactions", forceUserMid, forceSameAffiliateMid, affiliatesCont.getTransactions);
 affiliatesRouter.put("/:userId/avatar", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updateAvatar);
 affiliatesRouter.delete("/:userId/avatar", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.deleteAvatar);
 affiliatesRouter.patch("/:userId/password", forceAffiliateMid, forceSameAffiliateMid, affiliatesCont.updatePasswordHash);

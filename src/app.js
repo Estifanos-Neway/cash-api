@@ -15,7 +15,7 @@ const {
     defaultPort,
     numberOfMaxApiRequestsPerMin } = require("./commons/variables");
 const apiResponses = require("./api-docs/responses");
-const { adminRouter, sessionsRouter, productsRouter, imagesRouter, productCategoriesRouter, affiliatesRouter, ordersRouter } = require("./routers");
+const { adminRouter, sessionsRouter, productsRouter, imagesRouter, productCategoriesRouter, affiliatesRouter, ordersRouter, transactionsRouter } = require("./routers");
 const { createSingleResponse } = require("./controllers/controller-commons/functions");
 
 exports.makeApp = () => {
@@ -66,6 +66,7 @@ exports.makeApp = () => {
     app.use("/products", productsRouter);
     app.use("/affiliates", affiliatesRouter);
     app.use("/orders", ordersRouter);
+    app.use("/transactions", transactionsRouter);
 
     app.use("*", (req, res) => {
         res.status(404).json(createSingleResponse(rt.pathNotFound));

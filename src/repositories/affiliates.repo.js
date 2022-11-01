@@ -336,6 +336,13 @@ module.exports = Object.freeze({
         }
         return childrenList.splice(skip, limit);
     },
+    getTransactions: async ({ userId, getManyQueries }) => {
+        let { filter, skip, limit, select, sort } = repoUtils.validateGetManyQuery({ getManyQueries, defaultLimit: 8, maxLimit: 20 });
+        sort = _.isEmpty(sort) ? { transactedAt: -1 } : sort;
+        filter = { ...filter, "affiliate.userId": userId };
+        const transactionsList = await transactionsDb.findMany({ filter, skip, limit, select, sort });
+        return transactionsList.map(transaction => transaction.toJson());
+    },
     updatePasswordHash: async ({ userId, oldPasswordHash, newPasswordHash }) => {
         await validateUserIdExistence({ userId });
         // @ts-ignore

@@ -232,6 +232,27 @@ module.exports = Object.freeze({
             }
         });
     },
+    getTransactions: (req, res) => {
+        catchInternalError(res, async () => {
+            const { userId } = req.params;
+            const getManyQueries = req.query;
+            try {
+                const transactions = await affiliatesRepo.getTransactions({ userId, getManyQueries });
+                res.json(transactions);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    case rc.notFound:
+                        res.status(sc.notFound).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
+    },
     updatePasswordHash: (req, res) => {
         catchInternalError(res, async () => {
             const { userId } = req.params;

@@ -1,0 +1,2 @@
+- Implemented `/transactions`.
+- Added path `/affiliates/{id}/transactions`.
