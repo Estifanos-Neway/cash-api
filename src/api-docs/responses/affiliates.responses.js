@@ -94,6 +94,21 @@ module.exports = {
                 404: [createSingleResponse(rt.userNotFound)]
             }
         },
+        "/{userId}/transactions": {
+            "GET": {
+                200: ["<transactionObjectsList>"],
+                400: [
+                    createSingleResponse(rt.invalidUserId),
+                    createSingleResponse(rt.invalidSearchQuery),
+                    createSingleResponse(rt.invalidFilterQuery),
+                    createSingleResponse(rt.invalidSkipQuery),
+                    createSingleResponse(rt.invalidLimitQuery),
+                    createSingleResponse(rt.invalidSortQuery),
+                ],
+                401: [createSingleResponse(rt.unauthorized)],
+                404: [createSingleResponse(rt.userNotFound)]
+            }
+        },
         "/{userId}/avatar": {
             "PUT": {
                 200: ["<avatarObject>"],
