@@ -342,6 +342,7 @@ module.exports = Object.freeze({
         return childrenList.splice(skip, limit);
     },
     getTransactions: async ({ userId, getManyQueries }) => {
+        await validateUserIdExistence({ userId });
         let { filter, skip, limit, select, sort } = repoUtils.validateGetManyQuery({ getManyQueries, defaultLimit: 8, maxLimit: 20 });
         sort = _.isEmpty(sort) ? { transactedAt: -1 } : sort;
         filter = { ...filter, "affiliate.userId": userId };
