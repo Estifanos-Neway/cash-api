@@ -8,3 +8,4 @@ exports.filesDb = require("./files.db");
 exports.productCategoriesDb = require("./product-categories.db");
 exports.ordersDb = require("./orders.db");
 exports.transactionsDb = require("./transactions.db");
+exports.staticWebContentsDb = require("./static-web-contents.db");

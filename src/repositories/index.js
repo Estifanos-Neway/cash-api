@@ -6,3 +6,4 @@ exports.affiliatesRepo = require("./affiliates.repo");
 exports.sessionsRepo = require("./sessions.repo");
 exports.ordersRepo = require("./orders.repo");
 exports.transactionsRepo = require("./transactions.repo");
+exports.staticWebContentsRepo = require("./static-web-contents.repo");

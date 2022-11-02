@@ -75,6 +75,10 @@ module.exports = {
     pendingOrder: "Pending_Order",
 
     // Transactions
-    invalidTransactionId:"Invalid_Transaction_Id",
-    TransactionNotFound:"Transaction_Not_Found",
+    invalidTransactionId: "Invalid_Transaction_Id",
+    TransactionNotFound: "Transaction_Not_Found",
+
+    // StaticWebContents
+    invalidWhoAreWeVideoLink: "Invalid_Who_Are_We_Video_Link",
+    invalidHowToAffiliateWithUsVideoLink: "Invalid_How_To_Affiliate_With_Us_Video_Link"
 };
