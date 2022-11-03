@@ -1,3 +1,4 @@
+const flat = require("flat");
 const _ = require("lodash");
 const mongoose = require("mongoose");
 const utils = require("../commons/functions");
@@ -44,14 +45,11 @@ exports.db = {
     },
     updateOne: async (model, conditions = {}, updates, options = {}) => {
         adaptConditions(conditions);
-        let doc = await model.findOne(conditions, null, options);
+        const updateOptions = { ...options, runValidators: "true", returnDocument: "after" };
+        // @ts-ignore
+        const doc = await model.findOneAndUpdate(conditions, flat(updates), updateOptions);
         if (doc) {
-            Object.entries(updates).forEach(update => {
-                if (update[0] in doc) {
-                    doc[update[0]] = update[1];
-                }
-            });
-            return await doc.save(options);
+            return doc;
         } else {
             throw new Error(responses.docNotFound);
         }

@@ -1,6 +1,6 @@
 
 module.exports = {
-    setJestTimeout: (seconds = 20) => {
+    setJestTimeout: (seconds = 40) => {
         jest.setTimeout(seconds * 1000);
     }
 };

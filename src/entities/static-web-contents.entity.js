@@ -4,12 +4,12 @@ const utils = require("../commons/functions");
 class videoLinks {
     whoAreWe;
     hasValidWhoAreWe() {
-        return utils.isNonEmptyString(this.whoAreWe) || _.isUndefined(this.whoAreWe);
+        return utils.isNonEmptyString(this.whoAreWe) || _.isUndefined(this.whoAreWe) || _.isNull(this.whoAreWe);
     }
 
     howToAffiliateWithUs;
     hasValidHowToAffiliateWithUs() {
-        return utils.isNonEmptyString(this.howToAffiliateWithUs) || _.isUndefined(this.howToAffiliateWithUs);
+        return utils.isNonEmptyString(this.howToAffiliateWithUs) || _.isUndefined(this.howToAffiliateWithUs) || _.isNull(this.howToAffiliateWithUs);
     }
 
     constructor({ whoAreWe, howToAffiliateWithUs }) {

@@ -2215,6 +2215,61 @@
           }
         }
       }
+    },
+    "/static-web-contents": {
+      "put": {
+        "summary": "Update static web contents",
+        "tags": ["Static Web Contents"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StaticWebContents"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaticWebContents"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get static web contents",
+        "tags": ["Static Web Contents"],
+        "responses": {
+          "200": {
+            "description": "StaticWebContents object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaticWebContents"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2547,6 +2602,22 @@
                 "$ref": "#/components/schemas/Affiliate-Display"
               },
               "productId": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "StaticWebContents": {
+        "type": "object",
+        "properties": {
+          "videoLinks": {
+            "type": "object",
+            "properties": {
+              "whoAreWe": {
+                "type": "string"
+              },
+              "howToAffiliateWithUs": {
                 "type": "string"
               }
             }
