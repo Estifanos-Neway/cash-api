@@ -18,7 +18,7 @@ describe("/static-web-contents", () => {
     };
     const staticWebContents = {
         videoLinks: {
-            whoAreWek: "whoAreWeLink"
+            whoAreWe: "whoAreWeLink"
         }
     };
     let req, accessToken;
@@ -95,22 +95,12 @@ describe("/static-web-contents", () => {
                     expect(body).toEqual(staticWebContents);
                 });
             });
-            describe("Given empty videoLinks", () => {
-                it("Should return the existing (non-updated) object", async () => {
-                    const { body, statusCode } = await req.put(mainPath)
-                        .set("Api-Key", env.API_KEY)
-                        .set("Authorization", `Bearer ${accessToken}`)
-                        .send({ videoLinks: {} });
-                    expect(statusCode).toBe(200);
-                    expect(body).toEqual(staticWebContents);
-                });
-            });
             describe("Given invalid videoLinks.whoAreWe", () => {
                 it(`Should return 400 and ${rt.invalidWhoAreWeVideoLink}`, async () => {
                     const { body, statusCode } = await req.put(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
-                        .send({ ...staticWebContents, whoAreWe: ["invalid"] });
+                        .send({ videoLinks: { whoAreWe: ["invalid"] } });
                     expect(statusCode).toBe(400);
                     expect(body).toEqual(createSingleResponse(rt.invalidWhoAreWeVideoLink));
                 });
@@ -120,7 +110,7 @@ describe("/static-web-contents", () => {
                     const { body, statusCode } = await req.put(mainPath)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessToken}`)
-                        .send({ ...staticWebContents, howToAffiliateWithUs: ["invalid"] });
+                        .send({ videoLinks: { howToAffiliateWithUs: ["invalid"] } });
                     expect(statusCode).toBe(400);
                     expect(body).toEqual(createSingleResponse(rt.invalidHowToAffiliateWithUsVideoLink));
                 });
@@ -129,7 +119,7 @@ describe("/static-web-contents", () => {
         });
         describe("GET", () => {
             describe("Given there are static web contents in the system", () => {
-                it("Should return empty object", async () => {
+                it("Should return StaticWebContents object", async () => {
                     const { body, statusCode } = await req.get(mainPath)
                         .set("Api-Key", env.API_KEY);
                     expect(statusCode).toBe(200);
