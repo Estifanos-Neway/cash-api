@@ -19,3 +19,9 @@
 
 - Implemented `/transactions`.
 - Added path `/affiliates/{id}/transactions`.
+
+## v0.6.0 | Nov 06, 2022
+
+- Implemented `/static-web-contents`.
+- Implemented `/analytics`.
+- Implemented `/contact-us`.
