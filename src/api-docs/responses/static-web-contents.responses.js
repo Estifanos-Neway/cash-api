@@ -5,7 +5,7 @@ module.exports = {
     "/static-web-contents": {
         "/": {
             "PUT": {
-                200: [["<staticWebContentsObject"]],
+                200: ["<staticWebContentsObject>"],
                 400: [
                     createSingleResponse(rt.invalidWhoAreWeVideoLink),
                     createSingleResponse(rt.invalidHowToAffiliateWithUsVideoLink)
@@ -13,7 +13,7 @@ module.exports = {
                 401: [createSingleResponse(rt.unauthorized)]
             },
             "GET": {
-                200: [["<staticWebContentsObject"]]
+                200: ["<staticWebContentsObject>"]
             }
         }
     }

@@ -80,5 +80,9 @@ module.exports = {
 
     // StaticWebContents
     invalidWhoAreWeVideoLink: "Invalid_Who_Are_We_Video_Link",
-    invalidHowToAffiliateWithUsVideoLink: "Invalid_How_To_Affiliate_With_Us_Video_Link"
+    invalidHowToAffiliateWithUsVideoLink: "Invalid_How_To_Affiliate_With_Us_Video_Link",
+
+    // ContactUs
+    invalidAddress:"Invalid_Address",
+    invalidMessage:"Invalid_Message"
 };

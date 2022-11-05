@@ -8,3 +8,4 @@ exports.ordersCont = require("./orders.con");
 exports.transactionsCont = require("./transactions.con");
 exports.staticWebContentsCont = require("./static-web-contents.con");
 exports.analyticsCont = require("./analytics.con");
+exports.contactUsCon = require("./contact-us.con");

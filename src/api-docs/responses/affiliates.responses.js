@@ -165,7 +165,7 @@ module.exports = {
         },
         "/{userId}/email": {
             "PATCH": {
-                200: ["<verificationTokenObject"],
+                200: ["<verificationTokenObject>"],
                 400: [
                     createSingleResponse(rt.invalidUserId),
                     createSingleResponse(rt.invalidEmail)

@@ -8,3 +8,4 @@ exports.ordersRepo = require("./orders.repo");
 exports.transactionsRepo = require("./transactions.repo");
 exports.staticWebContentsRepo = require("./static-web-contents.repo");
 exports.analyticsRepo = require("./analytics.repo");
+exports.contactUsRepo = require("./contact-us.repo");

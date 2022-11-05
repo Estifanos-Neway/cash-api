@@ -5,6 +5,7 @@ const rc = require("../commons/response-codes");
 const rt = require("../commons/response-texts");
 const { sessionsDb } = require("../database");
 const { User, Session } = require("../entities");
+const emailSubjects = require("../assets/emails/email-subjects.json");
 
 module.exports = {
     startSession: async ({ userId, userType }, sessionOption) => {
@@ -85,7 +86,7 @@ module.exports = {
     },
     sendEmailVerificationCode: async ({ verificationEmail, email, verificationObject }) => {
         const verificationCode = utils["createVerificationCode"]();
-        const subject = "Email Verification";
+        const subject = emailSubjects.emailVerification;
         // @ts-ignore
         const html = verificationEmail.replaceAll("__verificationCode__", verificationCode);
         await utils.sendEmail({ subject, html, to: email });

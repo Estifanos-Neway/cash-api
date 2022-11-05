@@ -5,7 +5,7 @@ module.exports = {
     "/orders": {
         "/": {
             "POST": {
-                200: ["<orderObject"],
+                200: ["<orderObject>"],
                 400: [
                     createSingleResponse(rt.invalidProductId),
                     createSingleResponse(rt.requiredParamsNotFound),
@@ -16,7 +16,7 @@ module.exports = {
                 404: [createSingleResponse(rt.productNotFound)]
             },
             "GET": {
-                200: [["<orderObject"]],
+                200: ["<orderObject>"],
                 400: [
                     createSingleResponse(rt.invalidSearchQuery),
                     createSingleResponse(rt.invalidFilterQuery),
@@ -30,7 +30,7 @@ module.exports = {
         },
         "/{orderId}": {
             "GET": {
-                200: ["<orderObject"],
+                200: ["<orderObject>"],
                 400: [createSingleResponse(rt.invalidOrderId)],
                 401: [createSingleResponse(rt.unauthorized)],
                 404: [createSingleResponse(rt.orderNotFound)]
@@ -45,7 +45,7 @@ module.exports = {
         },
         "/{orderId}/accept": {
             "PATCH": {
-                200: ["<orderObject"],
+                200: ["<orderObject>"],
                 400: [createSingleResponse(rt.invalidOrderId)],
                 401: [createSingleResponse(rt.unauthorized)],
                 404: [createSingleResponse(rt.orderNotFound)],
@@ -54,7 +54,7 @@ module.exports = {
         },
         "/{orderId}/reject": {
             "PATCH": {
-                200: ["<orderObject"],
+                200: ["<orderObject>"],
                 400: [createSingleResponse(rt.invalidOrderId)],
                 401: [createSingleResponse(rt.unauthorized)],
                 404: [createSingleResponse(rt.orderNotFound)],

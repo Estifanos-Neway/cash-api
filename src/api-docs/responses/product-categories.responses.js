@@ -5,7 +5,7 @@ module.exports = {
     "/product-categories": {
         "/": {
             "POST": {
-                200: ["<productCategoryObject"],
+                200: ["<productCategoryObject>"],
                 400: [
                     createSingleResponse(rt.invalidInput),
                     createSingleResponse(rt.requiredParamsNotFound)
@@ -14,12 +14,12 @@ module.exports = {
                 409: [createSingleResponse(rt.categoryNameAlreadyExist)]
             },
             "GET": {
-                200: [["<productCategoryObject"]],
+                200: ["<productCategoryObject>"],
             }
         },
         "/{productId}": {
             "PATCH": {
-                200: ["<productCategoryObject"],
+                200: ["<productCategoryObject>"],
                 400: [createSingleResponse(rt.invalidInput)],
                 404: [createSingleResponse(rt.categoryNotFound)],
                 401: [createSingleResponse(rt.unauthorized)],

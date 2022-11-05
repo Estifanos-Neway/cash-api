@@ -25,7 +25,8 @@ const {
     ordersRouter,
     transactionsRouter,
     staticWebContentsRouter,
-    analyticsRouter } = require("./routers");
+    analyticsRouter,
+    contactUsRouter } = require("./routers");
 const { createSingleResponse } = require("./controllers/controller-commons/functions");
 
 exports.makeApp = () => {
@@ -79,6 +80,7 @@ exports.makeApp = () => {
     app.use("/transactions", transactionsRouter);
     app.use("/static-web-contents", staticWebContentsRouter);
     app.use("/analytics", analyticsRouter);
+    app.use("/contact-us", contactUsRouter);
 
 
     app.use("*", (req, res) => {

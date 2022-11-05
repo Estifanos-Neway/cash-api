@@ -10,6 +10,7 @@ const configs = require("../config.json");
 const { affiliatesDb, filesDb, db, transactionsDb } = require("../database");
 const { Affiliate, User, Image, Transaction } = require("../entities");
 const repoUtils = require("./repo.utils");
+const emailSubjects = require("../assets/emails/email-subjects.json");
 const verificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-sign-up-verification-email.html"), { encoding: "utf-8" });
 const passwordRecoveryEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-password-recovery.html"), { encoding: "utf-8" });
 
@@ -257,7 +258,7 @@ module.exports = Object.freeze({
                 // clean
                 console.dir(`recoveryToken: ${recoveryToken}`, { depth: null });
                 const recoveryLink = `${configs.urls.baseUrl}${configs.urls.passwordRecoveryPath}?u=affiliate&t=${recoveryToken}`;
-                const subject = "Password Recovery";
+                const subject = emailSubjects.passwordRecovery;
                 // @ts-ignore
                 const html = passwordRecoveryEmail.replaceAll("__recoveryLink__", recoveryLink);
                 await utils.sendEmail({ subject, html, to: email });

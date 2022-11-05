@@ -16,7 +16,8 @@
     "test-affiliates.router": "jest affiliates.router.test",
     "test-orders.router": "jest orders.router.test",
     "test-static-web-contents.router": "jest static-web-contents.router.test",
-    "test-analytics.router": "jest analytics.router.test"
+    "test-analytics.router": "jest analytics.router.test",
+    "test-contact-us.router": "jest contact-us.router.test"
   },
   "repository": {
     "type": "git",
@@ -63,6 +64,7 @@
     "nodemailer": "^6.8.0",
     "nodemon": "^2.0.19",
     "phone": "^3.1.28",
+    "regexp.escape": "^1.1.0",
     "short-unique-id": "^4.4.4",
     "streamifier": "^0.1.1",
     "swagger-ui-express": "^4.5.0",

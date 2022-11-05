@@ -8,3 +8,4 @@ exports.ordersRouter = require("./orders.router");
 exports.transactionsRouter = require("./transactions.router");
 exports.staticWebContentsRouter = require("./static-web-contents.router");
 exports.analyticsRouter = require("./analytics.router");
+exports.contactUsRouter = require("./contact-us.router");

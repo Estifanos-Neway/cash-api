@@ -20,6 +20,7 @@ const {
 const { adminsRepo } = require("../repositories");
 const { User } = require("../entities");
 const repoUtils = require("../repositories/repo.utils");
+const emailSubjects = require("../assets/emails/email-subjects.json");
 const passwordRecoveryEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "password-recovery.html"), { encoding: "utf-8" });
 const emailVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "email-verification.html"), { encoding: "utf-8" });
 module.exports = Object.freeze({
@@ -141,7 +142,7 @@ module.exports = Object.freeze({
                 res.status(400).json(createSingleResponse(rt.invalidEmail));
             } else {
                 const html = emailVerificationEmail;
-                const subject = "Email verification";
+                const subject = emailSubjects.emailVerification;
                 const verificationToken = await sendEmailVerificationCode({ email: newEmail, subject, html });
                 res.json({ verificationToken });
             }
@@ -213,7 +214,7 @@ module.exports = Object.freeze({
                         res.status(404).json(createSingleResponse(rt.cantFindValidEmail));
                     } else {
                         const path = urls.passwordRecoveryPath;
-                        const subject = "Password recovery";
+                        const subject = emailSubjects.passwordRecovery;
                         const html = passwordRecoveryEmail;
                         await sendEmailVerification({ email: adminEmail, path, subject, html });
                         res.json(createSingleResponse(rt.success));

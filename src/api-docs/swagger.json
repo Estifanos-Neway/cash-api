@@ -2294,6 +2294,32 @@
           }
         }
       }
+    },
+    "/contact-us": {
+      "post": {
+        "summary": "Send contact-us email for the admin",
+        "tags": ["ContactUs"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactUs"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/success"
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2673,6 +2699,26 @@
                 "type": "number"
               }
             }
+          }
+        }
+      },
+      "ContactUs": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
           }
         }
       },

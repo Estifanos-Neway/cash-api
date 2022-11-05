@@ -5,7 +5,7 @@ module.exports = {
     "/transactions": {
         "/": {
             "GET": {
-                200: [["<transactionObject"]],
+                200: ["<transactionObject>"],
                 400: [
                     createSingleResponse(rt.invalidSearchQuery),
                     createSingleResponse(rt.invalidFilterQuery),
@@ -19,7 +19,7 @@ module.exports = {
         },
         "/{transactionId}": {
             "GET": {
-                200: ["<transactionObject"],
+                200: ["<transactionObject>"],
                 400: [createSingleResponse(rt.invalidTransactionId)],
                 401: [createSingleResponse(rt.unauthorized)],
                 404: [createSingleResponse(rt.transactionNotFound)]

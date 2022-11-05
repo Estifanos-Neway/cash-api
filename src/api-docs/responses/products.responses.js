@@ -5,7 +5,7 @@ module.exports = {
     "/products": {
         "/": {
             "POST": {
-                200: ["<productObject"],
+                200: ["<productObject>"],
                 400: [
                     createSingleResponse(rt.invalidJsonString),
                     createSingleResponse(rt.invalidInput),
@@ -15,7 +15,7 @@ module.exports = {
                 409: [createSingleResponse(rt.productNameAlreadyExist)]
             },
             "GET": {
-                200: [["<productObject"]],
+                200: ["<productObject>"],
                 400: [
                     createSingleResponse(rt.invalidSearchQuery),
                     createSingleResponse(rt.invalidFilterQuery),
@@ -29,12 +29,12 @@ module.exports = {
         },
         "/{productId}": {
             "GET": {
-                200: [["<productObject"]],
+                200: ["<productObject>"],
                 404: [createSingleResponse(rt.productNotFound)]
 
             },
             "PATCH": {
-                200: ["<productObject"],
+                200: ["<productObject>"],
                 400: [
                     createSingleResponse(rt.invalidJsonString),
                     createSingleResponse(rt.invalidInput)

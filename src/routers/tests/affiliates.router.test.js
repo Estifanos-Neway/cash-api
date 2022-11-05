@@ -13,6 +13,7 @@ const { env } = require("../../env");
 const { adminsRepo } = require("../../repositories");
 const verificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-sign-up-verification-email.html"), { encoding: "utf-8" });
 const testUtils = require("./test.utils");
+const emailSubjects = require("../../assets/emails/email-subjects.json");
 
 describe("/affiliates", () => {
     testUtils.setJestTimeout();
@@ -194,7 +195,7 @@ describe("/affiliates", () => {
                     .send(affiliateA);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
                 expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: affiliateA.email });
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: verificationEmailHtml, to: affiliateA.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
                 signUpVerificationTokenA = body.verificationToken;
@@ -231,7 +232,7 @@ describe("/affiliates", () => {
                     .send(affiliateB);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
                 expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: affiliateB.email });
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: verificationEmailHtml, to: affiliateB.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
                 signUpVerificationTokenB = body.verificationToken;
@@ -268,7 +269,7 @@ describe("/affiliates", () => {
                     .send(affiliateC);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
                 expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: affiliateC.email });
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: verificationEmailHtml, to: affiliateC.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
                 signUpVerificationTokenC = body.verificationToken;
@@ -1088,7 +1089,7 @@ describe("/affiliates", () => {
                         );
                     expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
                     expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                    expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: newEmail });
+                    expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: verificationEmailHtml, to: newEmail });
                     expect(statusCode).toBe(200);
                     expect(body).toEqual({ verificationToken: expect.any(String) });
 
@@ -1246,7 +1247,7 @@ describe("/affiliates", () => {
                     );
                 expect(statusCode).toBe(200);
                 expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Password Recovery", html: expect.any(String), to: newEmail });
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.passwordRecovery, html: expect.any(String), to: newEmail });
                 expect(body).toEqual(createSingleResponse(rt.success));
             });
         });

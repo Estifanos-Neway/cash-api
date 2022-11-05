@@ -11,6 +11,7 @@ const { createSingleResponse } = require("../../controllers/controller-commons/f
 const { env } = require("../../env");
 const { adminsRepo } = require("../../repositories");
 const testUtils = require("./test.utils");
+const emailSubjects = require("../../assets/emails/email-subjects.json");
 
 describe("/admin", () => {
     testUtils.setJestTimeout();
@@ -256,7 +257,7 @@ describe("/admin", () => {
 
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
                 expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email verification", html: `Verification code: ${emailVerificationCode}`, to: newEmail });
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: `Verification code: ${emailVerificationCode}`, to: newEmail });
                 expect(statusCode).toBe(200);
                 expect(body).toHaveProperty("verificationToken", expect.any(String));
 
@@ -400,7 +401,7 @@ describe("/admin", () => {
                     send({ email: newEmail });
                 expect(statusCode).toBe(200);
                 expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Password recovery", html: expect.any(String), to: newEmail });
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.passwordRecovery, html: expect.any(String), to: newEmail });
             });
         });
         describe("Given an invalid email (non-matching)", () => {

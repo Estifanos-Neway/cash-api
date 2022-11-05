@@ -23,5 +23,6 @@
   "productSellCredits": {
     "creditSubtractionPercent": 0.5,
     "minCredit": 100
-  }
+  },
+  "contactUsEmailTo":"cashmart.et@gmail.com"
 }
