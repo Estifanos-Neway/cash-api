@@ -5,8 +5,8 @@ const { User } = require("../entities");
 
 const forceAdminMid = mids.forceAccessToken([User.userTypes.Admin]);
 
-const ordersRouter = express.Router();
-ordersRouter.get("/", forceAdminMid, transactionsCont.getMany);
-ordersRouter.get("/:transactionId", forceAdminMid, transactionsCont.getOne);
+const transactionsRouter = express.Router();
+transactionsRouter.get("/", forceAdminMid, transactionsCont.getMany);
+transactionsRouter.get("/:transactionId", forceAdminMid, transactionsCont.getOne);
 
-module.exports = ordersRouter;
+module.exports = transactionsRouter;

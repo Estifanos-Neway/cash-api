@@ -45,9 +45,18 @@ exports.db = {
     },
     updateOne: async (model, conditions = {}, updates, options = {}) => {
         adaptConditions(conditions);
-        const updateOptions = { ...options, runValidators: "true", returnDocument: "after" };
+        const updateOptions = { ...options, runValidators: true, returnDocument: "after" };
         // @ts-ignore
-        const doc = await model.findOneAndUpdate(conditions, flat(updates), updateOptions);
+        const _flattenedUpdates = flat(updates);
+        const flattenedUpdates = { $unset: {} };
+        for (let [key, value] of Object.entries(_flattenedUpdates)) {
+            if (_.isUndefined(value)) {
+                flattenedUpdates.$unset[key] = 1;
+            } else {
+                flattenedUpdates[key] = value;
+            }
+        }
+        const doc = await model.findOneAndUpdate(conditions, flattenedUpdates, updateOptions);
         if (doc) {
             return doc;
         } else {
@@ -65,6 +74,17 @@ exports.db = {
         } else {
             throw new Error(responses.docNotFound);
         }
+    },
+    getSum: async (model, conditions = {}, sumOf, options = {}) => {
+        adaptConditions(conditions);
+        const result = await model.aggregate(
+            [
+                { $match: conditions },
+                { $group: { _id: null, sum: { $sum: `$${sumOf}` } } }
+            ],
+            options
+        );
+        return result[0].sum;
     },
     DbSession: class {
         #session;

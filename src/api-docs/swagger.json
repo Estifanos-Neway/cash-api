@@ -2270,6 +2270,30 @@
           }
         }
       }
+    },
+    "/analytics/counts": {
+      "get": {
+        "summary": "Get analytic counts. [Requires_Admin_Access_Token]",
+        "tags": ["Analytics"],
+        "responses": {
+          "200": {
+            "description": "Returns analytics object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Analytics"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2619,6 +2643,34 @@
               },
               "howToAffiliateWithUs": {
                 "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "Analytics": {
+        "type": "object",
+        "properties": {
+          "counts": {
+            "type": "object",
+            "properties": {
+              "totalProducts": {
+                "type": "number"
+              },
+              "totalOrders": {
+                "type": "number"
+              },
+              "acceptedOrders": {
+                "type": "number"
+              },
+              "totalAffiliates": {
+                "type": "number"
+              },
+              "totalEarned": {
+                "type": "number"
+              },
+              "totalUnpaid": {
+                "type": "number"
               }
             }
           }

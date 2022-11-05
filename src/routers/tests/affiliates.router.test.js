@@ -193,6 +193,7 @@ describe("/affiliates", () => {
                     .set("Api-Key", env.API_KEY)
                     .send(affiliateA);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
+                expect(sendEmailMock).toHaveBeenCalledTimes(1);
                 expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: affiliateA.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
@@ -229,6 +230,7 @@ describe("/affiliates", () => {
                     .set("Api-Key", env.API_KEY)
                     .send(affiliateB);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
+                expect(sendEmailMock).toHaveBeenCalledTimes(1);
                 expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: affiliateB.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
@@ -265,6 +267,7 @@ describe("/affiliates", () => {
                     .set("Api-Key", env.API_KEY)
                     .send(affiliateC);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
+                expect(sendEmailMock).toHaveBeenCalledTimes(1);
                 expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: affiliateC.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
@@ -1084,6 +1087,7 @@ describe("/affiliates", () => {
                             }
                         );
                     expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
+                    expect(sendEmailMock).toHaveBeenCalledTimes(1);
                     expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Email Verification", html: verificationEmailHtml, to: newEmail });
                     expect(statusCode).toBe(200);
                     expect(body).toEqual({ verificationToken: expect.any(String) });
@@ -1124,7 +1128,7 @@ describe("/affiliates", () => {
     );
     describe("/verify-email", () => {
         describe("Given valid verification token and code", () => {
-            it("Should update the admins email", async () => {
+            it("Should update the affiliates email", async () => {
                 const { body, statusCode } = await req.patch(`${mainPath}/verify-email`)
                     .set("Api-Key", env.API_KEY)
                     .set("Authorization", `Bearer ${accessTokenA}`)
@@ -1240,8 +1244,9 @@ describe("/affiliates", () => {
                             email: affiliateA.email
                         }
                     );
-                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Password Recovery", html: expect.any(String), to: newEmail });
                 expect(statusCode).toBe(200);
+                expect(sendEmailMock).toHaveBeenCalledTimes(1);
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: "Password Recovery", html: expect.any(String), to: newEmail });
                 expect(body).toEqual(createSingleResponse(rt.success));
             });
         });

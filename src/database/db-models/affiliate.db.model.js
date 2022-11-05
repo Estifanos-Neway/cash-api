@@ -115,6 +115,15 @@ affiliateSchema.pre("save", function (next) {
     this.sanitizedEmail = utils.sanitizeEmail(this.email);
     next();
 });
+affiliateSchema.pre("findOneAndUpdate", async function (next) {
+    // @ts-ignore
+    const newEmail = this.getUpdate()?.email;
+    if (newEmail) {
+        const docToBeUpdated = await this.model.findOne(this.getQuery());
+        this.set({sanitizedEmail:utils.sanitizeEmail(newEmail)});
+    }
+    next();
+});
 
 affiliateSchema.plugin(uniqueValidator);
 module.exports = mongoose.model(User.userTypes.Affiliate, affiliateSchema, "affiliates");

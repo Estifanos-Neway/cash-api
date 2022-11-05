@@ -10,3 +10,4 @@ exports.User = require("./user.entity");
 exports.Order = require("./order.entity");
 exports.Transaction = require("./transaction.entity");
 exports.StaticWebContents = require("./static-web-contents.entity");
+exports.Analytics = require("./analytics.entity");

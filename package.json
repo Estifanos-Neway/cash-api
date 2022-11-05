@@ -15,7 +15,8 @@
     "test-products.router": "jest products.router.test",
     "test-affiliates.router": "jest affiliates.router.test",
     "test-orders.router": "jest orders.router.test",
-    "test-static-web-contents.router": "jest static-web-contents.router.test"
+    "test-static-web-contents.router": "jest static-web-contents.router.test",
+    "test-analytics.router": "jest analytics.router.test"
   },
   "repository": {
     "type": "git",

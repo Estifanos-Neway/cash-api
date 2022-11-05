@@ -10,7 +10,7 @@ const { createSingleResponse } = require("../../controllers/controller-commons/f
 const { Order } = require("../../entities");
 const testUtils = require("./test.utils");
 
-describe("/product-categories", () => {
+describe("/orders", () => {
     testUtils.setJestTimeout();
     const mainPath = "/orders";
     const adminCredentials = {

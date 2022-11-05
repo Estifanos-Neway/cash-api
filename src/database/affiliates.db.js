@@ -69,5 +69,9 @@ module.exports = Object.freeze({
         db.sanitizeOptions(options);
         const affiliateDoc = await db.increment(affiliateDbModel, conditions, incrementors, options);
         return affiliateDoc ? db.adaptEntity(Affiliate, affiliateDoc, idName) : null;
+    },
+    getSum: async (conditions, sumOf, options) => {
+        db.sanitizeOptions(options);
+        return await db.getSum(affiliateDbModel, conditions, sumOf, options);
     }
 });
