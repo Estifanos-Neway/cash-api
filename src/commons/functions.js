@@ -11,7 +11,7 @@ const mimeTypes = require("mime-types");
 const isImage = require("is-image");
 const { env } = require("../env");
 const rt = require("./response-texts");
-const config = require("../config.json");
+const config = require("../configs");
 
 function errorLog(errorMessage, error) {
     console.error(color.red(errorMessage), color.red("\n[\n"), error, color.red("\n]"));

@@ -9,7 +9,7 @@ const {
     authenticateByToken,
     forceApiKey } = require("./controllers/middlewares");
 const { env } = require("./env");
-const config = require("./config.json");
+const config = require("./configs");
 const rt = require("./commons/response-texts");
 const {
     defaultPort,
@@ -41,7 +41,6 @@ exports.makeApp = () => {
     };
 
     app.use(morgan("dev"));
-    console.log(config.corsWhiteList);
     app.use(cors(
         {
             origin: config.corsWhiteList,

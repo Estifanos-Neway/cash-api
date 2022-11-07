@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { adminsDb } = require("./database");
 const { adminsRepo } = require("./repositories");
-const { defaultAdmin } = require("./config.json");
+const { defaultAdmin } = require("./configs");
 const {
     errorLog,
     hash } = require("./commons/functions");

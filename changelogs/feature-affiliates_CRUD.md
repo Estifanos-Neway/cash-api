@@ -1,5 +1,5 @@
 - Implemented /affiliates.
 - /tokens is changed to /sessions.
 - Removed "Authorization" header from /sessions requests (/refresh and /sign-out).
-- Cors whitelist is moved from `.env` to `src/config.json`.
+- Cors whitelist is moved from `.env` to `src/configs`.
 - Changed "Invalid_Access_Token" to "Not_Authorized" for status code 401.

@@ -1,4 +1,4 @@
-const { defaultCommissionRate } = require("../config.json");
+const { defaultCommissionRate } = require("../configs");
 const { hasValue, isEmail, hasSingleValue, removeUndefined } = require("../commons/functions");
 const rt = require("../commons/response-texts");
 

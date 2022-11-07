@@ -5,7 +5,7 @@ const rc = require("../commons/response-codes");
 const { Order, Transaction } = require("../entities");
 const { db, ordersDb, productsDb, affiliatesDb, transactionsDb } = require("../database");
 const repoUtils = require("./repo.utils");
-const configs = require("../config.json");
+const configs = require("../configs");
 
 async function validateOrderIdExistence({ id }) {
     if (!Order.isValidOrderId(id)) {

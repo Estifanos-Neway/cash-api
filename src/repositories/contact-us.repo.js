@@ -1,6 +1,6 @@
 const { ContactUs } = require("../entities");
 const utils = require("../commons/functions");
-const config = require("../config.json");
+const config = require("../configs");
 const rc = require("../commons/response-codes");
 const rt = require("../commons/response-texts");
 const emailSubjects = require("../assets/emails/email-subjects.json");

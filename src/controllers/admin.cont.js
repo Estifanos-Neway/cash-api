@@ -4,7 +4,7 @@ const _ = require("lodash");
 const path = require("path");
 const fs = require("fs");
 const { env } = require("../env");
-const { urls } = require("../config.json");
+const { urls } = require("../configs");
 const {
     decrypt,
     isEmail,

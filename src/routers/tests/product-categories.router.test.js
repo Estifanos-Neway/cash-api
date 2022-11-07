@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { env } = require("../../env");
 const { adminsRepo } = require("../../repositories");
-const { defaultAdmin } = require("../../config.json");
+const { defaultAdmin } = require("../../configs");
 const { hash } = require("../../commons/functions");
 const supertest = require("supertest");
 const { makeApp } = require("../../app");

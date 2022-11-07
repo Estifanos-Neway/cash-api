@@ -3,7 +3,7 @@ const uniqueValidator = require("mongoose-unique-validator");
 const utils = require("../../commons/functions");
 const { User } = require("../../entities");
 const { imageJsonSchema } = require("./db-model.commons");
-const config = require("../../config.json");
+const config = require("../../configs");
 
 const required = true;
 const unique = true;

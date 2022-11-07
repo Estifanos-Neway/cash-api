@@ -6,7 +6,7 @@ const rt = require("../../commons/response-texts");
 const { env } = require("../../env");
 const testUtils = require("./test.utils");
 const emailSubjects = require("../../assets/emails/email-subjects.json");
-const config = require("../../config.json");
+const config = require("../../configs");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
 const mainPath = "/contact-us";

@@ -3,7 +3,7 @@ const rt = require("../../commons/response-texts");
 const sc = require("./status-codes");
 const { env } = require("../../env");
 const utils = require("../../commons/functions");
-const { urls } = require("../../config.json");
+const { urls } = require("../../configs");
 const { verificationTokenExpiresIn } = require("../../commons/variables");
 
 function createSingleResponse(response) {
@@ -37,7 +37,7 @@ module.exports = {
         const verificationObject = { email, validUntil };
         // @ts-ignore
         const verificationToken = jwt.sign(verificationObject, env.JWT_SECRETE);
-        const verificationLink = `${urls.baseUrl}${path}?t=${verificationToken}`;
+        const verificationLink = `${urls.baseUrl}${path}?u=admin&t=${verificationToken}`;
         html = html.replaceAll("__verificationLink__", verificationLink);
         await utils["sendEmail"]({ subject, html, to: email });
     },
