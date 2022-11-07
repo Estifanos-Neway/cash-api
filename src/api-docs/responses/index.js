@@ -5,6 +5,8 @@ const productsResponses = require("./products.responses");
 const affiliatesResponses = require("./affiliates.responses");
 const ordersResponses = require("./orders.responses");
 const staticWebContentsResponses = require("./static-web-contents.responses");
+const analyticsResponses = require("./analytics.responses");
+const contactUsResponses = require("./contact-us.responses");
 const rt = require("../../commons/response-texts");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
 
@@ -19,5 +21,7 @@ exports.Responses = {
     ...productsResponses,
     ...affiliatesResponses,
     ...ordersResponses,
-    ...staticWebContentsResponses
+    ...staticWebContentsResponses,
+    ...analyticsResponses,
+    ...contactUsResponses
 };

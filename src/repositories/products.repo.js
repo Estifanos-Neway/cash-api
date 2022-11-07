@@ -21,8 +21,10 @@ module.exports = Object.freeze({
             try {
                 return await productsDb.increment({ id: productId }, { "viewCount": 1 });
             } catch (error) {
-                if (error.message == db.responses.docNotFound) {
+                if (error.message === db.responses.docNotFound) {
                     return null;
+                } else {
+                    throw error;
                 }
             }
         } else {
