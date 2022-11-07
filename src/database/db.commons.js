@@ -84,7 +84,7 @@ exports.db = {
             ],
             options
         );
-        return result[0].sum;
+        return result[0]?.sum ?? 0;
     },
     DbSession: class {
         #session;
