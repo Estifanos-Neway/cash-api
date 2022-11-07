@@ -39,7 +39,17 @@ exports.makeApp = () => {
         // explorer: true,
         customCssUrl: "/swagger.css"
     };
-    console.dir(config.corsWhiteList,{depth:null});
+    console.dir(config.corsWhiteList, { depth: null });
+    app.use("*", (req, res, next) => {
+        console.log(req.get("host"));
+        console.log(req.get("origin"));
+        next();
+
+    });
+    app.options("*", function (req, res, next) {
+        console.log(req.get("origin"));
+        next();
+    });
     app.use(morgan("dev"));
     app.use(cors(
         {
