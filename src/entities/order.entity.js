@@ -4,14 +4,21 @@ const utils = require("../commons/functions");
 const Affiliate = require("./affiliate.entity");
 
 class OrderedBy {
-    // fullName
-    fullName;
+    // #fullName
+    #fullName;
+    set fullName(fullName) {
+        this.#fullName = utils.trim(fullName);
+    }
+    get fullName() {
+        return this.#fullName;
+    }
     hasValidFullName(strict) {
         return utils.isNonEmptyString(this.fullName) || (!strict && _.isUndefined(this.fullName));
     }
 
     #phone;
     set phone(phone) {
+        phone = utils.trim(phone);
         const validPhone = utils.isPhone(phone);
         if (validPhone) {
             this.#phone = validPhone;
@@ -26,8 +33,14 @@ class OrderedBy {
         return !!utils.isPhone(this.phone) || (!strict && _.isUndefined(this.phone));
     }
 
-    // companyName
-    companyName;
+    // #companyName
+    #companyName;
+    set companyName(companyName) {
+        this.#companyName = utils.trim(companyName);
+    }
+    get companyName() {
+        return this.#companyName;
+    }
     hasValidCompanyName() {
         return utils.isNonEmptyString(this.companyName) || _.isUndefined(this.companyName);
     }
@@ -57,8 +70,15 @@ module.exports = class Order {
     }
 
     static idName = "orderId";
-    // orderId
-    orderId;
+
+    // #orderId
+    #orderId;
+    set orderId(orderId) {
+        this.#orderId = utils.trim(orderId);
+    }
+    get orderId() {
+        return this.#orderId;
+    }
 
     // #product;
     #product;
@@ -105,7 +125,7 @@ module.exports = class Order {
     // status;
     #status;
     set status(status) {
-        this.#status = Order.#statuses[status];
+        this.#status = Order.#statuses[utils.trim(status)];
     }
     get status() {
         return this.#status;

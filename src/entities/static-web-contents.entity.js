@@ -2,12 +2,26 @@ const _ = require("lodash");
 const utils = require("../commons/functions");
 
 class videoLinks {
-    whoAreWe;
+    // #whoAreWe
+    #whoAreWe;
+    set whoAreWe(whoAreWe) {
+        this.#whoAreWe = utils.trim(whoAreWe);
+    }
+    get whoAreWe() {
+        return this.#whoAreWe;
+    }
     hasValidWhoAreWe() {
         return utils.isNonEmptyString(this.whoAreWe) || _.isUndefined(this.whoAreWe) || _.isNull(this.whoAreWe);
     }
 
-    howToAffiliateWithUs;
+    // #howToAffiliateWithUs
+    #howToAffiliateWithUs;
+    set howToAffiliateWithUs(howToAffiliateWithUs) {
+        this.#howToAffiliateWithUs = utils.trim(howToAffiliateWithUs);
+    }
+    get howToAffiliateWithUs() {
+        return this.#howToAffiliateWithUs;
+    }
     hasValidHowToAffiliateWithUs() {
         return utils.isNonEmptyString(this.howToAffiliateWithUs) || _.isUndefined(this.howToAffiliateWithUs) || _.isNull(this.howToAffiliateWithUs);
     }

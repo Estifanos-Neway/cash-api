@@ -5,13 +5,26 @@ const User = require("./user.entity");
 
 module.exports = class Affiliate {
     static idName = "userId";
-    // userId
-    userId;
+
+    // #userId
+    #userId;
+    set userId(userId) {
+        this.#userId = utils.trim(userId);
+    }
+    get userId() {
+        return this.#userId;
+    }
     hasValidUserId(strict) {
         return utils.isValidDbId(this.userId) || (!strict && _.isUndefined(this.userId));
     }
-    // fullName
-    fullName;
+    // #fullName
+    #fullName;
+    set fullName(fullName) {
+        this.#fullName = utils.trim(fullName);
+    }
+    get fullName() {
+        return this.#fullName;
+    }
     hasValidFullName(strict) {
         const fullName = this.fullName;
         return utils.isNonEmptyString(fullName) || (!strict && _.isUndefined(fullName));
@@ -20,6 +33,7 @@ module.exports = class Affiliate {
     // phone
     #phone;
     set phone(phone) {
+        phone = utils.trim(phone);
         const validPhone = utils.isPhone(phone);
         if (validPhone) {
             this.#phone = validPhone;
@@ -38,6 +52,7 @@ module.exports = class Affiliate {
     // email
     #email;
     set email(email) {
+        email = utils.trim(email);
         if (_.isString(email)) {
             email = email.toLowerCase();
         }
@@ -51,14 +66,20 @@ module.exports = class Affiliate {
         return utils.isEmail(email) || (!strict && _.isUndefined(email));
     }
 
-    // passwordHash
-    passwordHash;
+    // #passwordHash
+    #passwordHash;
+    set passwordHash(passwordHash) {
+        this.#passwordHash = utils.trim(passwordHash);
+    }
+    get passwordHash() {
+        return this.#passwordHash;
+    }
     hasValidPasswordHash(strict) {
         const passwordHash = this.passwordHash;
         return utils.isNonEmptyString(passwordHash) || (!strict && _.isUndefined(passwordHash));
     }
 
-    // avatar
+    // #avatar
     #avatar;
     set avatar(imageJson) {
         this.#avatar = _.isPlainObject(imageJson) ? new Image(imageJson) : undefined;
@@ -71,8 +92,14 @@ module.exports = class Affiliate {
         return utils.isNonEmptyString(avatar?.path) || _.isUndefined(avatar);
     }
 
-    // parent
-    parentId;
+    // #parent
+    #parentId;
+    set parentId(parentId) {
+        this.#parentId = utils.trim(parentId);
+    }
+    get parentId() {
+        return this.#parentId;
+    }
     hasValidParentId() {
         const parentId = this.parentId;
         return User.isValidUserId(parentId) || _.isUndefined(parentId);

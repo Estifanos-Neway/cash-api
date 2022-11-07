@@ -154,5 +154,6 @@ module.exports = {
         }
     },
     isValidDbId: (value) => mongoose.Types.ObjectId.isValid(value),
-    generateDbId: () => mongoose.Types.ObjectId.generate().toString("hex")
+    generateDbId: () => mongoose.Types.ObjectId.generate().toString("hex"),
+    trim: (value) => _.isString(value) ? value.trim() : value
 };

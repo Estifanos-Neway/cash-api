@@ -5,40 +5,40 @@ const utils = require("../commons/functions");
 module.exports = class Product {
     static idName = "productId";
 
-    productId;
+    // #productId
+    #productId;
+    set productId(productId) {
+        this.#productId = utils.trim(productId);
+    }
+    get productId() {
+        return this.#productId;
+    }
     hasValidProductId(strict) {
         return utils.isValidDbId(this.productId) || (!strict && _.isUndefined(this.productId));
     }
-    #productName;
-    #description;
-    #mainImage;
-    #moreImages;
-    price;
-    commission;
-    categories;
-    published;
-    featured;
-    topSeller;
-    viewCount;
-    #createdAt;
-    #updatedAt;
 
+    // #productName
+    #productName;
     set productName(productName) {
-        this.#productName = productName?.trim();
+        this.#productName = utils.trim(productName);
     }
 
     get productName() {
         return this.#productName;
     }
 
+    // #description
+    #description;
     set description(description) {
-        this.#description = description?.trim();
+        this.#description = utils.trim(description);
     }
 
     get description() {
         return this.#description;
     }
 
+    // #mainImage
+    #mainImage;
     set mainImage(jsonImage) {
         if (utils.hasValue(jsonImage)) {
             this.#mainImage = new Image({ ...jsonImage });
@@ -49,6 +49,8 @@ module.exports = class Product {
         return this.#mainImage?.toJson();
     }
 
+    // #moreImages
+    #moreImages;
     set moreImages(jsonImageArray) {
         if (_.isArray(jsonImageArray)) {
             this.#moreImages = [];
@@ -69,6 +71,16 @@ module.exports = class Product {
             return undefined;
         }
     }
+    
+    price;
+    commission;
+    categories;
+    published;
+    featured;
+    topSeller;
+    viewCount;
+    #createdAt;
+    #updatedAt;
 
     get createdAt() {
         return this.#createdAt;

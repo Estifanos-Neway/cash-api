@@ -1,5 +1,5 @@
 const { defaultCommissionRate } = require("../configs");
-const { hasValue, isEmail, hasSingleValue, removeUndefined } = require("../commons/functions");
+const utils = require("../commons/functions");
 const rt = require("../commons/response-texts");
 
 class AdminSettings {
@@ -10,7 +10,7 @@ class AdminSettings {
     }
 
     toJson() {
-        return removeUndefined({
+        return utils.removeUndefined({
             commissionRate: this.commissionRate
         });
     }
@@ -32,41 +32,45 @@ module.exports = class Admin {
 
 
     set username(newUsername) {
-        if (hasValue(newUsername)) {
-            if (hasSingleValue(newUsername)) {
+        newUsername = utils.trim(newUsername);
+        if (utils.hasValue(newUsername)) {
+            if (utils.hasSingleValue(newUsername)) {
                 this.#username = newUsername;
             } else {
-                throw new Error(rt.invalidUsername );
+                throw new Error(rt.invalidUsername);
             }
         }
     }
 
     set passwordHash(newPasswordHash) {
-        if (hasValue(newPasswordHash)) {
-            if (hasSingleValue(newPasswordHash)) {
+        newPasswordHash = utils.trim(newPasswordHash);
+        if (utils.hasValue(newPasswordHash)) {
+            if (utils.hasSingleValue(newPasswordHash)) {
                 this.#passwordHash = newPasswordHash;
             } else {
-                throw new Error(rt.invalidPasswordHash );
+                throw new Error(rt.invalidPasswordHash);
             }
         }
     }
 
     set email(newEmail) {
-        if (hasValue(newEmail)) {
-            if (isEmail(newEmail)) {
+        newEmail = utils.trim(newEmail);
+        if (utils.hasValue(newEmail)) {
+            if (utils.isEmail(newEmail)) {
                 this.#email = newEmail;
             } else {
-                throw new Error(rt.invalidEmail );
+                throw new Error(rt.invalidEmail);
             }
         }
     }
 
     set userId(newUserId) {
-        if (hasValue(newUserId)) {
-            if (hasSingleValue(newUserId)) {
+        newUserId = utils.trim(newUserId);
+        if (utils.hasValue(newUserId)) {
+            if (utils.hasSingleValue(newUserId)) {
                 this.#userId = newUserId;
             } else {
-                throw new Error(rt.invalidUserId );
+                throw new Error(rt.invalidUserId);
             }
         }
     }
@@ -80,7 +84,7 @@ module.exports = class Admin {
     }
 
     toJson() {
-        return removeUndefined(
+        return utils.removeUndefined(
             {
                 username: this.username,
                 passwordHash: this.passwordHash,
@@ -92,8 +96,9 @@ module.exports = class Admin {
     }
 
     changePasswordHash({ oldPasswordHash, newPasswordHash }) {
+        oldPasswordHash = utils.trim(oldPasswordHash);
         if (oldPasswordHash !== this.passwordHash) {
-            throw new Error(rt.wrongPasswordHash );
+            throw new Error(rt.wrongPasswordHash);
         } else {
             this.passwordHash = newPasswordHash;
         }
