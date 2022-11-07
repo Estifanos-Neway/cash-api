@@ -41,6 +41,7 @@ exports.makeApp = () => {
     };
 
     app.use(morgan("dev"));
+    console.log(config.corsWhiteList);
     app.use(cors(
         {
             origin: config.corsWhiteList,

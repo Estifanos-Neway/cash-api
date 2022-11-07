@@ -2,15 +2,15 @@
   "defaultAdmin": {
     "username": "Admin",
     "password": "password"
-  },
+  }, 
   "defaultCommissionRate": 10,
   "urls": {
-    "baseUrl": "http://localhost:5000",
+    "baseUrl": "cashmart.netlify.app",
     "passwordRecoveryPath": "/password-recovery",
     "emailVerificationPath": "/verify-email"
   },
   "defaultCountryForPhone": "ETH",
-  "corsWhiteList": [],
+  "corsWhiteList": ["cashmart.netlify.app"],
   "affiliatesWallet": {
     "initialBalance": 100,
     "canWithdrawAfter": 200
