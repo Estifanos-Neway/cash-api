@@ -3,6 +3,10 @@ const mainWebUrl = "cashmart.netlify.app";
 const stagingMainWebUrl = "staging--" + mainWebUrl;
 const adminWebUrl = "admin-" + mainWebUrl;
 const stagingAdminWebUrl = "staging--" + adminWebUrl;
+function appendHttps(url) {
+  return `https://${url}`;
+}
+
 module.exports = {
   defaultAdmin: {
     username: "Admin",
@@ -15,7 +19,7 @@ module.exports = {
     emailVerificationPath: "/verify-email"
   },
   defaultCountryForPhone: "ETH",
-  corsWhiteList: [mainWebUrl, adminWebUrl, stagingMainWebUrl, stagingAdminWebUrl],
+  corsWhiteList: [mainWebUrl, adminWebUrl, stagingMainWebUrl, stagingAdminWebUrl].map(url => appendHttps(url)),
   affiliatesWallet: {
     initialBalance: 100,
     canWithdrawAfter: 200
