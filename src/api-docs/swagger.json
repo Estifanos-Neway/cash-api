@@ -2704,6 +2704,7 @@
       },
       "ContactUs": {
         "type": "object",
+        "required": ["message"],
         "properties": {
           "fullName": {
             "type": "string"

@@ -35,7 +35,7 @@ module.exports = {
         } catch (error) {
             throw utils.createError(rt.invalidFilterQuery, rc.invalidInput);
         }
-        filter = { ...search, ...filter };
+        filter = { or: search, ...filter };
         getManyQueries.filter = filter;
 
         // skip

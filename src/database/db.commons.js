@@ -9,6 +9,19 @@ function adaptConditions(conditions = {}) {
         delete conditions.id;
     }
 }
+function adaptFilter(filter) {
+    if (filter.or) {
+        if (!_.isEmpty(filter.or)) {
+            filter.$or = [];
+            for (const [key, value] of Object.entries(filter.or)) {
+                filter.$or.push({ [key]: value });
+            }
+        }
+        delete filter.or;
+    }
+    return filter;
+}
+
 const responses = {
     docNotFound: "Doc_Not_Found"
 };
@@ -33,6 +46,7 @@ exports.db = {
     },
     findMany: async ({ model, conditions = {}, filter = {}, select = [], skip = 0, limit, sort = {}, options = {} }) => {
         adaptConditions(conditions);
+        adaptFilter(filter);
         return await model.find(conditions, null, options).where(filter).select(select).skip(skip).limit(limit).sort(sort).exec();
     },
     deleteOne: async (model, conditions = {}, options = {}) => {
