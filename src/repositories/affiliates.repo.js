@@ -11,8 +11,9 @@ const { affiliatesDb, filesDb, db, transactionsDb } = require("../database");
 const { Affiliate, User, Image, Transaction } = require("../entities");
 const repoUtils = require("./repo.utils");
 const emailSubjects = require("../assets/emails/email-subjects.json");
-const verificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-sign-up-verification-email.html"), { encoding: "utf-8" });
-const passwordRecoveryEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-password-recovery.html"), { encoding: "utf-8" });
+const signUpVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "sign-up-verification.email.html"), { encoding: "utf-8" });
+const verificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "email-verification.email.html"), { encoding: "utf-8" });
+const passwordRecoveryEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "password-recovery.email.html"), { encoding: "utf-8" });
 
 const avatarBasePath = "/images/avatars";
 function adaptAffiliate(affiliate) {
@@ -156,7 +157,7 @@ module.exports = Object.freeze({
                             parentId: affiliate.parentId
                         }
                     };
-                    return await repoUtils.sendEmailVerificationCode({ verificationEmail: verificationEmail, email, verificationObject });
+                    return await repoUtils.sendEmailVerificationCode({ verificationEmail: signUpVerificationEmail, email, verificationObject });
                 }
             }
         }
@@ -260,7 +261,7 @@ module.exports = Object.freeze({
                 const recoveryLink = `${configs.urls.baseUrl}${configs.urls.passwordRecoveryPath}?u=affiliate&t=${recoveryToken}`;
                 const subject = emailSubjects.passwordRecovery;
                 // @ts-ignore
-                const html = utils.replaceAll(passwordRecoveryEmail,"__recoveryLink__", recoveryLink);
+                const html = utils.replaceAll(passwordRecoveryEmail, "__recoveryLink__", recoveryLink);
                 await utils.sendEmail({ subject, html, to: email });
                 return true;
             }

@@ -1,3 +1,5 @@
+const path = require("path");
+const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
@@ -12,12 +14,14 @@ const { env } = require("../../env");
 const { adminsRepo } = require("../../repositories");
 const testUtils = require("./test.utils");
 const emailSubjects = require("../../assets/emails/email-subjects.json");
+const emailVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "email-verification.email.html"), { encoding: "utf-8" });
 
 describe("/admin", () => {
     testUtils.setJestTimeout();
     const mainPath = "/admin";
     const newEmail = "cashmart.et@gmail.com";
     let emailVerificationCode = "vCODE";
+    const emailVerificationEmailHtml = utils.replaceAll(emailVerificationEmail, "__verificationCode__", emailVerificationCode);
     const adminCredentials = {
         username: defaultAdmin.username,
         passwordHash: hash(defaultAdmin.password)
@@ -257,7 +261,7 @@ describe("/admin", () => {
 
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
                 expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: `Verification code: ${emailVerificationCode}`, to: newEmail });
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: emailVerificationEmailHtml, to: newEmail });
                 expect(statusCode).toBe(200);
                 expect(body).toHaveProperty("verificationToken", expect.any(String));
 

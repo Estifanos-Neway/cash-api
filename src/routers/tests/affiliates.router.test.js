@@ -11,7 +11,8 @@ const { createSingleResponse } = require("../../controllers/controller-commons/f
 const { User } = require("../../entities");
 const { env } = require("../../env");
 const { adminsRepo } = require("../../repositories");
-const verificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "affiliate-sign-up-verification-email.html"), { encoding: "utf-8" });
+const signUpVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "sign-up-verification.email.html"), { encoding: "utf-8" });
+const emailVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "email-verification.email.html"), { encoding: "utf-8" });
 const testUtils = require("./test.utils");
 const emailSubjects = require("../../assets/emails/email-subjects.json");
 
@@ -20,7 +21,8 @@ describe("/affiliates", () => {
     const mainPath = "/affiliates";
     const verificationCode = "vCODE";
     // @ts-ignore
-    const verificationEmailHtml = utils.replaceAll(verificationEmail, "__verificationCode__", verificationCode);
+    const signUpVerificationEmailHtml = utils.replaceAll(signUpVerificationEmail, "__verificationCode__", verificationCode);
+    const emailVerificationEmailHtml = utils.replaceAll(emailVerificationEmail, "__verificationCode__", verificationCode);
     const passwordHash = "pwh";
     const newPasswordHash = "n-pwh";
     const newPasswordHash2 = "n-pwh-2";
@@ -195,7 +197,7 @@ describe("/affiliates", () => {
                     .send(affiliateA);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
                 expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: verificationEmailHtml, to: affiliateA.email });
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: signUpVerificationEmailHtml, to: affiliateA.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
                 signUpVerificationTokenA = body.verificationToken;
@@ -232,7 +234,7 @@ describe("/affiliates", () => {
                     .send(affiliateB);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
                 expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: verificationEmailHtml, to: affiliateB.email });
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: signUpVerificationEmailHtml, to: affiliateB.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
                 signUpVerificationTokenB = body.verificationToken;
@@ -269,7 +271,7 @@ describe("/affiliates", () => {
                     .send(affiliateC);
                 expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
                 expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: verificationEmailHtml, to: affiliateC.email });
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: signUpVerificationEmailHtml, to: affiliateC.email });
                 expect(statusCode).toBe(200);
                 expect(body).toEqual({ verificationToken: expect.any(String) });
                 signUpVerificationTokenC = body.verificationToken;
@@ -1089,7 +1091,7 @@ describe("/affiliates", () => {
                         );
                     expect(createVerificationCodeMock).toHaveBeenCalledTimes(1);
                     expect(sendEmailMock).toHaveBeenCalledTimes(1);
-                    expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: verificationEmailHtml, to: newEmail });
+                    expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.emailVerification, html: emailVerificationEmailHtml, to: newEmail });
                     expect(statusCode).toBe(200);
                     expect(body).toEqual({ verificationToken: expect.any(String) });
 
