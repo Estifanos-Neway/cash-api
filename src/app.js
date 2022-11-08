@@ -42,6 +42,10 @@ exports.makeApp = () => {
     };
     app.use(morgan("dev"));
     app.use(useragent.express());
+    app.use("*", (req, res, next) => {
+        console.dir(req.useragent, { depth: null });
+        next();
+    });
     app.use(cors(
         {
             origin: config.corsWhiteList,
