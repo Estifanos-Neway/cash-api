@@ -1,5 +1,6 @@
 {
   "emailVerification": "Email Verification",
   "passwordRecovery": "Password Recovery",
-  "contactUs": "Email via Contact-Us [Cash]"
+  "contactUs": "Email via Contact-Us [Cash]",
+  "signUpReport": "New Sign-In"
 }

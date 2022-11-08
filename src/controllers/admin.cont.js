@@ -9,7 +9,10 @@ const {
     decrypt,
     isEmail,
     hasSingleValue,
-    hasValue } = require("../commons/functions");
+    hasValue,
+    createUseragentDeviceString,
+    replaceAll,
+    sendEmail } = require("../commons/functions");
 const rt = require("../commons/response-texts");
 const {
     createSingleResponse,
@@ -23,6 +26,7 @@ const repoUtils = require("../repositories/repo.utils");
 const emailSubjects = require("../assets/emails/email-subjects.json");
 const passwordRecoveryEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "password-recovery.email.html"), { encoding: "utf-8" });
 const emailVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "email-verification.email.html"), { encoding: "utf-8" });
+const signInReportEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "sign-in-report.email.html"), { encoding: "utf-8" });
 module.exports = Object.freeze({
     signIn: async (req, res) => {
         catchInternalError(res, async () => {
@@ -39,10 +43,11 @@ module.exports = Object.freeze({
                         refreshToken
                     };
                     res.json(response);
-                    // get email
-                    // get signin info
-                    // prepare email
-                    // send email
+                    const adminEmail = signedInAdmin.email;
+                    const device = createUseragentDeviceString(req.useragent);
+                    const ip = req.socket.remoteAddress ?? "unknown";
+                    const signInReportEmailHtml = replaceAll(replaceAll(signInReportEmail, "--device--", device), "--ip--",ip);
+                    await sendEmail({ subject: emailSubjects.signUpReport, html: signInReportEmailHtml, to: adminEmail });
                 } else {
                     res.status(404).json(createSingleResponse(rt.userNotFound));
                 }
