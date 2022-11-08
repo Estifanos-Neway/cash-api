@@ -39,6 +39,10 @@ module.exports = Object.freeze({
                         refreshToken
                     };
                     res.json(response);
+                    // get email
+                    // get signin info
+                    // prepare email
+                    // send email
                 } else {
                     res.status(404).json(createSingleResponse(rt.userNotFound));
                 }
