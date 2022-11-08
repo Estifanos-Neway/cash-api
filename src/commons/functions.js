@@ -160,11 +160,11 @@ module.exports = {
     isValidDbId: (value) => mongoose.Types.ObjectId.isValid(value),
     generateDbId: () => mongoose.Types.ObjectId.generate().toString("hex"),
     trim: (value) => _.isString(value) ? value.trim() : value,
-    createUseragentDeviceString: (useragent) => {
-        const info = platform.parse(useragent);
-        console.dir(info, { depth: null });
+    createUseragentDeviceString: (useragentString) => {
+        const info = platform.parse(useragentString);
+        const product = info.product ? `${info.product}, ` : "";
         const os = info.os ?? "unknown";
         const browser = info.name ?? "unknown";
-        return `${os} (${browser})`;
+        return `${product}${os} (${browser})`;
     }
 };

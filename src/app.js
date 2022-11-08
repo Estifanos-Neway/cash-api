@@ -1,6 +1,5 @@
 
 const express = require("express");
-var useragent = require("express-useragent");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
@@ -41,11 +40,6 @@ exports.makeApp = () => {
         customCssUrl: "/swagger.css"
     };
     app.use(morgan("dev"));
-    app.use(useragent.express());
-    // app.use("*", (req, res, next) => {
-    //     console.dir(req.useragent, { depth: null });
-    //     next();
-    // });
     app.use(cors(
         {
             origin: config.corsWhiteList,
