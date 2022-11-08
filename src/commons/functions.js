@@ -147,7 +147,6 @@ module.exports = {
         return error;
     },
     sanitizeEmail: (originalEmail) => {
-        console.dir(originalEmail, { depth: null });
         if (isEmail(originalEmail) && /@gmail\.com$/.test(originalEmail)) {
             let sanitized = originalEmail.split("@")[0];
             sanitized = sanitized.split("+")[0];

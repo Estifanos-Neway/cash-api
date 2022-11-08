@@ -139,7 +139,6 @@ module.exports = Object.freeze({
             if (!affiliate.hasValidParentId()) {
                 affiliate.parentId = undefined;
             }
-            console.dir(affiliate.toJson(),{depth:null});
             const emailAlreadyExist = await affiliatesDb.exists({ sanitizedEmail: utils.sanitizeEmail(affiliate.email) });
             if (emailAlreadyExist) {
                 throw utils.createError(rt.affiliateEmailAlreadyExist, rc.conflict);
