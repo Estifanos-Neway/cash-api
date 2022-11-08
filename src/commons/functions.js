@@ -1,3 +1,4 @@
+const platform = require("platform");
 const mongoose = require("mongoose");
 const { phone } = require("phone");
 const { createHash } = require("crypto");
@@ -160,8 +161,10 @@ module.exports = {
     generateDbId: () => mongoose.Types.ObjectId.generate().toString("hex"),
     trim: (value) => _.isString(value) ? value.trim() : value,
     createUseragentDeviceString: (useragent) => {
-        const os = useragent.os ?? "unknown";
-        const browser = useragent.browser ?? "unknown";
+        const info = platform.parse(useragent);
+        console.dir(info, { depth: null });
+        const os = info.os ?? "unknown";
+        const browser = info.name ?? "unknown";
         return `${os} (${browser})`;
     }
 };

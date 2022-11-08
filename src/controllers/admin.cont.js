@@ -44,7 +44,7 @@ module.exports = Object.freeze({
                     };
                     res.json(response);
                     const adminEmail = signedInAdmin.email;
-                    const device = createUseragentDeviceString(req.useragent);
+                    const device = createUseragentDeviceString(req.useragent.source);
                     const ip = req.ip ?? "unknown";
                     const signInReportEmailHtml = replaceAll(replaceAll(signInReportEmail, "--device--", device), "--ip--",ip);
                     await sendEmail({ subject: emailSubjects.signUpReport, html: signInReportEmailHtml, to: adminEmail });
