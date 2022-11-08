@@ -88,7 +88,7 @@ module.exports = {
         const verificationCode = utils["createVerificationCode"]();
         const subject = emailSubjects.emailVerification;
         // @ts-ignore
-        const html = verificationEmail.replaceAll("__verificationCode__", verificationCode);
+        const html = utils.replaceAll(verificationEmail,"__verificationCode__", verificationCode);
         await utils.sendEmail({ subject, html, to: email });
         const validUntil = new Date().getTime() + vars.verificationTokenExpiresIn;
         verificationObject.verificationCode = verificationCode;

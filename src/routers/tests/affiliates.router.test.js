@@ -20,7 +20,7 @@ describe("/affiliates", () => {
     const mainPath = "/affiliates";
     const verificationCode = "vCODE";
     // @ts-ignore
-    const verificationEmailHtml = verificationEmail.replaceAll("__verificationCode__", verificationCode);
+    const verificationEmailHtml = utils.replaceAll(verificationEmail, "__verificationCode__", verificationCode);
     const passwordHash = "pwh";
     const newPasswordHash = "n-pwh";
     const newPasswordHash2 = "n-pwh-2";

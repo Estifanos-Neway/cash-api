@@ -16,7 +16,9 @@ const config = require("../configs");
 function errorLog(errorMessage, error) {
     console.error(color.red(errorMessage), color.red("\n[\n"), error, color.red("\n]"));
 }
-
+function replaceAll(str, find, replaceWith) {
+    return str.split(find).join(replaceWith);
+}
 function hasValue(object) {
     if (_.isNumber(object)) return true;
     else if (_.isUndefined(object) || _.isEmpty(object)) return false;
@@ -137,6 +139,7 @@ module.exports = {
     pipe,
     isImageMime,
     removeUndefined,
+    replaceAll,
     createError: (message, code = 0) => {
         const error = Error(message);
         // @ts-ignore
@@ -144,11 +147,11 @@ module.exports = {
         return error;
     },
     sanitizeEmail: (originalEmail) => {
-        console.dir(originalEmail,{depth:null});
+        console.dir(originalEmail, { depth: null });
         if (isEmail(originalEmail) && /@gmail\.com$/.test(originalEmail)) {
             let sanitized = originalEmail.split("@")[0];
             sanitized = sanitized.split("+")[0];
-            sanitized = sanitized.replaceAll(".", "");
+            sanitized = replaceAll(sanitized, ".", "");
             return sanitized + "@gmail.com";
         } else {
             return originalEmail;

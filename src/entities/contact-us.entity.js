@@ -2,7 +2,7 @@ const _ = require("lodash");
 const utils = require("../commons/functions");
 const fs = require("fs");
 const path = require("path");
-const contactUsEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "contact-us.email.html"), { encoding: "utf-8" });
+let contactUsEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "contact-us.email.html"), { encoding: "utf-8" });
 module.exports = class ContactUs {
     // fullName
     fullName;
@@ -75,11 +75,11 @@ module.exports = class ContactUs {
     }
 
     toEmailHtml() {
-        // @ts-ignore
-        return contactUsEmail.replaceAll("-1-fullName-9-", this.fullName ?? "-")
-            .replaceAll("-1-phone-9-", this.phone ?? "-")
-            .replaceAll("-1-email-9-", this.email ?? "-")
-            .replaceAll("-1-address-9-", this.address ?? "-")
-            .replaceAll("-1-message-9-", this.message ?? "-");
+        contactUsEmail = utils.replaceAll(contactUsEmail, "-1-fullName-9-", this.fullName ?? "-");
+        contactUsEmail = utils.replaceAll(contactUsEmail, "-1-phone-9-", this.phone ?? "-");
+        contactUsEmail = utils.replaceAll(contactUsEmail, "-1-email-9-", this.email ?? "-");
+        contactUsEmail = utils.replaceAll(contactUsEmail, "-1-address-9-", this.address ?? "-");
+        contactUsEmail = utils.replaceAll(contactUsEmail, "-1-message-9-", this.message ?? "-");
+        return contactUsEmail;
     }
 };

@@ -261,7 +261,7 @@ module.exports = Object.freeze({
                 const recoveryLink = `${configs.urls.baseUrl}${configs.urls.passwordRecoveryPath}?u=affiliate&t=${recoveryToken}`;
                 const subject = emailSubjects.passwordRecovery;
                 // @ts-ignore
-                const html = passwordRecoveryEmail.replaceAll("__recoveryLink__", recoveryLink);
+                const html = utils.replaceAll(passwordRecoveryEmail,"__recoveryLink__", recoveryLink);
                 await utils.sendEmail({ subject, html, to: email });
                 return true;
             }

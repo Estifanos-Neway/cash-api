@@ -26,7 +26,7 @@ module.exports = {
     },
     sendEmailVerificationCode: async ({ email, subject, html }) => {
         const verificationCode = utils["createVerificationCode"]();
-        html = html.replaceAll("__verificationCode__", verificationCode);
+        html = utils.replaceAll(html, "__verificationCode__", verificationCode);
         await utils["sendEmail"]({ subject, html, to: email });
         const validUntil = new Date().getTime() + verificationTokenExpiresIn;
         const verificationObject = { email, verificationCode, validUntil };
@@ -38,7 +38,7 @@ module.exports = {
         // @ts-ignore
         const verificationToken = jwt.sign(verificationObject, env.JWT_SECRETE);
         const verificationLink = `${urls.baseUrl}${path}?u=admin&t=${verificationToken}`;
-        html = html.replaceAll("__verificationLink__", verificationLink);
+        html = utils.replaceAll(html, "__verificationLink__", verificationLink);
         await utils["sendEmail"]({ subject, html, to: email });
     },
     sendSuccessResponse: (res) => {
