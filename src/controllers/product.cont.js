@@ -3,7 +3,8 @@ const multer = require("multer");
 const streamifier = require("streamifier");
 const { hasSingleValue, isPositiveNumber, isNonEmptyString, createUid, isImageMime } = require("../commons/functions");
 const rt = require("../commons/response-texts");
-const { User } = require("../entities");
+const { ordersDb } = require("../database");
+const { User, Order } = require("../entities");
 const { productsRepo, filesRepo } = require("../repositories");
 const { createSingleResponse, sendInvalidInputResponse, sendInternalErrorResponse, sendSuccessResponse, catchInternalError } = require("./controller-commons/functions");
 
@@ -233,8 +234,13 @@ module.exports = Object.freeze({
             if (!productExist) {
                 res.status(404).json(createSingleResponse(rt.productNotFound));
             } else {
-                await productsRepo.delete({ id: productId });
-                sendSuccessResponse(res);
+                const ordersExist = await ordersDb.exists({ "product.productId": productId, status: Order.statuses.Pending });
+                if (ordersExist) {
+                    res.status(409).json(createSingleResponse(rt.pendingOrder));
+                } else {
+                    await productsRepo.delete({ id: productId });
+                    sendSuccessResponse(res);
+                }
             }
         });
     }

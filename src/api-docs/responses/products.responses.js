@@ -46,7 +46,8 @@ module.exports = {
             "DELETE": {
                 200: [createSingleResponse(rt.success)],
                 401: [createSingleResponse(rt.unauthorized)],
-                404: [createSingleResponse(rt.productNotFound)]
+                404: [createSingleResponse(rt.productNotFound)],
+                409: [createSingleResponse(rt.pendingOrder)]
             }
         }
     }
