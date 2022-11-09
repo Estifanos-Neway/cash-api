@@ -14,6 +14,7 @@ const emailSubjects = require("../assets/emails/email-subjects.json");
 const signUpVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "sign-up-verification.email.html"), { encoding: "utf-8" });
 const verificationEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "email-verification.email.html"), { encoding: "utf-8" });
 const passwordRecoveryEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "password-recovery.email.html"), { encoding: "utf-8" });
+const signInReportEmail = fs.readFileSync(path.resolve("src", "assets", "emails", "sign-in-report.email.html"), { encoding: "utf-8" });
 
 const avatarBasePath = "/images/avatars";
 function adaptAffiliate(affiliate) {
@@ -215,7 +216,7 @@ module.exports = Object.freeze({
             }
         }
     },
-    signIn: async ({ phoneOrEmail, passwordHash }) => {
+    signIn: async ({ phoneOrEmail, passwordHash, device, ip }) => {
         const signInObject = { passwordHash };
         if (utils.isEmail(phoneOrEmail)) {
             signInObject.email = phoneOrEmail;
@@ -234,11 +235,15 @@ module.exports = Object.freeze({
                 throw utils.createError(rt.wrongCredentials, rc.unauthorized);
             } else {
                 const { refreshToken, accessToken } = await repoUtils.startSession({ userId: affiliateToSignIn.userId, userType: User.userTypes.Affiliate });
-                return {
+                const signedInAffiliate = {
                     affiliate: adaptAffiliate(affiliateToSignIn),
                     accessToken,
                     refreshToken
                 };
+                const affiliateEmail = signedInAffiliate.affiliate.email;
+                const signInReportEmailHtml = utils.replaceAll(utils.replaceAll(signInReportEmail, "--device--", device), "--ip--", ip);
+                await utils.sendEmail({ subject: emailSubjects.signUpReport, html: signInReportEmailHtml, to: affiliateEmail });
+                return signedInAffiliate;
             }
         }
     },

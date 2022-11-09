@@ -430,10 +430,13 @@ describe("/affiliates", () => {
         const subPath = `${mainPath}/sign-in`;
         describe("Given valid affiliate credentials [email]", () => {
             it("Should return affiliate sign in data", async () => {
+                const sendEmailMock = jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
                 const { statusCode, body } = await req.post(subPath)
                     .set("Api-Key", env.API_KEY)
                     .send({ phoneOrEmail: affiliateA.email, passwordHash });
                 expect(statusCode).toBe(200);
+                expect(sendEmailMock).toHaveBeenCalledTimes(1);
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.signUpReport, html: expect.any(String), to: affiliateA.email });
                 expect(body).toEqual({
                     affiliate: affiliateA,
                     accessToken: expect.any(String),
@@ -443,10 +446,13 @@ describe("/affiliates", () => {
         });
         describe("Given valid affiliate credentials [phone]", () => {
             it("Should return affiliate sign in data", async () => {
+                const sendEmailMock = jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
                 const { statusCode, body } = await req.post(subPath)
                     .set("Api-Key", env.API_KEY)
                     .send({ phoneOrEmail: affiliateA.phone, passwordHash });
                 expect(statusCode).toBe(200);
+                expect(sendEmailMock).toHaveBeenCalledTimes(1);
+                expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.signUpReport, html: expect.any(String), to: affiliateA.email });
                 expect(body).toEqual({
                     affiliate: affiliateA,
                     accessToken: expect.any(String),

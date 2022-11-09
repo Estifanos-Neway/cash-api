@@ -57,7 +57,9 @@ module.exports = Object.freeze({
     signIn: (req, res) => {
         catchInternalError(res, async () => {
             try {
-                const signedInAffiliate = await affiliatesRepo.signIn(req.body);
+                const device = utils.createUseragentDeviceString(req.get("user-agent"));
+                const ip = req.ip ?? "unknown";
+                const signedInAffiliate = await affiliatesRepo.signIn({ ...req.body, device, ip });
                 res.json(signedInAffiliate);
             } catch (error) {
                 switch (error.code) {
