@@ -230,7 +230,13 @@ module.exports = Object.freeze({
         if (!affiliate.hasValidPasswordHash(strict)) {
             throw utils.createError(rt.invalidPasswordHash, rc.invalidInput);
         } else {
-            const affiliateToSignIn = await affiliatesDb.findOne(affiliate.toJson());
+            const signInParams = { passwordHash: signInObject.passwordHash };
+            if (affiliate.email) {
+                signInParams.sanitizedEmail = utils.sanitizeEmail(affiliate.email);
+            } else {
+                signInParams.phone = affiliate.phone;
+            }
+            const affiliateToSignIn = await affiliatesDb.findOne(signInParams);
             if (!affiliateToSignIn) {
                 throw utils.createError(rt.wrongCredentials, rc.unauthorized);
             } else {
