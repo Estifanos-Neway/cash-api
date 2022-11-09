@@ -53,7 +53,7 @@ async function uploadAttachedImagesMid(req, res, next) {
             }
         }
         const moreImages = req.files?.[moreImagesName];
-        if (_.isArray(moreImages)) {
+        if (_.isArray(moreImages) && !_.isEmpty(moreImages)) {
             req.body.moreImages = [];
             for (let image of moreImages) {
                 if (isImageMime(image.mimetype)) {
