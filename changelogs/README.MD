@@ -25,3 +25,8 @@
 - Implemented `/static-web-contents`.
 - Implemented `/analytics`.
 - Implemented `/contact-us`.
+
+## v0.6.1 | Nov 06, 2022
+
+- Restricted product deletion to products with no pending orders only.
+- Will return `409 : Pending_Order` if tried to delete a product with pending orders.
