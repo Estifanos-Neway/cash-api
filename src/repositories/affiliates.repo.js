@@ -320,9 +320,10 @@ module.exports = Object.freeze({
         await affiliatesDb.updateOne({ id: userId }, { avatar: undefined });
         return true;
     },
-    getOne: async ({ userId }) => {
+    getOne: async ({ userId, publicUse = false }) => {
         await validateUserIdExistence({ userId });
-        const affiliate = await affiliatesDb.findOne({ id: userId });
+        const select = publicUse ? ["fullName", "avatar"] : undefined;
+        const affiliate = await affiliatesDb.findOne({ id: userId }, select);
         if (!affiliate) {
             throw utils.createError(rt.userNotFound, rc.notFound);
         } else {

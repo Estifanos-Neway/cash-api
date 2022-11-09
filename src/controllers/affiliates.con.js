@@ -7,6 +7,7 @@ const sc = require("./controller-commons/status-codes");
 const utils = require("../commons/functions");
 const { affiliatesRepo } = require("../repositories");
 const { catchInternalError, createSingleResponse, sendSuccessResponse, sendInvalidInputResponse } = require("./controller-commons/functions");
+const { User } = require("../entities");
 
 const catchAvatarMid = multer().single("avatar");
 module.exports = Object.freeze({
@@ -180,7 +181,7 @@ module.exports = Object.freeze({
         catchInternalError(res, async () => {
             const { userId } = req.params;
             try {
-                const affiliate = await affiliatesRepo.getOne({ userId });
+                const affiliate = await affiliatesRepo.getOne({ userId, publicUse: req.user.userId !== userId && req.user.userType !== User.userTypes.Admin });
                 res.json(affiliate);
             } catch (error) {
                 switch (error.code) {
