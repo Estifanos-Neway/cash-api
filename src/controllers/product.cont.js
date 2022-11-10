@@ -78,6 +78,7 @@ async function validateProductMid(req, res, next) {
                         res.status(400).json(createSingleResponse(rt.invalidJsonString));
                         return res.end();
                     }
+                    req.body.description = req.body.description === "" ? null : req.body.description;
                     const {
                         productName,
                         description,
@@ -91,7 +92,7 @@ async function validateProductMid(req, res, next) {
                     } = req.body;
                     if (
                         (!_.isUndefined(productName) && !hasSingleValue(productName)) ||
-                        (!_.isUndefined(description) && !hasSingleValue(description)) ||
+                        (!_.isUndefined(description) && !_.isNull(description) && !hasSingleValue(description)) ||
                         (!_.isUndefined(price) && !isPositiveNumber(price)) ||
                         (!_.isUndefined(commission) && !isPositiveNumber(commission)) ||
                         !isValidCategoryList(categories) ||
