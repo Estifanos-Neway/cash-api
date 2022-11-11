@@ -119,7 +119,6 @@ affiliateSchema.pre("findOneAndUpdate", async function (next) {
     // @ts-ignore
     const newEmail = this.getUpdate()?.email;
     if (newEmail) {
-        const docToBeUpdated = await this.model.findOne(this.getQuery());
         this.set({sanitizedEmail:utils.sanitizeEmail(newEmail)});
     }
     next();
