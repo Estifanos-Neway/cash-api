@@ -15,8 +15,7 @@ module.exports = {
   defaultCommissionRate: 10,
   urls: {
     baseUrl: mainWebUrl,
-    passwordRecoveryPath: "/password-recovery",
-    emailVerificationPath: "/verify-email"
+    passwordRecoveryPath: "/recovery_password"
   },
   defaultCountryForPhone: "ETH",
   corsWhiteList: [mainWebUrl, adminWebUrl, stagingMainWebUrl, stagingAdminWebUrl].map(url => appendHttps(url)),
