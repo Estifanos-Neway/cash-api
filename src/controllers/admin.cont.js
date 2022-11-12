@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 const path = require("path");
 const fs = require("fs");
+const dateFormat = require("date-and-time");
 const { env } = require("../env");
 const { urls } = require("../configs");
 const {
@@ -45,9 +46,13 @@ module.exports = Object.freeze({
                     res.json(response);
                     const adminEmail = signedInAdmin.email;
                     if (adminEmail) {
+                        const now = new Date();
+                        const at = dateFormat.format(now, "DD/MM/YYYY hh:mm:ss");
                         const device = createUseragentDeviceString(req.get("user-agent"));
                         const ip = req.ip ?? "unknown";
-                        const signInReportEmailHtml = replaceAll(replaceAll(signInReportEmail, "--device--", device), "--ip--", ip);
+                        let signInReportEmailHtml = replaceAll(signInReportEmail, "--at--", at);
+                        signInReportEmailHtml = replaceAll(signInReportEmailHtml, "--device--", device);
+                        signInReportEmailHtml = replaceAll(signInReportEmailHtml, "--ip--", ip);
                         await sendEmail({ subject: emailSubjects.signUpReport, html: signInReportEmailHtml, to: adminEmail });
                     }
                 } else {

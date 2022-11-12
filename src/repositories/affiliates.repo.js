@@ -2,6 +2,7 @@
 const _ = require("lodash");
 const fs = require("fs");
 const path = require("path");
+const dateFormat = require("date-and-time");
 const utils = require("../commons/functions");
 const rc = require("../commons/response-codes");
 const rt = require("../commons/response-texts");
@@ -247,7 +248,11 @@ module.exports = Object.freeze({
                     refreshToken
                 };
                 const affiliateEmail = signedInAffiliate.affiliate.email;
-                const signInReportEmailHtml = utils.replaceAll(utils.replaceAll(signInReportEmail, "--device--", device), "--ip--", ip);
+                const now = new Date();
+                const at = dateFormat.format(now, "DD/MM/YYYY hh:mm:ss");
+                let signInReportEmailHtml = utils.replaceAll(signInReportEmail, "--at--", at);
+                signInReportEmailHtml = utils.replaceAll(signInReportEmailHtml, "--device--", device);
+                signInReportEmailHtml = utils.replaceAll(signInReportEmailHtml, "--ip--", ip);
                 await utils.sendEmail({ subject: emailSubjects.signUpReport, html: signInReportEmailHtml, to: affiliateEmail });
                 return signedInAffiliate;
             }
