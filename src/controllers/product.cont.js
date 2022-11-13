@@ -4,7 +4,7 @@ const streamifier = require("streamifier");
 const { hasSingleValue, isPositiveNumber, isNonEmptyString, createUid, isImageMime } = require("../commons/functions");
 const rt = require("../commons/response-texts");
 const { ordersDb } = require("../database");
-const { User, Order } = require("../entities");
+const { User } = require("../entities");
 const { productsRepo, filesRepo } = require("../repositories");
 const { createSingleResponse, sendInvalidInputResponse, sendInternalErrorResponse, sendSuccessResponse, catchInternalError } = require("./controller-commons/functions");
 
@@ -235,7 +235,7 @@ module.exports = Object.freeze({
             if (!productExist) {
                 res.status(404).json(createSingleResponse(rt.productNotFound));
             } else {
-                const ordersExist = await ordersDb.exists({ "product.productId": productId, status: Order.statuses.Pending });
+                const ordersExist = await ordersDb.exists({ "product.productId": productId});
                 if (ordersExist) {
                     res.status(409).json(createSingleResponse(rt.pendingOrder));
                 } else {
