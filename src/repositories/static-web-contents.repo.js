@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const { StaticWebContents, Image } = require("../entities");
 const utils = require("../commons/functions");
 const rc = require("../commons/response-codes");
@@ -7,7 +8,7 @@ const repoUtils = require("./repo.utils");
 
 module.exports = {
     updateLogoImage: async ({ imageReadStream }) => {
-        const fileName = "logo-image";
+        const fileName = "logo";
         const bucketName = filesDb.bucketNames.staticWebContentImages;
         await filesDb.delete({ fileName, bucketName });
         await filesDb.upload({ readStream: imageReadStream, fileName, bucketName });
@@ -29,17 +30,50 @@ module.exports = {
             throw utils.createError(rt.invalidHeroDescription, rc.invalidInput);
         } else {
             if (heroImageReadStream) {
-                const fileName = "hero-image";
+                const fileName = "hero";
                 const bucketName = filesDb.bucketNames.staticWebContentImages;
                 await filesDb.delete({ fileName, bucketName });
                 await filesDb.upload({ readStream: heroImageReadStream, fileName, bucketName });
                 const path = `/images/${bucketName}/${fileName}`;
-                const logoImage = new Image({ path }).toJson();
+                staticWebContents.heroImage = new Image({ path }).toJson();
             }
+            const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
+            return _.pick(updatedStaticWebContents, ["heroImage", "heroShortTitle", "heroLongTitle", "heroDescription"]);
         }
 
+    },
+    updateAboutUsImage: async ({ imageReadStream }) => {
+        const fileName = "about-us";
+        const bucketName = filesDb.bucketNames.staticWebContentImages;
+        await filesDb.delete({ fileName, bucketName });
+        await filesDb.upload({ readStream: imageReadStream, fileName, bucketName });
+        const path = `/images/${bucketName}/${fileName}`;
+        const aboutUsImage = new Image({ path }).toJson();
+        // @ts-ignore
+        const staticWebContents = new StaticWebContents({ aboutUsImage });
         const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
-        return { logoImage: updatedStaticWebContents.logoImage };
+        return { aboutUsImage: updatedStaticWebContents.aboutUsImage };
+    },
+    updateWhyUs: async ({ whyUsImageReadStream, whyUsTitle, whyUsDescription }) => {
+        // @ts-ignore
+        const staticWebContents = new StaticWebContents({ whyUsTitle, whyUsDescription });
+        if (!staticWebContents.hasValidWhyUsTitle()) {
+            throw utils.createError(rt.invalidWhyUsTitle, rc.invalidInput);
+        } else if (!staticWebContents.hasValidWhyUsDescription()) {
+            throw utils.createError(rt.invalidWhyUsDescription, rc.invalidInput);
+        } else {
+            if (whyUsImageReadStream) {
+                const fileName = "why-us";
+                const bucketName = filesDb.bucketNames.staticWebContentImages;
+                await filesDb.delete({ fileName, bucketName });
+                await filesDb.upload({ readStream: whyUsImageReadStream, fileName, bucketName });
+                const path = `/images/${bucketName}/${fileName}`;
+                staticWebContents.whyUsImage = new Image({ path }).toJson();
+            }
+            const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
+            return _.pick(updatedStaticWebContents, ["whyUsImage", "whyUsTitle", "whyUsDescription"]);
+        }
+
     },
     updateWhatMakesUsUnique: async ({ whatMakesUsUnique }) => {
         // @ts-ignore
@@ -49,6 +83,41 @@ module.exports = {
         }
         const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
         return updatedStaticWebContents.toJson();
+    },
+    updateWhoAreWe: async ({ whoAreWeImageReadStream, whoAreWeDescription, whoAreWeVideoLink }) => {
+        // @ts-ignore
+        const staticWebContents = new StaticWebContents({ whoAreWeDescription, whoAreWeVideoLink });
+        if (!staticWebContents.hasValidWhoAreWeDescription()) {
+            throw utils.createError(rt.invalidWhoAreWeDescription, rc.invalidInput);
+        } else if (!staticWebContents.hasValidWhoAreWeVideoLink()) {
+            throw utils.createError(rt.invalidWhoAreWeVideoLink, rc.invalidInput);
+        } else {
+            if (whoAreWeImageReadStream) {
+                const fileName = "who-are-we";
+                const bucketName = filesDb.bucketNames.staticWebContentImages;
+                await filesDb.delete({ fileName, bucketName });
+                await filesDb.upload({ readStream: whoAreWeImageReadStream, fileName, bucketName });
+                const path = `/images/${bucketName}/${fileName}`;
+                staticWebContents.whoAreWeImage = new Image({ path }).toJson();
+            }
+            const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
+            return _.pick(updatedStaticWebContents, ["whoAreWeImage", "whoAreWeDescription", "whoAreWeVideoLink"]);
+        }
+    },
+    updateHowTos: async ({ howToBuyFromUsDescription, howToAffiliateWithUsDescription, howToAffiliateWithUsVideoLink }) => {
+        // @ts-ignore
+        const staticWebContents = new StaticWebContents({ howToBuyFromUsDescription, howToAffiliateWithUsDescription, howToAffiliateWithUsVideoLink });
+        if (!staticWebContents.hasValidHowToBuyFromUsDescription()) {
+            throw utils.createError(rt.invalidHowToBuyFromUsDescription, rc.invalidInput);
+        } else if (!staticWebContents.hasValidHowToAffiliateWithUsDescription()) {
+            throw utils.createError(rt.invalidHowToAffiliateWithUsDescription, rc.invalidInput);
+        } else if (!staticWebContents.hasValidHowToAffiliateWithUsVideoLink()) {
+            throw utils.createError(rt.invalidHowToAffiliateWithUsVideoLink, rc.invalidInput);
+        } else {
+            const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
+            return _.pick(updatedStaticWebContents, ["howToBuyFromUsDescription", "howToAffiliateWithUsDescription", "howToAffiliateWithUsVideoLink"]);
+        }
+
     },
     get: async ({ getManyQueries }) => {
         // @ts-ignore

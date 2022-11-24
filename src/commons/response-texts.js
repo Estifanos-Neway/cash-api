@@ -79,12 +79,17 @@ module.exports = {
     TransactionNotFound: "Transaction_Not_Found",
 
     // StaticWebContents
-    invalidWhoAreWeVideoLink: "Invalid_Who_Are_We_Video_Link",
-    invalidHowToAffiliateWithUsVideoLink: "Invalid_How_To_Affiliate_With_Us_Video_Link",
     invalidWhatMakesUsUnique: "Invalid_What_Makes_Us_Unique",
     invalidHeroShortTitle: "Invalid_Hero_Short_Title",
     invalidHeroLongTitle: "Invalid_Hero_Long_Title",
     invalidHeroDescription: "Invalid_Hero_Description",
+    invalidWhyUsTitle: "Invalid_Why_Us_Title",
+    invalidWhyUsDescription: "Invalid_Why_Us_Description",
+    invalidWhoAreWeDescription: "Invalid_Who_Are_We_Description",
+    invalidWhoAreWeVideoLink: "Invalid_Who_Are_We_Video_Link",
+    invalidHowToBuyFromUsDescription: "Invalid_How_To_Buy_From_Us_Description",
+    invalidHowToAffiliateWithUsDescription: "Invalid_How_to_affiliate_with_us_description",
+    invalidHowToAffiliateWithUsVideoLink: "Invalid_How_To_Affiliate_With_Us_Video_Link",
 
     // ContactUs
     invalidAddress: "Invalid_Address",

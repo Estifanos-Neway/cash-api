@@ -39,6 +39,76 @@ module.exports = Object.freeze({
             });
         });
     },
+    updateHero: (req, res) => {
+        catchInternalError(res, async () => {
+            const imageFieldName = "heroImage";
+            const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
+            catchSingleImageMid(req, res, (imageReadStream) => {
+                catchInternalError(res, async () => {
+                    try {
+                        const staticWebContents = await staticWebContentsRepo.updateHero({ heroImageReadStream: imageReadStream, ...req.body });
+                        res.json(staticWebContents);
+                    } catch (error) {
+                        switch (error.code) {
+                            case rc.invalidInput:
+                                res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                break;
+                            default:
+                                throw error;
+                        }
+                    }
+                });
+            });
+        });
+    },
+    updateAboutUsImage: (req, res) => {
+        catchInternalError(res, async () => {
+            const imageFieldName = "aboutUsImage";
+            const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
+            catchSingleImageMid(req, res, (imageReadStream) => {
+                catchInternalError(res, async () => {
+                    if (!imageReadStream) {
+                        res.status(sc.invalidInput).json(createSingleResponse(rt.requiredParamsNotFound));
+                    } else {
+                        try {
+                            const staticWebContents = await staticWebContentsRepo.updateAboutUsImage({ imageReadStream });
+                            res.json(staticWebContents);
+                        } catch (error) {
+                            switch (error.code) {
+                                case rc.invalidInput:
+                                    res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                    break;
+                                default:
+                                    throw error;
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    },
+    updateWhyUs: (req, res) => {
+        catchInternalError(res, async () => {
+            const imageFieldName = "whyUsImage";
+            const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
+            catchSingleImageMid(req, res, (imageReadStream) => {
+                catchInternalError(res, async () => {
+                    try {
+                        const staticWebContents = await staticWebContentsRepo.updateWhyUs({ whyUsImageReadStream: imageReadStream, ...req.body });
+                        res.json(staticWebContents);
+                    } catch (error) {
+                        switch (error.code) {
+                            case rc.invalidInput:
+                                res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                break;
+                            default:
+                                throw error;
+                        }
+                    }
+                });
+            });
+        });
+    },
     updateWhatMakesUsUnique: (req, res) => {
         catchInternalError(res, async () => {
             try {
@@ -54,5 +124,43 @@ module.exports = Object.freeze({
                 }
             }
         });
-    }
+    },
+    updateWhoAreWe: (req, res) => {
+        catchInternalError(res, async () => {
+            const imageFieldName = "whoAreWeImage";
+            const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
+            catchSingleImageMid(req, res, (imageReadStream) => {
+                catchInternalError(res, async () => {
+                    try {
+                        const staticWebContents = await staticWebContentsRepo.updateWhoAreWe({ whoAreWeImageReadStream: imageReadStream, ...req.body });
+                        res.json(staticWebContents);
+                    } catch (error) {
+                        switch (error.code) {
+                            case rc.invalidInput:
+                                res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                break;
+                            default:
+                                throw error;
+                        }
+                    }
+                });
+            });
+        });
+    },
+    updateHowTos: (req, res) => {
+        catchInternalError(res, async () => {
+            try {
+                const staticWebContents = await staticWebContentsRepo.updateHowTos(req.body);
+                res.json(staticWebContents);
+            } catch (error) {
+                switch (error.code) {
+                    case rc.invalidInput:
+                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                        break;
+                    default:
+                        throw error;
+                }
+            }
+        });
+    },
 });
