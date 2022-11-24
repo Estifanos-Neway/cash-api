@@ -61,7 +61,7 @@ exports.db = {
         adaptConditions(conditions);
         const updateOptions = { ...options, runValidators: true, returnDocument: "after" };
         // @ts-ignore
-        const _flattenedUpdates = flat(updates);
+        const _flattenedUpdates = flat(updates,{safe: true});
         const flattenedUpdates = { $unset: {} };
         for (let [key, value] of Object.entries(_flattenedUpdates)) {
             if (_.isUndefined(value)) {

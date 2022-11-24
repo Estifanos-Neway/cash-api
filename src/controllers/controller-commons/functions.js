@@ -1,3 +1,6 @@
+/* eslint-disable indent */
+const multer = require("multer");
+const streamifier = require("streamifier");
 const jwt = require("jsonwebtoken");
 const rt = require("../../commons/response-texts");
 const sc = require("./status-codes");
@@ -15,6 +18,16 @@ function sendInternalErrorResponse(error, res) {
     res.status(sc.internalError).json(createSingleResponse(rt.internalError));
 }
 
+async function catchInternalError(res, task) {
+    try {
+        await task();
+    } catch (error) {
+        sendInternalErrorResponse(error, res);
+    }
+}
+function sendInvalidInputResponse(res) {
+    res.status(sc.invalidInput).json(createSingleResponse(rt.invalidInput));
+}
 module.exports = {
     createSingleResponse,
     getAccessToken: (authHeader) => {
@@ -44,9 +57,7 @@ module.exports = {
     sendSuccessResponse: (res) => {
         res.json(createSingleResponse(rt.success));
     },
-    sendInvalidInputResponse: (res) => {
-        res.status(sc.invalidInput).json(createSingleResponse(rt.invalidInput));
-    },
+    sendInvalidInputResponse,
     sendRequiredParamsNotFoundResponse: (res) => {
         res.status(sc.invalidInput).json(createSingleResponse(rt.requiredParamsNotFound));
     },
@@ -54,11 +65,33 @@ module.exports = {
         res.status(sc.unauthorized).json(createSingleResponse(rt.unauthorized));
     },
     sendInternalErrorResponse,
-    catchInternalError: async (res, task) => {
-        try {
-            await task();
-        } catch (error) {
-            sendInternalErrorResponse(error, res);
-        }
+    catchInternalError,
+    createCatchSingleImageMid: ({ imageFieldName }) => {
+        return async (req, res, next) => {
+            const catchSingleImageMid = multer().single(imageFieldName);
+            catchSingleImageMid(req, res, (error) => {
+                catchInternalError(res, async () => {
+                    if (error && error.message !== "Unexpected field") {
+                        if (error.message === "Unexpected end of form") {
+                            sendInvalidInputResponse(res);
+                        } else {
+                            throw error;
+                        }
+                    } else {
+                        const imageBuffer = req.file?.buffer;
+                        if (imageBuffer) {
+                            if (!utils.isImageMime(req.file.mimetype)) {
+                                res.status(sc.invalidInput).json(createSingleResponse(rt.invalidFileFormat));
+                            } else {
+                                const imageReadStream = streamifier.createReadStream(imageBuffer);
+                                next(imageReadStream);
+                            }
+                        } else {
+                            next(null);
+                        }
+                    }
+                });
+            });
+        };
     }
 };

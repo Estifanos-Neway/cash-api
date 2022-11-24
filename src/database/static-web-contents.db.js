@@ -8,8 +8,8 @@ module.exports = Object.freeze({
         const updatedStaticWebContentsDoc = await db.updateOne(staticWebContentsDbModel, {}, updates, updateOptions);
         return new StaticWebContents(updatedStaticWebContentsDoc.toJSON());
     },
-    findOne: async () => {
-        const staticWebContentsDoc = await db.findOne(staticWebContentsDbModel);
+    findOne: async ({ select }) => {
+        const staticWebContentsDoc = await db.findOne(staticWebContentsDbModel, undefined, select);
         return staticWebContentsDoc ? new StaticWebContents(staticWebContentsDoc.toJSON()) : null;
     }
 });

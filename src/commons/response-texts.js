@@ -81,8 +81,12 @@ module.exports = {
     // StaticWebContents
     invalidWhoAreWeVideoLink: "Invalid_Who_Are_We_Video_Link",
     invalidHowToAffiliateWithUsVideoLink: "Invalid_How_To_Affiliate_With_Us_Video_Link",
+    invalidWhatMakesUsUnique: "Invalid_What_Makes_Us_Unique",
+    invalidHeroShortTitle: "Invalid_Hero_Short_Title",
+    invalidHeroLongTitle: "Invalid_Hero_Long_Title",
+    invalidHeroDescription: "Invalid_Hero_Description",
 
     // ContactUs
-    invalidAddress:"Invalid_Address",
-    invalidMessage:"Invalid_Message"
+    invalidAddress: "Invalid_Address",
+    invalidMessage: "Invalid_Message"
 };

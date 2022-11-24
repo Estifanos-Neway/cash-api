@@ -87,10 +87,6 @@ module.exports = class Affiliate {
     get avatar() {
         return this.#avatar?.toJson();
     }
-    hasValidAvatar() {
-        const avatar = this.avatar;
-        return utils.isNonEmptyString(avatar?.path) || _.isUndefined(avatar);
-    }
 
     // #parent
     #parentId;

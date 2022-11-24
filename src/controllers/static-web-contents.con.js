@@ -1,14 +1,48 @@
 /* eslint-disable indent */
 const { staticWebContentsRepo } = require("../repositories");
-const { catchInternalError, createSingleResponse } = require("./controller-commons/functions");
+const { catchInternalError, createSingleResponse, createCatchSingleImageMid } = require("./controller-commons/functions");
+const rt = require("../commons/response-texts");
 const rc = require("../commons/response-codes");
 const sc = require("./controller-commons/status-codes");
 
 module.exports = Object.freeze({
-    update: (req, res) => {
+    get: (req, res) => {
+        catchInternalError(res, async () => {
+            const getManyQueries = req.query;
+            const staticWebContents = await staticWebContentsRepo.get({ getManyQueries });
+            res.json(staticWebContents);
+        });
+    },
+    updateLogoImage: (req, res) => {
+        catchInternalError(res, async () => {
+            const imageFieldName = "logoImage";
+            const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
+            catchSingleImageMid(req, res, (imageReadStream) => {
+                catchInternalError(res, async () => {
+                    if (!imageReadStream) {
+                        res.status(sc.invalidInput).json(createSingleResponse(rt.requiredParamsNotFound));
+                    } else {
+                        try {
+                            const staticWebContents = await staticWebContentsRepo.updateLogoImage({ imageReadStream });
+                            res.json(staticWebContents);
+                        } catch (error) {
+                            switch (error.code) {
+                                case rc.invalidInput:
+                                    res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                    break;
+                                default:
+                                    throw error;
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    },
+    updateWhatMakesUsUnique: (req, res) => {
         catchInternalError(res, async () => {
             try {
-                const staticWebContents = await staticWebContentsRepo.update(req.body);
+                const staticWebContents = await staticWebContentsRepo.updateWhatMakesUsUnique(req.body);
                 res.json(staticWebContents);
             } catch (error) {
                 switch (error.code) {
@@ -19,12 +53,6 @@ module.exports = Object.freeze({
                         throw error;
                 }
             }
-        });
-    },
-    get: (req, res) => {
-        catchInternalError(res, async () => {
-            const staticWebContents = await staticWebContentsRepo.get();
-            res.json(staticWebContents);
         });
     }
 });
