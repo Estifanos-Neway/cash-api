@@ -3,6 +3,11 @@ const { imageJsonSchema } = require("./db-model.commons");
 
 const logoWithLinkSchema = new mongoose.Schema(
     {
+        id: {
+            type: String,
+            required: true,
+            unique: true
+        },
         logoImage: {
             type: imageJsonSchema,
             required: true

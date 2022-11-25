@@ -5,10 +5,6 @@ const { StaticWebContents } = require("../entities");
 function adaptEntity(dbDoc) {
     dbDoc = dbDoc.toJSON();
     if (dbDoc.brands) {
-        for (const brand of dbDoc.brands) {
-            brand.id = brand._id;
-            delete brand._id;
-        }
         dbDoc.brands.sort((brand1, brand2) => {
             return brand1.rank < brand2.rank ? 1 : -1;
         });
@@ -28,6 +24,26 @@ module.exports = Object.freeze({
     addBrand: async ({ brand }) => {
         let staticWebContentsDoc = await db.findOne(staticWebContentsDbModel);
         staticWebContentsDoc.brands.push(brand);
+        staticWebContentsDoc = await staticWebContentsDoc.save();
+        return adaptEntity(staticWebContentsDoc);
+    },
+    updateBrand: async ({ id, updates }) => {
+        delete updates.id;
+        let staticWebContentsDoc = await db.findOne(staticWebContentsDbModel);
+        for (let brand of staticWebContentsDoc.brands) {
+            if (brand.id === id) {
+                for (const [key, value] of Object.entries(updates)) {
+                    brand[key] = value;
+                }
+                break;
+            }
+        }
+        staticWebContentsDoc = await staticWebContentsDoc.save();
+        return adaptEntity(staticWebContentsDoc);
+    },
+    deleteBrand: async ({ id }) => {
+        let staticWebContentsDoc = await db.findOne(staticWebContentsDbModel);
+        staticWebContentsDoc.brands = staticWebContentsDoc.brands.filter(brand => brand.id != id);
         staticWebContentsDoc = await staticWebContentsDoc.save();
         return adaptEntity(staticWebContentsDoc);
     }

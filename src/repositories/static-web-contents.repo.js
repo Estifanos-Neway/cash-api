@@ -126,15 +126,16 @@ module.exports = {
 
     },
     addBrand: async ({ brandLogoImageReadStream, link, rank }) => {
+        const id = utils.createUid();
         // @ts-ignore
-        const brand = new StaticWebContents.LogoWithLink({ link, rank });
+        const brand = new StaticWebContents.LogoWithLink({ id, link, rank });
         if (!brand.hasValidLink()) {
             throw utils.createError(rt.invalidBrandLink, rc.invalidInput);
         } else if (!brand.hasValidRank()) {
             throw utils.createError(rt.invalidBrandRank, rc.invalidInput);
         } else {
             if (brandLogoImageReadStream) {
-                const fileName = utils.createUid();
+                const fileName = id;
                 const bucketName = filesDb.bucketNames.staticWebContentImages;
                 await filesDb.delete({ fileName, bucketName });
                 await filesDb.upload({ readStream: brandLogoImageReadStream, fileName, bucketName });
@@ -144,5 +145,33 @@ module.exports = {
             const updatedStaticWebContents = await staticWebContentsDb.addBrand({ brand: brand.toJson() });
             return _.pick(updatedStaticWebContents.toJson(), ["brands"]);
         }
+    },
+    updateBrand: async ({ id, brandLogoImageReadStream, link, rank }) => {
+        // @ts-ignore
+        const brand = new StaticWebContents.LogoWithLink({ link, rank });
+        if (!brand.hasValidLink()) {
+            throw utils.createError(rt.invalidBrandLink, rc.invalidInput);
+        } else if (!brand.hasValidRank()) {
+            throw utils.createError(rt.invalidBrandRank, rc.invalidInput);
+        } else {
+            if (brandLogoImageReadStream) {
+                const fileName = id;
+                const bucketName = filesDb.bucketNames.staticWebContentImages;
+                await filesDb.delete({ fileName, bucketName });
+                await filesDb.upload({ readStream: brandLogoImageReadStream, fileName, bucketName });
+                const path = `/images/${bucketName}/${fileName}`;
+                brand.logoImage = new Image({ path }).toJson();
+            }
+            const updatedStaticWebContents = await staticWebContentsDb.updateBrand({ id, updates: brand.toJson() });
+            return _.pick(updatedStaticWebContents.toJson(), ["brands"]);
+        }
+    },
+    deleteBrand: async ({ id }) => {
+        const updatedStaticWebContents = await staticWebContentsDb.deleteBrand({ id });
+        const fileName = id;
+        const bucketName = filesDb.bucketNames.staticWebContentImages;
+        await filesDb.delete({ fileName, bucketName });
+        return _.pick(updatedStaticWebContents.toJson(), ["brands"]);
     }
+
 };

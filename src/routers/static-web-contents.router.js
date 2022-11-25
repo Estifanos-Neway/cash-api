@@ -15,4 +15,6 @@ staticWebContentsRouter.put("/what-makes-us-unique", forceAdminMid, staticWebCon
 staticWebContentsRouter.put("/who-are-we", forceAdminMid, staticWebContentsCont.updateWhoAreWe);
 staticWebContentsRouter.put("/how-tos", forceAdminMid, staticWebContentsCont.updateHowTos);
 staticWebContentsRouter.post("/brands", forceAdminMid, staticWebContentsCont.addBrand);
+staticWebContentsRouter.patch("/brands/:id", forceAdminMid, staticWebContentsCont.updateBrand);
+staticWebContentsRouter.delete("/brands/:id", forceAdminMid, staticWebContentsCont.deleteBrand);
 module.exports = staticWebContentsRouter;

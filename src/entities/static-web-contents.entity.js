@@ -20,7 +20,7 @@ module.exports = class StaticWebContents {
         // link
         link;
         hasValidLink() {
-            return isNonEmptyString(this.link);
+            return isNonEmptyString(this.link) || _.isUndefined(this.link);
         }
 
         // #rank

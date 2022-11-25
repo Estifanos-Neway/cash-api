@@ -189,4 +189,34 @@ module.exports = Object.freeze({
             });
         });
     },
+    updateBrand: (req, res) => {
+        catchInternalError(res, async () => {
+            const id = req.params.id;
+            const imageFieldName = "brandLogoImage";
+            const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
+            catchSingleImageMid(req, res, (imageReadStream) => {
+                catchInternalError(res, async () => {
+                    try {
+                        const staticWebContents = await staticWebContentsRepo.updateBrand({ id, brandLogoImageReadStream: imageReadStream, ...req.body });
+                        res.json(staticWebContents);
+                    } catch (error) {
+                        switch (error.code) {
+                            case rc.invalidInput:
+                                res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                break;
+                            default:
+                                throw error;
+                        }
+                    }
+                });
+            });
+        });
+    },
+    deleteBrand: (req, res) => {
+        catchInternalError(res, async () => {
+            const id = req.params.id;
+            const staticWebContents = await staticWebContentsRepo.deleteBrand({ id });
+            res.json(staticWebContents);
+        });
+    }
 });
