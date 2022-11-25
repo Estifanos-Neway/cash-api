@@ -2220,6 +2220,241 @@
       }
     },
     "/static-web-contents": {
+      "get": {
+        "summary": "Get static web contents",
+        "tags": ["Static Web Contents"],
+        "parameters": [
+          {
+            "name": "select",
+            "description": "Which properties to get back.",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "StaticWebContents object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaticWebContents"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/static-web-contents/logo-Image": {
+      "put": {
+        "summary": "Update static web contents",
+        "tags": ["Static Web Contents"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["logoImage"],
+                "properties": {
+                  "logoImage": {
+                    "type": "string",
+                    "format": "byte"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object [selected]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "logoImage": {
+                      "$ref": "#/components/schemas/StaticWebContents/properties/logoImage"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/static-web-contents/hero": {
+      "put": {
+        "summary": "Update static web contents",
+        "tags": ["Static Web Contents"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "heroShortTitle",
+                  "heroLongTitle",
+                  "heroDescription"
+                ],
+                "properties": {
+                  "heroImage": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "heroShortTitle": {
+                    "$ref": "#/components/schemas/StaticWebContents/properties/heroShortTitle"
+                  },
+                  "heroLongTitle": {
+                    "$ref": "#/components/schemas/StaticWebContents/properties/heroLongTitle"
+                  },
+                  "heroDescription": {
+                    "$ref": "#/components/schemas/StaticWebContents/properties/heroDescription"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object [selected]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaticWebContents_Hero"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/static-web-contents/about-us-image": {
+      "put": {
+        "summary": "Update static web contents",
+        "tags": ["Static Web Contents"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["aboutUsImage"],
+                "properties": {
+                  "aboutUsImage": {
+                    "type": "string",
+                    "format": "byte"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object [selected]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "aboutUsImage": {
+                      "$ref": "#/components/schemas/StaticWebContents/properties/aboutUsImage"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/static-web-contents/why-us": {
+      "put": {
+        "summary": "Update static web contents",
+        "tags": ["Static Web Contents"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["whyUsTitle", "whyUsDescription"],
+                "properties": {
+                  "whyUsImage": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "whyUsTitle": {
+                    "$ref": "#/components/schemas/StaticWebContents/properties/whyUsTitle"
+                  },
+                  "whyUsDescription": {
+                    "$ref": "#/components/schemas/StaticWebContents/properties/whyUsDescription"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object [selected]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaticWebContents_WhyUs"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/static-web-contents/what-makes-us-unique": {
       "put": {
         "summary": "Update static web contents",
         "tags": ["Static Web Contents"],
@@ -2227,18 +2462,228 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StaticWebContents"
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The updated StaticWebContents object",
+            "description": "The updated StaticWebContents object [selected]",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StaticWebContents"
+                  "type": "object",
+                  "properties": {
+                    "whatMakesUsUnique": {
+                      "$ref": "#/components/schemas/StaticWebContents/properties/whatMakesUsUnique"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/static-web-contents/who-are-we": {
+      "put": {
+        "summary": "Update static web contents",
+        "tags": ["Static Web Contents"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["whyUsTitle", "whoAreWeVideoLink"],
+                "properties": {
+                  "whoAreWeImage": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "whoAreWeDescription": {
+                    "$ref": "#/components/schemas/StaticWebContents/properties/whoAreWeDescription"
+                  },
+                  "whoAreWeVideoLink": {
+                    "$ref": "#/components/schemas/StaticWebContents/properties/whoAreWeVideoLink"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object [selected]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaticWebContents_WhoAreWe"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/static-web-contents/how-tos": {
+      "put": {
+        "summary": "Update static web contents",
+        "tags": ["Static Web Contents"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StaticWebContents_HowTos"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object [selected]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaticWebContents_HowTos"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/static-web-contents/brands": {
+      "post": {
+        "summary": "Adds new brand to static web contents",
+        "tags": ["Static Web Contents"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["logoImage"],
+                "properties": {
+                  "logoImage": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "link": {
+                    "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/link"
+                  },
+                  "rank": {
+                    "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/rank"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object [selected]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "brands": {
+                      "$ref": "#/components/schemas/StaticWebContents/properties/brands"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/static-web-contents/brands/{id}": {
+      "patch": {
+        "summary": "Update a brand in static web contents",
+        "tags": ["Static Web Contents"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "logoImage": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "link": {
+                    "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/link"
+                  },
+                  "rank": {
+                    "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/rank"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object [selected]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "brands": {
+                      "$ref": "#/components/schemas/StaticWebContents/properties/brands"
+                    }
+                  }
                 }
               }
             }
@@ -2254,19 +2699,191 @@
           }
         }
       },
-      "get": {
-        "summary": "Get static web contents",
+      "delete": {
+        "summary": "Delete a brand from static web contents",
         "tags": ["Static Web Contents"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "StaticWebContents object",
+            "description": "The updated StaticWebContents object [selected]",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StaticWebContents"
+                  "type": "object",
+                  "properties": {
+                    "brands": {
+                      "$ref": "#/components/schemas/StaticWebContents/properties/brands"
+                    }
+                  }
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/static-web-contents/social-links": {
+      "post": {
+        "summary": "Adds new social link to static web contents",
+        "tags": ["Static Web Contents"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["logoImage"],
+                "properties": {
+                  "logoImage": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "link": {
+                    "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/link"
+                  },
+                  "rank": {
+                    "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/rank"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object [selected]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "socialLinks": {
+                      "$ref": "#/components/schemas/StaticWebContents/properties/socialLinks"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      }
+    },
+    "/static-web-contents/social-links/{id}": {
+      "patch": {
+        "summary": "Update a social link in static web contents",
+        "tags": ["Static Web Contents"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "logoImage": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "link": {
+                    "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/link"
+                  },
+                  "rank": {
+                    "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/rank"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object [selected]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "socialLinks": {
+                      "$ref": "#/components/schemas/StaticWebContents/properties/socialLinks"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/invalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a social link from static web contents",
+        "tags": ["Static Web Contents"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The updated StaticWebContents object [selected]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "socialLinks": {
+                      "$ref": "#/components/schemas/StaticWebContents/properties/socialLinks"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
           },
           "500": {
             "$ref": "#/components/responses/internalError"
@@ -2664,16 +3281,159 @@
       "StaticWebContents": {
         "type": "object",
         "properties": {
-          "videoLinks": {
-            "type": "object",
-            "properties": {
-              "whoAreWe": {
-                "type": "string"
-              },
-              "howToAffiliateWithUs": {
-                "type": "string"
-              }
+          "logoImage": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "heroImage": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "heroShortTitle": {
+            "type": "string"
+          },
+          "heroLongTitle": {
+            "type": "string"
+          },
+          "heroDescription": {
+            "type": "string"
+          },
+          "aboutUsImage": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "whyUsImage": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "whyUsTitle": {
+            "type": "string"
+          },
+          "whyUsDescription": {
+            "type": "string"
+          },
+          "whatMakesUsUnique": {
+            "type": "array",
+            "items": {
+              "type": "string"
             }
+          },
+          "whoAreWeImage": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "whoAreWeDescription": {
+            "type": "string"
+          },
+          "whoAreWeVideoLink": {
+            "type": "string"
+          },
+          "howToBuyFromUsDescription": {
+            "type": "string"
+          },
+          "howToAffiliateWithUsDescription": {
+            "type": "string"
+          },
+          "howToAffiliateWithUsVideoLink": {
+            "type": "string"
+          },
+          "brands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StaticWebContents_LogoWithLink"
+            }
+          },
+          "socialLinks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StaticWebContents_LogoWithLink"
+            }
+          }
+        }
+      },
+      "StaticWebContents_Hero": {
+        "type": "object",
+        "required": ["heroShortTitle", "heroLongTitle", "heroDescription"],
+        "properties": {
+          "heroImage": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/heroImage"
+          },
+          "heroShortTitle": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/heroShortTitle"
+          },
+          "heroLongTitle": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/heroLongTitle"
+          },
+          "heroDescription": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/heroDescription"
+          }
+        }
+      },
+      "StaticWebContents_WhyUs": {
+        "type": "object",
+        "required": ["whyUsTitle", "whyUsDescription"],
+        "properties": {
+          "whyUsImage": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/whyUsImage"
+          },
+          "whyUsTitle": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/whyUsTitle"
+          },
+          "whyUsDescription": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/whyUsDescription"
+          }
+        }
+      },
+      "StaticWebContents_WhatMakesUsUnique": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "StaticWebContents_WhoAreWe": {
+        "type": "object",
+        "required": ["whoAreWeDescription", "whoAreWeVideoLink"],
+        "properties": {
+          "whoAreWeImage": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/whoAreWeImage"
+          },
+          "whoAreWeDescription": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/whoAreWeDescription"
+          },
+          "whoAreWeVideoLink": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/whoAreWeVideoLink"
+          }
+        }
+      },
+      "StaticWebContents_HowTos": {
+        "type": "object",
+        "required": [
+          "howToBuyFromUsDescription",
+          "howToAffiliateWithUsDescription",
+          "howToAffiliateWithUsVideoLink"
+        ],
+        "properties": {
+          "howToBuyFromUsDescription": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/howToBuyFromUsDescription"
+          },
+          "howToAffiliateWithUsDescription": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/howToAffiliateWithUsDescription"
+          },
+          "howToAffiliateWithUsVideoLink": {
+            "$ref": "#/components/schemas/StaticWebContents/properties/howToAffiliateWithUsVideoLink"
+          }
+        }
+      },
+      "StaticWebContents_LogoWithLink": {
+        "type": "object",
+        "required": ["logoImage", "link", "rank"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "logoImage": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "link": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "integer"
           }
         }
       },
