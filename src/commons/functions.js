@@ -166,5 +166,6 @@ module.exports = {
         const os = info.os ?? "unknown";
         const browser = info.name ?? "unknown";
         return `${product}${os} (${browser})`;
-    }
+    },
+    isNumber: (value) => _.isNumber(value) && !isNaN(value)
 };

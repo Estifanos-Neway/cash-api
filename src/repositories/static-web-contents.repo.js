@@ -7,6 +7,12 @@ const { staticWebContentsDb, filesDb } = require("../database");
 const repoUtils = require("./repo.utils");
 
 module.exports = {
+    get: async ({ getManyQueries }) => {
+        // @ts-ignore
+        let { select } = repoUtils.validateGetManyQuery({ getManyQueries });
+        const staticWebContents = await staticWebContentsDb.findOne({ select });
+        return staticWebContents ? staticWebContents.toJson() : {};
+    },
     updateLogoImage: async ({ imageReadStream }) => {
         const fileName = "logo";
         const bucketName = filesDb.bucketNames.staticWebContentImages;
@@ -17,7 +23,7 @@ module.exports = {
         // @ts-ignore
         const staticWebContents = new StaticWebContents({ logoImage });
         const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
-        return { logoImage: updatedStaticWebContents.logoImage };
+        return _.pick(updatedStaticWebContents, ["logoImage"]);
     },
     updateHero: async ({ heroImageReadStream, heroShortTitle, heroLongTitle, heroDescription }) => {
         // @ts-ignore
@@ -52,7 +58,7 @@ module.exports = {
         // @ts-ignore
         const staticWebContents = new StaticWebContents({ aboutUsImage });
         const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
-        return { aboutUsImage: updatedStaticWebContents.aboutUsImage };
+        return _.pick(updatedStaticWebContents, ["aboutUsImage"]);
     },
     updateWhyUs: async ({ whyUsImageReadStream, whyUsTitle, whyUsDescription }) => {
         // @ts-ignore
@@ -82,7 +88,7 @@ module.exports = {
             throw utils.createError(rt.invalidWhatMakesUsUnique, rc.invalidInput);
         }
         const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
-        return updatedStaticWebContents.toJson();
+        return _.pick(updatedStaticWebContents, ["whatMakesUsUnique"]);
     },
     updateWhoAreWe: async ({ whoAreWeImageReadStream, whoAreWeDescription, whoAreWeVideoLink }) => {
         // @ts-ignore
@@ -119,10 +125,24 @@ module.exports = {
         }
 
     },
-    get: async ({ getManyQueries }) => {
+    addBrand: async ({ brandLogoImageReadStream, link, rank }) => {
         // @ts-ignore
-        let { select } = repoUtils.validateGetManyQuery({ getManyQueries });
-        const staticWebContents = await staticWebContentsDb.findOne({ select });
-        return staticWebContents ? staticWebContents.toJson() : {};
+        const brand = new StaticWebContents.LogoWithLink({ link, rank });
+        if (!brand.hasValidLink()) {
+            throw utils.createError(rt.invalidBrandLink, rc.invalidInput);
+        } else if (!brand.hasValidRank()) {
+            throw utils.createError(rt.invalidBrandRank, rc.invalidInput);
+        } else {
+            if (brandLogoImageReadStream) {
+                const fileName = utils.createUid();
+                const bucketName = filesDb.bucketNames.staticWebContentImages;
+                await filesDb.delete({ fileName, bucketName });
+                await filesDb.upload({ readStream: brandLogoImageReadStream, fileName, bucketName });
+                const path = `/images/${bucketName}/${fileName}`;
+                brand.logoImage = new Image({ path }).toJson();
+            }
+            const updatedStaticWebContents = await staticWebContentsDb.addBrand({ brand: brand.toJson() });
+            return _.pick(updatedStaticWebContents.toJson(), ["brands"]);
+        }
     }
 };

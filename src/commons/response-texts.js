@@ -90,6 +90,8 @@ module.exports = {
     invalidHowToBuyFromUsDescription: "Invalid_How_To_Buy_From_Us_Description",
     invalidHowToAffiliateWithUsDescription: "Invalid_How_to_affiliate_with_us_description",
     invalidHowToAffiliateWithUsVideoLink: "Invalid_How_To_Affiliate_With_Us_Video_Link",
+    invalidBrandLink: "Invalid_Brand_Link",
+    invalidBrandRank: "Invalid_Brand_Rank",
 
     // ContactUs
     invalidAddress: "Invalid_Address",

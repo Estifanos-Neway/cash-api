@@ -3,44 +3,56 @@ const { isNonEmptyString } = require("../commons/functions");
 const utils = require("../commons/functions");
 const Image = require("./image.entity");
 
-// class videoLinks {
-//     // #whoAreWe
-//     #whoAreWe;
-//     set whoAreWe(whoAreWe) {
-//         this.#whoAreWe = utils.trim(whoAreWe);
-//     }
-//     get whoAreWe() {
-//         return this.#whoAreWe;
-//     }
-//     hasValidWhoAreWe() {
-//         return utils.isNonEmptyString(this.whoAreWe) || _.isUndefined(this.whoAreWe) || _.isNull(this.whoAreWe);
-//     }
-
-//     // #howToAffiliateWithUs
-//     #howToAffiliateWithUs;
-//     set howToAffiliateWithUs(howToAffiliateWithUs) {
-//         this.#howToAffiliateWithUs = utils.trim(howToAffiliateWithUs);
-//     }
-//     get howToAffiliateWithUs() {
-//         return this.#howToAffiliateWithUs;
-//     }
-//     hasValidHowToAffiliateWithUs() {
-//         return utils.isNonEmptyString(this.howToAffiliateWithUs) || _.isUndefined(this.howToAffiliateWithUs) || _.isNull(this.howToAffiliateWithUs);
-//     }
-
-//     constructor({ whoAreWe, howToAffiliateWithUs }) {
-//         this.whoAreWe = whoAreWe;
-//         this.howToAffiliateWithUs = howToAffiliateWithUs;
-//     }
-
-//     toJson() {
-//         return utils.removeUndefined({
-//             whoAreWe: this.whoAreWe,
-//             howToAffiliateWithUs: this.howToAffiliateWithUs
-//         });
-//     }
-// }
 module.exports = class StaticWebContents {
+    static LogoWithLink = class {
+        // id
+        id;
+
+        // #logo
+        #logoImage;
+        set logoImage(imageJson) {
+            this.#logoImage = _.isPlainObject(imageJson) ? new Image(imageJson) : undefined;
+        }
+        get logoImage() {
+            return this.#logoImage;
+        }
+
+        // link
+        link;
+        hasValidLink() {
+            return isNonEmptyString(this.link);
+        }
+
+        // #rank
+        #rank;
+        set rank(value) {
+            value = Number.parseInt(value?.toString());
+            this.#rank = utils.isNumber(value) ? value : undefined;
+        }
+        get rank() {
+            return this.#rank;
+        }
+        hasValidRank() {
+            return utils.isNumber(this.rank) || _.isUndefined(this.rank);
+        }
+
+        constructor({ id, logoImage, link, rank }) {
+            this.id = id;
+            this.logoImage = logoImage;
+            this.link = link;
+            this.rank = rank;
+        }
+
+        toJson() {
+            return utils.removeUndefined({
+                id: this.id,
+                logoImage: this.logoImage?.toJson(),
+                link: this.link,
+                rank: this.rank
+            });
+        }
+    };
+
     // #logoImage;
     #logoImage;
     set logoImage(imageJson) {
@@ -160,6 +172,24 @@ module.exports = class StaticWebContents {
         return isNonEmptyString(this.howToAffiliateWithUsVideoLink);
     }
 
+    // #brands;
+    #brands;
+    set brands(logoWithLinkJsonArray) {
+        if (!_.isArray(logoWithLinkJsonArray)) {
+            this.#brands = undefined;
+        } else {
+            this.#brands = [];
+            for (let logoWithLinkJson of logoWithLinkJsonArray) {
+                if (_.isPlainObject(logoWithLinkJson)) {
+                    this.#brands.push(new StaticWebContents.LogoWithLink(logoWithLinkJson));
+                }
+            }
+        }
+    }
+    get brands() {
+        return this.#brands;
+    }
+
     constructor({
         logoImage,
         heroImage,
@@ -176,7 +206,8 @@ module.exports = class StaticWebContents {
         whoAreWeVideoLink,
         howToBuyFromUsDescription,
         howToAffiliateWithUsDescription,
-        howToAffiliateWithUsVideoLink
+        howToAffiliateWithUsVideoLink,
+        brands
     }) {
         this.logoImage = logoImage;
         this.heroImage = heroImage;
@@ -194,6 +225,7 @@ module.exports = class StaticWebContents {
         this.howToBuyFromUsDescription = howToBuyFromUsDescription;
         this.howToAffiliateWithUsDescription = howToAffiliateWithUsDescription;
         this.howToAffiliateWithUsVideoLink = howToAffiliateWithUsVideoLink;
+        this.brands = brands;
     }
 
     toJson() {
@@ -213,7 +245,8 @@ module.exports = class StaticWebContents {
             whoAreWeVideoLink: this.whoAreWeVideoLink,
             howToBuyFromUsDescription: this.howToBuyFromUsDescription,
             howToAffiliateWithUsDescription: this.howToAffiliateWithUsDescription,
-            howToAffiliateWithUsVideoLink: this.howToAffiliateWithUsVideoLink
+            howToAffiliateWithUsVideoLink: this.howToAffiliateWithUsVideoLink,
+            brands: this.brands?.map(logoWithLinkObject => logoWithLinkObject.toJson())
         });
     }
 };

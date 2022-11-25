@@ -163,4 +163,30 @@ module.exports = Object.freeze({
             }
         });
     },
+    addBrand: (req, res) => {
+        catchInternalError(res, async () => {
+            const imageFieldName = "brandLogoImage";
+            const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
+            catchSingleImageMid(req, res, (imageReadStream) => {
+                catchInternalError(res, async () => {
+                    if (!imageReadStream) {
+                        res.status(sc.invalidInput).json(createSingleResponse(rt.requiredParamsNotFound));
+                    } else {
+                        try {
+                            const staticWebContents = await staticWebContentsRepo.addBrand({ brandLogoImageReadStream: imageReadStream, ...req.body });
+                            res.json(staticWebContents);
+                        } catch (error) {
+                            switch (error.code) {
+                                case rc.invalidInput:
+                                    res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                    break;
+                                default:
+                                    throw error;
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    },
 });
