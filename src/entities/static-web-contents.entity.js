@@ -190,6 +190,24 @@ module.exports = class StaticWebContents {
         return this.#brands;
     }
 
+    // #socialLinks;
+    #socialLinks;
+    set socialLinks(logoWithLinkJsonArray) {
+        if (!_.isArray(logoWithLinkJsonArray)) {
+            this.#socialLinks = undefined;
+        } else {
+            this.#socialLinks = [];
+            for (let logoWithLinkJson of logoWithLinkJsonArray) {
+                if (_.isPlainObject(logoWithLinkJson)) {
+                    this.#socialLinks.push(new StaticWebContents.LogoWithLink(logoWithLinkJson));
+                }
+            }
+        }
+    }
+    get socialLinks() {
+        return this.#socialLinks;
+    }
+
     constructor({
         logoImage,
         heroImage,
@@ -207,7 +225,8 @@ module.exports = class StaticWebContents {
         howToBuyFromUsDescription,
         howToAffiliateWithUsDescription,
         howToAffiliateWithUsVideoLink,
-        brands
+        brands,
+        socialLinks
     }) {
         this.logoImage = logoImage;
         this.heroImage = heroImage;
@@ -226,6 +245,7 @@ module.exports = class StaticWebContents {
         this.howToAffiliateWithUsDescription = howToAffiliateWithUsDescription;
         this.howToAffiliateWithUsVideoLink = howToAffiliateWithUsVideoLink;
         this.brands = brands;
+        this.socialLinks = socialLinks;
     }
 
     toJson() {
@@ -246,7 +266,8 @@ module.exports = class StaticWebContents {
             howToBuyFromUsDescription: this.howToBuyFromUsDescription,
             howToAffiliateWithUsDescription: this.howToAffiliateWithUsDescription,
             howToAffiliateWithUsVideoLink: this.howToAffiliateWithUsVideoLink,
-            brands: this.brands?.map(logoWithLinkObject => logoWithLinkObject.toJson())
+            brands: this.brands?.map(logoWithLinkObject => logoWithLinkObject.toJson()),
+            socialLinks: this.socialLinks?.map(logoWithLinkObject => logoWithLinkObject.toJson())
         });
     }
 };

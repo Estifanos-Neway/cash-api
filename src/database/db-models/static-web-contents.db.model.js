@@ -38,7 +38,8 @@ const staticWebContentsSchema = new mongoose.Schema(
         howToBuyFromUsDescription: String,
         howToAffiliateWithUsDescription: String,
         howToAffiliateWithUsVideoLink: String,
-        brands: [logoWithLinkSchema]
+        brands: [logoWithLinkSchema],
+        socialLinks: [logoWithLinkSchema]
     }
 );
 

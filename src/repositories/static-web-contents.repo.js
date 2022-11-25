@@ -172,6 +172,53 @@ module.exports = {
         const bucketName = filesDb.bucketNames.staticWebContentImages;
         await filesDb.delete({ fileName, bucketName });
         return _.pick(updatedStaticWebContents.toJson(), ["brands"]);
+    },
+    addSocialLink: async ({ socialLinkLogoImageReadStream, link, rank }) => {
+        const id = utils.createUid();
+        // @ts-ignore
+        const socialLink = new StaticWebContents.LogoWithLink({ id, link, rank });
+        if (!socialLink.hasValidLink()) {
+            throw utils.createError(rt.invalidsocialLinkLink, rc.invalidInput);
+        } else if (!socialLink.hasValidRank()) {
+            throw utils.createError(rt.invalidsocialLinkRank, rc.invalidInput);
+        } else {
+            if (socialLinkLogoImageReadStream) {
+                const fileName = id;
+                const bucketName = filesDb.bucketNames.staticWebContentImages;
+                await filesDb.delete({ fileName, bucketName });
+                await filesDb.upload({ readStream: socialLinkLogoImageReadStream, fileName, bucketName });
+                const path = `/images/${bucketName}/${fileName}`;
+                socialLink.logoImage = new Image({ path }).toJson();
+            }
+            const updatedStaticWebContents = await staticWebContentsDb.addSocialLink({ socialLink: socialLink.toJson() });
+            return _.pick(updatedStaticWebContents.toJson(), ["socialLinks"]);
+        }
+    },
+    updateSocialLink: async ({ id, socialLinkLogoImageReadStream, link, rank }) => {
+        // @ts-ignore
+        const socialLink = new StaticWebContents.LogoWithLink({ link, rank });
+        if (!socialLink.hasValidLink()) {
+            throw utils.createError(rt.invalidSocialLinkLink, rc.invalidInput);
+        } else if (!socialLink.hasValidRank()) {
+            throw utils.createError(rt.invalidSocialLinkRank, rc.invalidInput);
+        } else {
+            if (socialLinkLogoImageReadStream) {
+                const fileName = id;
+                const bucketName = filesDb.bucketNames.staticWebContentImages;
+                await filesDb.delete({ fileName, bucketName });
+                await filesDb.upload({ readStream: socialLinkLogoImageReadStream, fileName, bucketName });
+                const path = `/images/${bucketName}/${fileName}`;
+                socialLink.logoImage = new Image({ path }).toJson();
+            }
+            const updatedStaticWebContents = await staticWebContentsDb.updateSocialLink({ id, updates: socialLink.toJson() });
+            return _.pick(updatedStaticWebContents.toJson(), ["socialLinks"]);
+        }
+    },
+    deleteSocialLink: async ({ id }) => {
+        const updatedStaticWebContents = await staticWebContentsDb.deleteSocialLink({ id });
+        const fileName = id;
+        const bucketName = filesDb.bucketNames.staticWebContentImages;
+        await filesDb.delete({ fileName, bucketName });
+        return _.pick(updatedStaticWebContents.toJson(), ["socialLinks"]);
     }
-
 };

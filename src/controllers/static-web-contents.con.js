@@ -165,7 +165,7 @@ module.exports = Object.freeze({
     },
     addBrand: (req, res) => {
         catchInternalError(res, async () => {
-            const imageFieldName = "brandLogoImage";
+            const imageFieldName = "logoImage";
             const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
             catchSingleImageMid(req, res, (imageReadStream) => {
                 catchInternalError(res, async () => {
@@ -192,7 +192,7 @@ module.exports = Object.freeze({
     updateBrand: (req, res) => {
         catchInternalError(res, async () => {
             const id = req.params.id;
-            const imageFieldName = "brandLogoImage";
+            const imageFieldName = "logoImage";
             const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
             catchSingleImageMid(req, res, (imageReadStream) => {
                 catchInternalError(res, async () => {
@@ -216,6 +216,62 @@ module.exports = Object.freeze({
         catchInternalError(res, async () => {
             const id = req.params.id;
             const staticWebContents = await staticWebContentsRepo.deleteBrand({ id });
+            res.json(staticWebContents);
+        });
+    },
+    addSocialLink: (req, res) => {
+        catchInternalError(res, async () => {
+            const imageFieldName = "logoImage";
+            const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
+            catchSingleImageMid(req, res, (imageReadStream) => {
+                catchInternalError(res, async () => {
+                    if (!imageReadStream) {
+                        res.status(sc.invalidInput).json(createSingleResponse(rt.requiredParamsNotFound));
+                    } else {
+                        try {
+                            const staticWebContents = await staticWebContentsRepo.addSocialLink({ socialLinkLogoImageReadStream: imageReadStream, ...req.body });
+                            res.json(staticWebContents);
+                        } catch (error) {
+                            switch (error.code) {
+                                case rc.invalidInput:
+                                    res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                    break;
+                                default:
+                                    throw error;
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    },
+    updateSocialLink: (req, res) => {
+        catchInternalError(res, async () => {
+            const id = req.params.id;
+            const imageFieldName = "logoImage";
+            const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
+            catchSingleImageMid(req, res, (imageReadStream) => {
+                catchInternalError(res, async () => {
+                    try {
+                        const staticWebContents = await staticWebContentsRepo.updateSocialLink({ id, socialLinkLogoImageReadStream: imageReadStream, ...req.body });
+                        res.json(staticWebContents);
+                    } catch (error) {
+                        switch (error.code) {
+                            case rc.invalidInput:
+                                res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                break;
+                            default:
+                                throw error;
+                        }
+                    }
+                });
+            });
+        });
+    },
+    deleteSocialLink: (req, res) => {
+        catchInternalError(res, async () => {
+            const id = req.params.id;
+            const staticWebContents = await staticWebContentsRepo.deleteSocialLink({ id });
             res.json(staticWebContents);
         });
     }
