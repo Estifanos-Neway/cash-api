@@ -92,6 +92,8 @@ module.exports = {
     invalidHowToAffiliateWithUsVideoLink: "Invalid_How_To_Affiliate_With_Us_Video_Link",
     invalidBrandLink: "Invalid_Brand_Link",
     invalidBrandRank: "Invalid_Brand_Rank",
+    invalidSocialLinkLink: "Invalid_Social_Link_Link",
+    invalidSocialLinkRank: "Invalid_Social_Link_Rank",
 
     // ContactUs
     invalidAddress: "Invalid_Address",

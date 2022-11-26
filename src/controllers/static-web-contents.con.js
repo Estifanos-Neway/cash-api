@@ -22,18 +22,8 @@ module.exports = Object.freeze({
                     if (!imageReadStream) {
                         res.status(sc.invalidInput).json(createSingleResponse(rt.requiredParamsNotFound));
                     } else {
-                        try {
-                            const staticWebContents = await staticWebContentsRepo.updateLogoImage({ imageReadStream });
-                            res.json(staticWebContents);
-                        } catch (error) {
-                            switch (error.code) {
-                                case rc.invalidInput:
-                                    res.status(sc.invalidInput).json(createSingleResponse(error.message));
-                                    break;
-                                default:
-                                    throw error;
-                            }
-                        }
+                        const staticWebContents = await staticWebContentsRepo.updateLogoImage({ imageReadStream });
+                        res.json(staticWebContents);
                     }
                 });
             });
@@ -70,18 +60,8 @@ module.exports = Object.freeze({
                     if (!imageReadStream) {
                         res.status(sc.invalidInput).json(createSingleResponse(rt.requiredParamsNotFound));
                     } else {
-                        try {
-                            const staticWebContents = await staticWebContentsRepo.updateAboutUsImage({ imageReadStream });
-                            res.json(staticWebContents);
-                        } catch (error) {
-                            switch (error.code) {
-                                case rc.invalidInput:
-                                    res.status(sc.invalidInput).json(createSingleResponse(error.message));
-                                    break;
-                                default:
-                                    throw error;
-                            }
-                        }
+                        const staticWebContents = await staticWebContentsRepo.updateAboutUsImage({ imageReadStream });
+                        res.json(staticWebContents);
                     }
                 });
             });

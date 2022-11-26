@@ -178,9 +178,9 @@ module.exports = {
         // @ts-ignore
         const socialLink = new StaticWebContents.LogoWithLink({ id, link, rank });
         if (!socialLink.hasValidLink()) {
-            throw utils.createError(rt.invalidsocialLinkLink, rc.invalidInput);
+            throw utils.createError(rt.invalidSocialLinkLink, rc.invalidInput);
         } else if (!socialLink.hasValidRank()) {
-            throw utils.createError(rt.invalidsocialLinkRank, rc.invalidInput);
+            throw utils.createError(rt.invalidSocialLinkRank, rc.invalidInput);
         } else {
             if (socialLinkLogoImageReadStream) {
                 const fileName = id;
