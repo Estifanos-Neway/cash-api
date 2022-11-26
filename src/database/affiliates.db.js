@@ -40,9 +40,10 @@ module.exports = Object.freeze({
         const affiliateDocList = await db.findMany({ model: affiliateDbModel, filter, skip, limit, select, sort });
         return affiliateDocList.map(affiliateDoc => db.adaptEntity(Affiliate, affiliateDoc, idName));
     },
-    updateOne: async (conditions, updates) => {
+    updateOne: async (conditions, updates, options) => {
+        db.sanitizeOptions(options);
         try {
-            const affiliateDoc = await db.updateOne(affiliateDbModel, conditions, updates);
+            const affiliateDoc = await db.updateOne(affiliateDbModel, conditions, updates, options);
             return db.adaptEntity(Affiliate, affiliateDoc, idName);
         } catch (error) {
             catchUniquenessErrors(error);

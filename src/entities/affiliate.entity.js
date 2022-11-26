@@ -101,6 +101,9 @@ module.exports = class Affiliate {
         return User.isValidUserId(parentId) || _.isUndefined(parentId);
     }
 
+    // childrenCount
+    childrenCount;
+
     // wallet
     wallet;
 
@@ -110,7 +113,7 @@ module.exports = class Affiliate {
     // memberSince
     memberSince;
 
-    constructor({ userId, fullName, phone, email, passwordHash, avatar, parentId, wallet, affiliationSummary, memberSince }) {
+    constructor({ userId, fullName, phone, email, passwordHash, avatar, parentId, childrenCount, wallet, affiliationSummary, memberSince }) {
         this.userId = userId;
         this.fullName = fullName;
         this.phone = phone;
@@ -118,9 +121,10 @@ module.exports = class Affiliate {
         this.passwordHash = passwordHash;
         this.avatar = avatar;
         this.parentId = parentId;
-        this.memberSince = memberSince;
+        this.childrenCount = childrenCount;
         this.wallet = wallet;
         this.affiliationSummary = affiliationSummary;
+        this.memberSince = memberSince;
     }
 
     toJson() {
@@ -132,6 +136,7 @@ module.exports = class Affiliate {
             passwordHash: this.passwordHash,
             avatar: this.avatar,
             parentId: this.parentId,
+            childrenCount: this.childrenCount,
             wallet: this.wallet,
             affiliationSummary: this.affiliationSummary,
             memberSince: this.memberSince

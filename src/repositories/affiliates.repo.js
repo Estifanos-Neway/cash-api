@@ -180,6 +180,10 @@ module.exports = Object.freeze({
             let affiliateSignIn;
             await dbSession.withTransaction(async () => {
                 let signedUpAffiliate = await affiliatesDb.create(affiliate, sessionOption);
+                const parentId = signedUpAffiliate.parentId;
+                if (parentId) {
+                    await affiliatesDb.increment({ id: parentId }, { childrenCount: 1 }, sessionOption);
+                }
                 const signUpTransactionList = await createSignUpTransactionList(signedUpAffiliate);
                 for (let transaction of signUpTransactionList) {
                     const userId = transaction.affiliate.userId;

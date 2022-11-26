@@ -49,6 +49,10 @@ const affiliateSchema = new mongoose.Schema(
             ref: "Affiliate",
             immutable: true
         },
+        childrenCount: {
+            type: Number,
+            default: 0,
+        },
         wallet: {
             totalMade: {
                 type: Number,
@@ -119,7 +123,7 @@ affiliateSchema.pre("findOneAndUpdate", async function (next) {
     // @ts-ignore
     const newEmail = this.getUpdate()?.email;
     if (newEmail) {
-        this.set({sanitizedEmail:utils.sanitizeEmail(newEmail)});
+        this.set({ sanitizedEmail: utils.sanitizeEmail(newEmail) });
     }
     next();
 });

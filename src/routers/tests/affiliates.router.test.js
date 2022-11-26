@@ -215,6 +215,7 @@ describe("/affiliates", () => {
                         ...walletAndAffiliations,
                         userId: expect.any(String),
                         passwordHash: undefined,
+                        childrenCount: 0,
                         memberSince: expectToday
                     },
                     accessToken: expect.any(String),
@@ -253,12 +254,14 @@ describe("/affiliates", () => {
                         userId: expect.any(String),
                         passwordHash: undefined,
                         parentId: affiliateA.userId,
+                        childrenCount: 0,
                         memberSince: expectToday
                     },
                     accessToken: expect.any(String),
                     refreshToken: expect.any(String),
                 });
                 affiliateB = body.affiliate;
+                affiliateA.childrenCount += 1;
             });
         });
         describe("[/sign-up] Given valid affiliate data [with valid but non-existing parent id]", () => {
@@ -290,6 +293,7 @@ describe("/affiliates", () => {
                         userId: expect.any(String),
                         passwordHash: undefined,
                         parentId: undefined,
+                        childrenCount: 0,
                         memberSince: expectToday
                     },
                     accessToken: expect.any(String),
@@ -734,6 +738,7 @@ describe("/affiliates", () => {
                         }
                     );
                 expect(statusCode1).toBe(200);
+                affiliateA.childrenCount += 1;
                 const { statusCode: statusCode2 } = await req.post(verifySignUpPath)
                     .set("Api-Key", env.API_KEY)
                     .send({ verificationToken: body1.verificationToken, verificationCode });
@@ -748,6 +753,7 @@ describe("/affiliates", () => {
                         }
                     );
                 expect(statusCode3).toBe(200);
+                affiliateB.childrenCount += 1;
                 const { statusCode: statusCode4 } = await req.post(verifySignUpPath)
                     .set("Api-Key", env.API_KEY)
                     .send({ verificationToken: body3.verificationToken, verificationCode });

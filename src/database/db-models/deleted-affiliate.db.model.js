@@ -46,6 +46,10 @@ const deletedAffiliateSchema = new mongoose.Schema(
                 ref: "Affiliate",
                 immutable: true
             },
+            childrenCount: {
+                type: Number,
+                default: 0,
+            },
             wallet: {
                 totalMade: {
                     type: Number,

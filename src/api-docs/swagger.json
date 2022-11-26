@@ -3012,6 +3012,9 @@
           "parentId": {
             "type": "string"
           },
+          "childrenCount": {
+            "type": "integer"
+          },
           "wallet": {
             "type": "object",
             "properties": {
