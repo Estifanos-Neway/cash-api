@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const multer = require("multer");
 const streamifier = require("streamifier");
-const { hasSingleValue, isPositiveNumber, isNonEmptyString, createUid, isImageMime } = require("../commons/functions");
+const { hasSingleValue, isPositiveNumber, isNonEmptyString, createUid, isImageMime, isVideoMime } = require("../commons/functions");
 const rt = require("../commons/response-texts");
 const { ordersDb } = require("../database");
 const { User } = require("../entities");
@@ -56,7 +56,7 @@ async function uploadAttachedImagesMid(req, res, next) {
         if (_.isArray(moreImages) && !_.isEmpty(moreImages)) {
             req.body.moreImages = [];
             for (let image of moreImages) {
-                if (isImageMime(image.mimetype)) {
+                if (isImageMime(image.mimetype) || isVideoMime(image.mimetype)) {
                     const imagePath = await uploadProductImage(image);
                     req.body.moreImages.push({ path: imagePath }
                     );
@@ -235,7 +235,7 @@ module.exports = Object.freeze({
             if (!productExist) {
                 res.status(404).json(createSingleResponse(rt.productNotFound));
             } else {
-                const ordersExist = await ordersDb.exists({ "product.productId": productId});
+                const ordersExist = await ordersDb.exists({ "product.productId": productId });
                 if (ordersExist) {
                     res.status(409).json(createSingleResponse(rt.pendingOrder));
                 } else {

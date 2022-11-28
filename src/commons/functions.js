@@ -109,10 +109,6 @@ async function pipe(readable, writable) {
     });
 }
 
-function isImageMime(mime) {
-    return isImage(`sudo.${mimeTypes.extension(mime)}`);
-}
-
 function removeUndefined(object) {
     Object.keys(object).forEach(key => {
         if (object[key] === undefined) {
@@ -138,7 +134,13 @@ module.exports = {
     hash,
     isPositiveNumber,
     pipe,
-    isImageMime,
+    isImageMime: (mime) => {
+        return isImage(`sudo.${mimeTypes.extension(mime)}`);
+    },
+    isVideoMime: (mime) => {
+        const videoRegExp = new RegExp(/^video/i);
+        return videoRegExp.test(mime);
+    },
     removeUndefined,
     replaceAll,
     createError: (message, code = 0) => {
