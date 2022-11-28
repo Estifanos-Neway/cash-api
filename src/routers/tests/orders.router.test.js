@@ -12,6 +12,7 @@ const testUtils = require("./test.utils");
 
 describe("/orders", () => {
     testUtils.setJestTimeout();
+    jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
     const mainPath = "/orders";
     const adminCredentials = {
         username: defaultAdmin.username,
@@ -116,7 +117,6 @@ describe("/orders", () => {
         };
 
         const verificationCode = "vCode";
-        jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
         jest.spyOn(utils, "createVerificationCode").mockReturnValue(verificationCode);
         // @ts-ignore
         const { statusCode: statusCodeSignUp, body: signUp } = await req.post("/affiliates/sign-up")

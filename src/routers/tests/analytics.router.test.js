@@ -10,6 +10,7 @@ const { Order } = require("../../entities");
 
 describe("/analytics", () => {
     testUtils.setJestTimeout();
+    jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
     const mainPath = "/analytics";
     const adminCredentials = {
         username: defaultAdmin.username,
@@ -99,7 +100,6 @@ describe("/analytics", () => {
         }
 
         const verificationCode = "vCode";
-        jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
         jest.spyOn(utils, "createVerificationCode").mockReturnValue(verificationCode);
         for (const index in affiliates) {
             // @ts-ignore

@@ -726,7 +726,6 @@ describe("/affiliates", () => {
             beforeAll(async () => {
                 const signUpPath = `${mainPath}/sign-up`;
                 const verifySignUpPath = `${mainPath}/verify-sign-up`;
-                jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
                 jest.spyOn(utils, "createVerificationCode").mockReturnValue(verificationCode);
 
                 const { statusCode: statusCode1, body: body1 } = await req.post(signUpPath)
@@ -931,6 +930,7 @@ describe("/affiliates", () => {
         describe("/password", () => {
             describe("Given valid old and new password hash", () => {
                 it("Should update the affiliates password hash", async () => {
+                    jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
                     const { body, statusCode } = await req.patch(`${mainPath}/${affiliateA.userId}/password`)
                         .set("Api-Key", env.API_KEY)
                         .set("Authorization", `Bearer ${accessTokenA}`)
@@ -1295,6 +1295,7 @@ describe("/affiliates", () => {
     describe("/recover-password", () => {
         describe("Given valid token and password hash", () => {
             it("Should update the affiliates password hash", async () => {
+                jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
                 const recoveryToken = utils.encrypt(JSON.stringify(
                     {
                         userId: affiliateA.userId,

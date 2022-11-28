@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const { makeApp } = require("../../app");
-const { hash } = require("../../commons/functions");
+const utils = require("../../commons/functions");
 const rt = require("../../commons/response-texts");
 const { defaultAdmin } = require("../../configs");
 const { createSingleResponse } = require("../../controllers/controller-commons/functions");
@@ -11,10 +11,11 @@ const testUtils = require("./test.utils");
 
 describe("/sessions", () => {
     testUtils.setJestTimeout();
+    jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
     const mainPath = "/sessions";
     const adminCredentials = {
         username: defaultAdmin.username,
-        passwordHash: hash(defaultAdmin.password)
+        passwordHash: utils.hash(defaultAdmin.password)
     };
     let request, refreshToken;
 

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { env } = require("../../env");
 const { adminsRepo } = require("../../repositories");
 const { defaultAdmin } = require("../../configs");
-const { hash } = require("../../commons/functions");
+const utils = require("../../commons/functions");
 const supertest = require("supertest");
 const { makeApp } = require("../../app");
 const rt = require("../../commons/response-texts");
@@ -12,11 +12,12 @@ const testUtils = require("./test.utils");
 
 describe("/products", () => {
     testUtils.setJestTimeout();
+    jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
     const mainPath = "/products";
 
     const adminCredentials = {
         username: defaultAdmin.username,
-        passwordHash: hash(defaultAdmin.password)
+        passwordHash: utils.hash(defaultAdmin.password)
     };
     let productA = {
         productId: undefined,

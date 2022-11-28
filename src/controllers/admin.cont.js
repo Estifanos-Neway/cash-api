@@ -6,14 +6,7 @@ const fs = require("fs");
 const dateFormat = require("date-and-time");
 const { env } = require("../env");
 const { urls } = require("../configs");
-const {
-    decrypt,
-    isEmail,
-    hasSingleValue,
-    hasValue,
-    createUseragentDeviceString,
-    replaceAll,
-    sendEmail } = require("../commons/functions");
+const utils = require("../commons/functions");
 const rt = require("../commons/response-texts");
 const {
     createSingleResponse,
@@ -32,7 +25,7 @@ module.exports = Object.freeze({
     signIn: async (req, res) => {
         catchInternalError(res, async () => {
             const { username, passwordHash } = req.body;
-            if (!hasSingleValue(username) || !hasSingleValue(passwordHash)) {
+            if (!utils.hasSingleValue(username) || !utils.hasSingleValue(passwordHash)) {
                 res.status(400).json(createSingleResponse(rt.invalidInput));
             } else {
                 const signedInAdmin = await adminsRepo.signIn({ username, passwordHash });
@@ -48,12 +41,12 @@ module.exports = Object.freeze({
                     if (adminEmail) {
                         const now = new Date();
                         const at = dateFormat.format(now, "DD/MM/YYYY hh:mm:ss");
-                        const device = createUseragentDeviceString(req.get("user-agent"));
+                        const device = utils.createUseragentDeviceString(req.get("user-agent"));
                         const ip = req.ip ?? "unknown";
-                        let signInReportEmailHtml = replaceAll(signInReportEmail, "--at--", at);
-                        signInReportEmailHtml = replaceAll(signInReportEmailHtml, "--device--", device);
-                        signInReportEmailHtml = replaceAll(signInReportEmailHtml, "--ip--", ip);
-                        await sendEmail({ subject: emailSubjects.signUpReport, html: signInReportEmailHtml, to: adminEmail });
+                        let signInReportEmailHtml = utils.replaceAll(signInReportEmail, "--at--", at);
+                        signInReportEmailHtml = utils.replaceAll(signInReportEmailHtml, "--device--", device);
+                        signInReportEmailHtml = utils.replaceAll(signInReportEmailHtml, "--ip--", ip);
+                        await utils["sendEmail"]({ subject: emailSubjects.signUpReport, html: signInReportEmailHtml, to: adminEmail });
                     }
                 } else {
                     res.status(404).json(createSingleResponse(rt.userNotFound));
@@ -85,7 +78,7 @@ module.exports = Object.freeze({
         catchInternalError(res, async () => {
             const userId = req.user.userId;
             const { oldPasswordHash, newPasswordHash } = req.body;
-            if (!hasSingleValue(oldPasswordHash) || !hasSingleValue(newPasswordHash)) {
+            if (!utils.hasSingleValue(oldPasswordHash) || !utils.hasSingleValue(newPasswordHash)) {
                 res.status(400).json(createSingleResponse(rt.invalidInput));
             } else {
                 try {
@@ -110,7 +103,7 @@ module.exports = Object.freeze({
         catchInternalError(res, async () => {
             const userId = req.user.userId;
             const { newUsername } = req.body;
-            if (!hasSingleValue(newUsername)) {
+            if (!utils.hasSingleValue(newUsername)) {
                 res.status(400).json(createSingleResponse(rt.invalidInput));
             } else {
                 try {
@@ -151,10 +144,10 @@ module.exports = Object.freeze({
     sendEmailVerification: async (req, res) => {
         catchInternalError(res, async () => {
             const { newEmail } = req.body;
-            if (!hasSingleValue(newEmail)) {
+            if (!utils.hasSingleValue(newEmail)) {
                 res.status(400).json(createSingleResponse(rt.invalidInput));
                 // @ts-ignore
-            } else if (!isEmail(newEmail)) {
+            } else if (!utils.isEmail(newEmail)) {
                 res.status(400).json(createSingleResponse(rt.invalidEmail));
             } else {
                 const html = emailVerificationEmail;
@@ -168,12 +161,12 @@ module.exports = Object.freeze({
         catchInternalError(res, async () => {
             const userId = req.user.userId;
             const { verificationCode, verificationToken } = req.body;
-            if (!hasSingleValue(verificationCode) || !hasSingleValue(verificationToken)) {
+            if (!utils.hasSingleValue(verificationCode) || !utils.hasSingleValue(verificationToken)) {
                 res.status(400).json(createSingleResponse(rt.invalidInput));
             } else {
                 let decrypted;
                 try {
-                    decrypted = decrypt(verificationToken);
+                    decrypted = utils.decrypt(verificationToken);
                 } catch (error) {
                     if (error.message === "Malformed UTF-8 data") {
                         res.status(400).json(createSingleResponse(rt.invalidToken));
@@ -194,7 +187,7 @@ module.exports = Object.freeze({
                 } else if (verificationCode !== verificationObject.verificationCode) {
                     res.status(400).json(createSingleResponse(rt.invalidVerificationCode));
                     // @ts-ignore
-                } else if (!isEmail(verificationObject.email)) {
+                } else if (!utils.isEmail(verificationObject.email)) {
                     res.status(400).json(createSingleResponse(rt.invalidToken));
                 } else {
                     try {
@@ -214,9 +207,9 @@ module.exports = Object.freeze({
     sendPasswordRecoveryEmail: async (req, res) => {
         catchInternalError(res, async () => {
             const { email } = req.body;
-            if (!hasValue(email)) {
+            if (!utils.hasValue(email)) {
                 res.status(400).json(createSingleResponse(rt.requiredParamsNotFound));
-            } else if (!isEmail(email)) {
+            } else if (!utils.isEmail(email)) {
                 res.status(400).json(createSingleResponse(rt.invalidEmail));
             } else {
                 const adminInfo = await adminsRepo.get();
@@ -226,7 +219,7 @@ module.exports = Object.freeze({
                     const adminEmail = adminInfo.email;
                     if (email !== adminEmail) {
                         res.status(400).json(createSingleResponse(rt.invalidEmail));
-                    } else if (!isEmail(adminEmail)) {
+                    } else if (!utils.isEmail(adminEmail)) {
                         res.status(404).json(createSingleResponse(rt.cantFindValidEmail));
                     } else {
                         const path = urls.passwordRecoveryPath;
@@ -242,7 +235,7 @@ module.exports = Object.freeze({
     recoverPassword: async (req, res) => {
         catchInternalError(res, async () => {
             const { recoveryToken, newPasswordHash } = req.body;
-            if (!hasSingleValue(recoveryToken) || !hasSingleValue(newPasswordHash)) {
+            if (!utils.hasSingleValue(recoveryToken) || !utils.hasSingleValue(newPasswordHash)) {
                 res.status(400).json(createSingleResponse(rt.invalidInput));
             } else {
                 const adminInfo = await adminsRepo.get();

@@ -18,6 +18,7 @@ const emailVerificationEmail = fs.readFileSync(path.resolve("src", "assets", "em
 
 describe("/admin", () => {
     testUtils.setJestTimeout();
+    jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
     const mainPath = "/admin";
     const newEmail = "cashmart.et@gmail.com";
     let emailVerificationCode = "vCODE";
@@ -55,11 +56,13 @@ describe("/admin", () => {
         const subPath = `${mainPath}/sign-in`;
         describe("Given valid username and password hash", () => {
             it("Should be successfully signed-in.", async () => {
+                // const sendEmailMock = jest.spyOn(utils, "sendEmail").mockReturnValue(Promise.resolve(true));
                 const { body, statusCode } = await request.post(subPath)
                     .set("Api-Key", env.API_KEY)
                     .send(adminCredentials);
-
                 expect(statusCode).toBe(200);
+                // expect(sendEmailMock).toHaveBeenCalledTimes(1);
+                // expect(sendEmailMock).toHaveBeenCalledWith({ subject: emailSubjects.signUpReport, html: expect.any(String), to: body.email });
                 expect(body).toHaveProperty("admin.username", adminCredentials.username);
                 accessToken = body.accessToken;
             });
