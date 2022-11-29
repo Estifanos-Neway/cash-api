@@ -91,18 +91,24 @@ module.exports = Object.freeze({
     },
     updateWhatMakesUsUnique: (req, res) => {
         catchInternalError(res, async () => {
-            try {
-                const staticWebContents = await staticWebContentsRepo.updateWhatMakesUsUnique(req.body);
-                res.json(staticWebContents);
-            } catch (error) {
-                switch (error.code) {
-                    case rc.invalidInput:
-                        res.status(sc.invalidInput).json(createSingleResponse(error.message));
-                        break;
-                    default:
-                        throw error;
-                }
-            }
+            const imageFieldName = "whatMakesUsUniqueImage";
+            const catchSingleImageMid = createCatchSingleImageMid({ imageFieldName });
+            catchSingleImageMid(req, res, (imageReadStream) => {
+                catchInternalError(res, async () => {
+                    try {
+                        const staticWebContents = await staticWebContentsRepo.updateWhatMakesUsUnique({ whatMakesUsUniqueImageReadStream: imageReadStream, ...req.body });
+                        res.json(staticWebContents);
+                    } catch (error) {
+                        switch (error.code) {
+                            case rc.invalidInput:
+                                res.status(sc.invalidInput).json(createSingleResponse(error.message));
+                                break;
+                            default:
+                                throw error;
+                        }
+                    }
+                });
+            });
         });
     },
     updateWhoAreWe: (req, res) => {

@@ -32,6 +32,7 @@ const staticWebContentsSchema = new mongoose.Schema(
         whyUsTitle: String,
         whyUsDescription: String,
         whatMakesUsUnique: [String],
+        whatMakesUsUniqueImage: imageJsonSchema,
         whoAreWeImage: imageJsonSchema,
         whoAreWeDescription: String,
         whoAreWeVideoLink: String,

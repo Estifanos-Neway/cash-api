@@ -1458,8 +1458,7 @@
                 "type": "object",
                 "properties": {
                   "avatar": {
-                    "type": "string",
-                    "format": "byte"
+                    "$ref": "#/components/schemas/Image-Input"
                   }
                 }
               }
@@ -2265,8 +2264,7 @@
                 "required": ["logoImage"],
                 "properties": {
                   "logoImage": {
-                    "type": "string",
-                    "format": "byte"
+                    "$ref": "#/components/schemas/Image-Input"
                   }
                 }
               }
@@ -2317,8 +2315,7 @@
                 ],
                 "properties": {
                   "heroImage": {
-                    "type": "string",
-                    "format": "byte"
+                    "$ref": "#/components/schemas/Image-Input"
                   },
                   "heroShortTitle": {
                     "$ref": "#/components/schemas/StaticWebContents/properties/heroShortTitle"
@@ -2369,8 +2366,7 @@
                 "required": ["aboutUsImage"],
                 "properties": {
                   "aboutUsImage": {
-                    "type": "string",
-                    "format": "byte"
+                    "$ref": "#/components/schemas/Image-Input"
                   }
                 }
               }
@@ -2417,8 +2413,7 @@
                 "required": ["whyUsTitle", "whyUsDescription"],
                 "properties": {
                   "whyUsImage": {
-                    "type": "string",
-                    "format": "byte"
+                    "$ref": "#/components/schemas/Image-Input"
                   },
                   "whyUsTitle": {
                     "$ref": "#/components/schemas/StaticWebContents/properties/whyUsTitle"
@@ -2460,11 +2455,18 @@
         "tags": ["Static Web Contents"],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+                "type": "object",
+                "description": "    'whatMakesUsUnique' must be stringified JSON",
+                "required":["whatMakesUsUnique"],
+                "properties": {
+                  "whatMakesUsUniqueImage": {
+                    "$ref": "#/components/schemas/Image-Input"
+                  },
+                  "whatMakesUsUnique": {
+                    "$ref": "#/components/schemas/StaticWebContents/properties/whatMakesUsUnique"
+                  }
                 }
               }
             }
@@ -2476,12 +2478,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "whatMakesUsUnique": {
-                      "$ref": "#/components/schemas/StaticWebContents/properties/whatMakesUsUnique"
-                    }
-                  }
+                  "$ref": "#/components/schemas/StaticWebContents_WhatMakesUsUnique"
                 }
               }
             }
@@ -2510,8 +2507,7 @@
                 "required": ["whyUsTitle", "whoAreWeVideoLink"],
                 "properties": {
                   "whoAreWeImage": {
-                    "type": "string",
-                    "format": "byte"
+                    "$ref": "#/components/schemas/Image-Input"
                   },
                   "whoAreWeDescription": {
                     "$ref": "#/components/schemas/StaticWebContents/properties/whoAreWeDescription"
@@ -2595,8 +2591,7 @@
                 "required": ["logoImage"],
                 "properties": {
                   "logoImage": {
-                    "type": "string",
-                    "format": "byte"
+                    "$ref": "#/components/schemas/Image-Input"
                   },
                   "link": {
                     "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/link"
@@ -2658,8 +2653,7 @@
                 "type": "object",
                 "properties": {
                   "logoImage": {
-                    "type": "string",
-                    "format": "byte"
+                    "$ref": "#/components/schemas/Image-Input"
                   },
                   "link": {
                     "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/link"
@@ -2749,8 +2743,7 @@
                 "required": ["logoImage"],
                 "properties": {
                   "logoImage": {
-                    "type": "string",
-                    "format": "byte"
+                    "$ref": "#/components/schemas/Image-Input"
                   },
                   "link": {
                     "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/link"
@@ -2812,8 +2805,7 @@
                 "type": "object",
                 "properties": {
                   "logoImage": {
-                    "type": "string",
-                    "format": "byte"
+                    "$ref": "#/components/schemas/Image-Input"
                   },
                   "link": {
                     "$ref": "#/components/schemas/StaticWebContents_LogoWithLink/properties/link"
@@ -3174,14 +3166,12 @@
             }
           },
           "mainImage": {
-            "type": "string",
-            "format": "byte"
+            "$ref": "#/components/schemas/Image-Input"
           },
           "moreImages": {
             "type": "array",
             "items": {
-              "type": "string",
-              "format": "byte"
+              "$ref": "#/components/schemas/Image-Input"
             }
           }
         }
@@ -3311,6 +3301,9 @@
           "whyUsDescription": {
             "type": "string"
           },
+          "whatMakesUsUniqueImage": {
+            "$ref": "#/components/schemas/Image"
+          },
           "whatMakesUsUnique": {
             "type": "array",
             "items": {
@@ -3383,9 +3376,11 @@
         }
       },
       "StaticWebContents_WhatMakesUsUnique": {
-        "type": "array",
-        "items": {
-          "type": "string"
+        "whatMakesUsUnique": {
+          "$ref": "#/components/schemas/StaticWebContents/properties/whatMakesUsUnique"
+        },
+        "whatMakesUsUniqueImage": {
+          "$ref": "#/components/schemas/StaticWebContents/properties/whatMakesUsUniqueImage"
         }
       },
       "StaticWebContents_WhoAreWe": {
@@ -3497,6 +3492,11 @@
           }
         }
       },
+      "Image-Input": {
+        "type": "string",
+        "format": "byte"
+      },
+
       "Single-Response": {
         "type": "object",
         "properties": {

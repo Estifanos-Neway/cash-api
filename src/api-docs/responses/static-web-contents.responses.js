@@ -59,6 +59,8 @@ module.exports = {
             "PUT": {
                 200: ["<staticWebContentsObject>"],
                 400: [
+                    createSingleResponse(rt.invalidInput),
+                    createSingleResponse(rt.invalidFileFormat),
                     createSingleResponse(rt.invalidWhatMakesUsUnique)
                 ],
                 401: [createSingleResponse(rt.unauthorized)]

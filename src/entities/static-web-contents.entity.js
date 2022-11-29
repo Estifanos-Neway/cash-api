@@ -134,6 +134,15 @@ module.exports = class StaticWebContents {
         }
     }
 
+    // #whatMakesUsUniqueImage
+    #whatMakesUsUniqueImage;
+    set whatMakesUsUniqueImage(imageJson) {
+        this.#whatMakesUsUniqueImage = _.isPlainObject(imageJson) ? new Image(imageJson) : undefined;
+    }
+    get whatMakesUsUniqueImage() {
+        return this.#whatMakesUsUniqueImage?.toJson();
+    }
+
     // #whoAreWeImage
     #whoAreWeImage;
     set whoAreWeImage(imageJson) {
@@ -219,6 +228,7 @@ module.exports = class StaticWebContents {
         whyUsTitle,
         whyUsDescription,
         whatMakesUsUnique,
+        whatMakesUsUniqueImage,
         whoAreWeImage,
         whoAreWeDescription,
         whoAreWeVideoLink,
@@ -238,6 +248,7 @@ module.exports = class StaticWebContents {
         this.whyUsTitle = whyUsTitle;
         this.whyUsDescription = whyUsDescription;
         this.whatMakesUsUnique = whatMakesUsUnique;
+        this.whatMakesUsUniqueImage = whatMakesUsUniqueImage;
         this.whoAreWeImage = whoAreWeImage;
         this.whoAreWeDescription = whoAreWeDescription;
         this.whoAreWeVideoLink = whoAreWeVideoLink;
@@ -260,6 +271,7 @@ module.exports = class StaticWebContents {
             whyUsTitle: this.whyUsTitle,
             whyUsDescription: this.whyUsDescription,
             whatMakesUsUnique: this.whatMakesUsUnique,
+            whatMakesUsUniqueImage: this.whatMakesUsUniqueImage,
             whoAreWeImage: this.whoAreWeImage,
             whoAreWeDescription: this.whoAreWeDescription,
             whoAreWeVideoLink: this.whoAreWeVideoLink,

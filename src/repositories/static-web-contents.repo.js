@@ -81,14 +81,28 @@ module.exports = {
         }
 
     },
-    updateWhatMakesUsUnique: async ({ whatMakesUsUnique }) => {
+    updateWhatMakesUsUnique: async ({ whatMakesUsUniqueImageReadStream, whatMakesUsUnique }) => {
+        try {
+            whatMakesUsUnique = JSON.parse(whatMakesUsUnique);
+        } catch (error) {
+            throw utils.createError(rt.invalidWhatMakesUsUnique, rc.invalidInput);
+        }
         // @ts-ignore
         const staticWebContents = new StaticWebContents({ whatMakesUsUnique });
         if (!staticWebContents.hasValidWhatMakesUsUnique()) {
             throw utils.createError(rt.invalidWhatMakesUsUnique, rc.invalidInput);
+        } else {
+            if (whatMakesUsUniqueImageReadStream) {
+                const fileName = "what-makes-us-unique";
+                const bucketName = filesDb.bucketNames.staticWebContentImages;
+                await filesDb.delete({ fileName, bucketName });
+                await filesDb.upload({ readStream: whatMakesUsUniqueImageReadStream, fileName, bucketName });
+                const path = `/images/${bucketName}/${fileName}`;
+                staticWebContents.whatMakesUsUniqueImage = new Image({ path }).toJson();
+            }
+            const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
+            return _.pick(updatedStaticWebContents, ["whatMakesUsUnique","whatMakesUsUniqueImage"]);
         }
-        const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
-        return _.pick(updatedStaticWebContents, ["whatMakesUsUnique"]);
     },
     updateWhoAreWe: async ({ whoAreWeImageReadStream, whoAreWeDescription, whoAreWeVideoLink }) => {
         // @ts-ignore

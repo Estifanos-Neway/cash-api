@@ -28,7 +28,9 @@ describe("/static-web-contents", () => {
         whyUsTitle: "whyUsTitle",
         whyUsDescription: "whyUsDescription"
     };
-    const whatMakesUsUnique = ["whatMakesUsUnique1", "whatMakesUsUnique2"];
+    const whatMakesUsUnique = {
+        whatMakesUsUnique: ["whatMakesUsUnique1", "whatMakesUsUnique2"]
+    };
     const whoAreWe = {
         whoAreWeDescription: "whoAreWeDescription",
         whoAreWeVideoLink: "whoAreWeVideoLink"
@@ -341,10 +343,38 @@ describe("/static-web-contents", () => {
                         const { body, statusCode } = await req.put(subPath)
                             .set("Api-Key", env.API_KEY)
                             .set("Authorization", `Bearer ${accessToken}`)
-                            .send({ whatMakesUsUnique });
+                            .attach("whatMakesUsUniqueImage", path.resolve("src", "assets", "images", "sample-image-1.png"))
+                            .field("whatMakesUsUnique", JSON.stringify(whatMakesUsUnique.whatMakesUsUnique));
                         expect(statusCode).toBe(200);
-                        expect(body).toEqual({ whatMakesUsUnique });
+                        expect(body).toEqual({ whatMakesUsUniqueImage: expectImage, ...whatMakesUsUnique });
                         staticWebContents = { ...staticWebContents, ...body };
+
+                        const { statusCode: imageStatusCode, text: imageText } = await req.get(body.whatMakesUsUniqueImage.path);
+                        expect(imageStatusCode).toBe(200);
+                        expect(imageText).toBeDefined();
+                    });
+                });
+                describe("Given all fields but whatMakesUsUniqueImage", () => {
+                    it("Should return staticWebContents object", async () => {
+                        whatMakesUsUnique.whatMakesUsUnique.push("whatMakesUsUnique3");
+                        const { body, statusCode } = await req.put(subPath)
+                            .set("Api-Key", env.API_KEY)
+                            .set("Authorization", `Bearer ${accessToken}`)
+                            .field("whatMakesUsUnique", JSON.stringify(whatMakesUsUnique.whatMakesUsUnique));
+                        expect(statusCode).toBe(200);
+                        expect(body).toEqual({ whatMakesUsUniqueImage: expectImage, ...whatMakesUsUnique });
+                        staticWebContents = { ...staticWebContents, ...body };
+                    });
+                });
+                describe("Given non-image file format for whatMakesUsUniqueImage field", () => {
+                    it(`Should return 400 and ${rt.invalidFileFormat}`, async () => {
+                        const { body, statusCode } = await req.put(subPath)
+                            .set("Api-Key", env.API_KEY)
+                            .set("Authorization", `Bearer ${accessToken}`)
+                            .attach("whatMakesUsUniqueImage", path.resolve("src", "assets", "files", "sample-file.txt"))
+                            .field("whatMakesUsUnique", JSON.stringify(whatMakesUsUnique.whatMakesUsUnique));
+                        expect(statusCode).toBe(400);
+                        expect(body).toEqual(createSingleResponse(rt.invalidFileFormat));
                     });
                 });
                 describe("Given non-array (invalid) whatMakesUsUnique", () => {
