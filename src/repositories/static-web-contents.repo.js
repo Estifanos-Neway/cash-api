@@ -14,9 +14,14 @@ module.exports = {
         return staticWebContents ? staticWebContents.toJson() : {};
     },
     updateLogoImage: async ({ imageReadStream }) => {
-        const fileName = "logo";
         const bucketName = filesDb.bucketNames.staticWebContentImages;
-        await filesDb.delete({ fileName, bucketName });
+        const oldStaticWebContents = await staticWebContentsDb.findOne({ select: ["logoImage"] });
+        const oldImagePath = oldStaticWebContents?.logoImage?.path;
+        if (oldImagePath) {
+            const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+            await filesDb.delete({ fileName: oldFileName, bucketName });
+        }
+        const fileName = `logo-${utils.createUid()}`;
         await filesDb.upload({ readStream: imageReadStream, fileName, bucketName });
         const path = `/images/${bucketName}/${fileName}`;
         const logoImage = new Image({ path }).toJson();
@@ -36,9 +41,14 @@ module.exports = {
             throw utils.createError(rt.invalidHeroDescription, rc.invalidInput);
         } else {
             if (heroImageReadStream) {
-                const fileName = "hero";
                 const bucketName = filesDb.bucketNames.staticWebContentImages;
-                await filesDb.delete({ fileName, bucketName });
+                const oldStaticWebContents = await staticWebContentsDb.findOne({ select: ["heroImage"] });
+                const oldImagePath = oldStaticWebContents?.heroImage?.path;
+                if (oldImagePath) {
+                    const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+                    await filesDb.delete({ fileName: oldFileName, bucketName });
+                }
+                const fileName = `hero-${utils.createUid()}`;
                 await filesDb.upload({ readStream: heroImageReadStream, fileName, bucketName });
                 const path = `/images/${bucketName}/${fileName}`;
                 staticWebContents.heroImage = new Image({ path }).toJson();
@@ -49,9 +59,14 @@ module.exports = {
 
     },
     updateAboutUsImage: async ({ imageReadStream }) => {
-        const fileName = "about-us";
         const bucketName = filesDb.bucketNames.staticWebContentImages;
-        await filesDb.delete({ fileName, bucketName });
+        const oldStaticWebContents = await staticWebContentsDb.findOne({ select: ["aboutUsImage"] });
+        const oldImagePath = oldStaticWebContents?.aboutUsImage?.path;
+        if (oldImagePath) {
+            const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+            await filesDb.delete({ fileName: oldFileName, bucketName });
+        }
+        const fileName = `about-us-${utils.createUid()}`;
         await filesDb.upload({ readStream: imageReadStream, fileName, bucketName });
         const path = `/images/${bucketName}/${fileName}`;
         const aboutUsImage = new Image({ path }).toJson();
@@ -69,9 +84,14 @@ module.exports = {
             throw utils.createError(rt.invalidWhyUsDescription, rc.invalidInput);
         } else {
             if (whyUsImageReadStream) {
-                const fileName = "why-us";
                 const bucketName = filesDb.bucketNames.staticWebContentImages;
-                await filesDb.delete({ fileName, bucketName });
+                const oldStaticWebContents = await staticWebContentsDb.findOne({ select: ["whyUsImage"] });
+                const oldImagePath = oldStaticWebContents?.whyUsImage?.path;
+                if (oldImagePath) {
+                    const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+                    await filesDb.delete({ fileName: oldFileName, bucketName });
+                }
+                const fileName = `why-us-${utils.createUid()}`;
                 await filesDb.upload({ readStream: whyUsImageReadStream, fileName, bucketName });
                 const path = `/images/${bucketName}/${fileName}`;
                 staticWebContents.whyUsImage = new Image({ path }).toJson();
@@ -93,15 +113,20 @@ module.exports = {
             throw utils.createError(rt.invalidWhatMakesUsUnique, rc.invalidInput);
         } else {
             if (whatMakesUsUniqueImageReadStream) {
-                const fileName = "what-makes-us-unique";
                 const bucketName = filesDb.bucketNames.staticWebContentImages;
-                await filesDb.delete({ fileName, bucketName });
+                const oldStaticWebContents = await staticWebContentsDb.findOne({ select: ["whatMakesUsUnique"] });
+                const oldImagePath = oldStaticWebContents?.whatMakesUsUnique?.path;
+                if (oldImagePath) {
+                    const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+                    await filesDb.delete({ fileName: oldFileName, bucketName });
+                }
+                const fileName = `what-makes-us-unique-${utils.createUid()}`;
                 await filesDb.upload({ readStream: whatMakesUsUniqueImageReadStream, fileName, bucketName });
                 const path = `/images/${bucketName}/${fileName}`;
                 staticWebContents.whatMakesUsUniqueImage = new Image({ path }).toJson();
             }
             const updatedStaticWebContents = await staticWebContentsDb.update(staticWebContents.toJson());
-            return _.pick(updatedStaticWebContents, ["whatMakesUsUnique","whatMakesUsUniqueImage"]);
+            return _.pick(updatedStaticWebContents, ["whatMakesUsUnique", "whatMakesUsUniqueImage"]);
         }
     },
     updateWhoAreWe: async ({ whoAreWeImageReadStream, whoAreWeDescription, whoAreWeVideoLink }) => {
@@ -113,9 +138,14 @@ module.exports = {
             throw utils.createError(rt.invalidWhoAreWeVideoLink, rc.invalidInput);
         } else {
             if (whoAreWeImageReadStream) {
-                const fileName = "who-are-we";
                 const bucketName = filesDb.bucketNames.staticWebContentImages;
-                await filesDb.delete({ fileName, bucketName });
+                const oldStaticWebContents = await staticWebContentsDb.findOne({ select: ["whoAreWeImage"] });
+                const oldImagePath = oldStaticWebContents?.whoAreWeImage?.path;
+                if (oldImagePath) {
+                    const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+                    await filesDb.delete({ fileName: oldFileName, bucketName });
+                }
+                const fileName = `who-are-we-${utils.createUid()}`;
                 await filesDb.upload({ readStream: whoAreWeImageReadStream, fileName, bucketName });
                 const path = `/images/${bucketName}/${fileName}`;
                 staticWebContents.whoAreWeImage = new Image({ path }).toJson();
@@ -149,9 +179,8 @@ module.exports = {
             throw utils.createError(rt.invalidBrandRank, rc.invalidInput);
         } else {
             if (brandLogoImageReadStream) {
-                const fileName = id;
                 const bucketName = filesDb.bucketNames.staticWebContentImages;
-                await filesDb.delete({ fileName, bucketName });
+                const fileName = `brand-${utils.createUid()}`;
                 await filesDb.upload({ readStream: brandLogoImageReadStream, fileName, bucketName });
                 const path = `/images/${bucketName}/${fileName}`;
                 brand.logoImage = new Image({ path }).toJson();
@@ -169,9 +198,20 @@ module.exports = {
             throw utils.createError(rt.invalidBrandRank, rc.invalidInput);
         } else {
             if (brandLogoImageReadStream) {
-                const fileName = id;
                 const bucketName = filesDb.bucketNames.staticWebContentImages;
-                await filesDb.delete({ fileName, bucketName });
+                const oldStaticWebContents = await staticWebContentsDb.findOne({ select: ["brands"] });
+                if (oldStaticWebContents?.brands) {
+                    for (const brand of oldStaticWebContents.brands) {
+                        if (brand.id == id) {
+                            const oldImagePath = brand.path;
+                            if (oldImagePath) {
+                                const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+                                await filesDb.delete({ fileName: oldFileName, bucketName });
+                            }
+                        }
+                    }
+                }
+                const fileName = `brand-${utils.createUid()}`;
                 await filesDb.upload({ readStream: brandLogoImageReadStream, fileName, bucketName });
                 const path = `/images/${bucketName}/${fileName}`;
                 brand.logoImage = new Image({ path }).toJson();
@@ -181,10 +221,20 @@ module.exports = {
         }
     },
     deleteBrand: async ({ id }) => {
-        const updatedStaticWebContents = await staticWebContentsDb.deleteBrand({ id });
-        const fileName = id;
         const bucketName = filesDb.bucketNames.staticWebContentImages;
-        await filesDb.delete({ fileName, bucketName });
+        const oldStaticWebContents = await staticWebContentsDb.findOne({ select: ["brands"] });
+        if (oldStaticWebContents?.brands) {
+            for (const brand of oldStaticWebContents.brands) {
+                if (brand.id == id) {
+                    const oldImagePath = brand.path;
+                    if (oldImagePath) {
+                        const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+                        await filesDb.delete({ fileName: oldFileName, bucketName });
+                    }
+                }
+            }
+        }
+        const updatedStaticWebContents = await staticWebContentsDb.deleteBrand({ id });
         return _.pick(updatedStaticWebContents.toJson(), ["brands"]);
     },
     addSocialLink: async ({ socialLinkLogoImageReadStream, link, rank }) => {
@@ -197,9 +247,8 @@ module.exports = {
             throw utils.createError(rt.invalidSocialLinkRank, rc.invalidInput);
         } else {
             if (socialLinkLogoImageReadStream) {
-                const fileName = id;
                 const bucketName = filesDb.bucketNames.staticWebContentImages;
-                await filesDb.delete({ fileName, bucketName });
+                const fileName = `social-link-${utils.createUid()}`;
                 await filesDb.upload({ readStream: socialLinkLogoImageReadStream, fileName, bucketName });
                 const path = `/images/${bucketName}/${fileName}`;
                 socialLink.logoImage = new Image({ path }).toJson();
@@ -217,9 +266,20 @@ module.exports = {
             throw utils.createError(rt.invalidSocialLinkRank, rc.invalidInput);
         } else {
             if (socialLinkLogoImageReadStream) {
-                const fileName = id;
                 const bucketName = filesDb.bucketNames.staticWebContentImages;
-                await filesDb.delete({ fileName, bucketName });
+                const oldStaticWebContents = await staticWebContentsDb.findOne({ select: ["socialLinks"] });
+                if (oldStaticWebContents?.socialLinks) {
+                    for (const socialLink of oldStaticWebContents.socialLinks) {
+                        if (socialLink.id == id) {
+                            const oldImagePath = socialLink.path;
+                            if (oldImagePath) {
+                                const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+                                await filesDb.delete({ fileName: oldFileName, bucketName });
+                            }
+                        }
+                    }
+                }
+                const fileName = `social-link-${utils.createUid()}`;
                 await filesDb.upload({ readStream: socialLinkLogoImageReadStream, fileName, bucketName });
                 const path = `/images/${bucketName}/${fileName}`;
                 socialLink.logoImage = new Image({ path }).toJson();
@@ -229,10 +289,20 @@ module.exports = {
         }
     },
     deleteSocialLink: async ({ id }) => {
-        const updatedStaticWebContents = await staticWebContentsDb.deleteSocialLink({ id });
-        const fileName = id;
         const bucketName = filesDb.bucketNames.staticWebContentImages;
-        await filesDb.delete({ fileName, bucketName });
+        const oldStaticWebContents = await staticWebContentsDb.findOne({ select: ["socialLinks"] });
+        if (oldStaticWebContents?.socialLinks) {
+            for (const socialLink of oldStaticWebContents.socialLinks) {
+                if (socialLink.id == id) {
+                    const oldImagePath = socialLink.path;
+                    if (oldImagePath) {
+                        const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+                        await filesDb.delete({ fileName: oldFileName, bucketName });
+                    }
+                }
+            }
+        }
+        const updatedStaticWebContents = await staticWebContentsDb.deleteSocialLink({ id });
         return _.pick(updatedStaticWebContents.toJson(), ["socialLinks"]);
     }
 };

@@ -1,4 +1,4 @@
-
+const color = require("cli-color");
 const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
@@ -39,6 +39,10 @@ exports.makeApp = () => {
         // explorer: true,
         customCssUrl: "/swagger.css"
     };
+    app.use((req, res, next) => {
+        console.log(color.blue(`INCOMING: ${req.method} ${req.originalUrl}`));
+        next();
+    });
     app.use(morgan("dev"));
     app.use(cors(
         {

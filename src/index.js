@@ -8,6 +8,7 @@ const port = app.get("port");
 
 app.listen(port, async () => {
     console.log(color.blue(`\n> Server started running at port: ${color.bold(port)}`));
+    console.log("> Connecting to the database...");
     // @ts-ignore
     await mongoose.connect(env.DB_URL, { keepAlive: true });
     console.log(color.blue("> Connected to the database\n"));
