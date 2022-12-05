@@ -312,9 +312,14 @@ module.exports = Object.freeze({
     },
     updateAvatar: async ({ userId, imageReadStream }) => {
         await validateUserIdExistence({ userId });
-        const fileName = userId;
         const bucketName = filesDb.bucketNames.avatars;
-        await filesDb.delete({ fileName, bucketName });
+        const user = await affiliatesDb.findOne({ id: userId }, ["avatar"]);
+        const oldImagePath = user?.avatar?.path;
+        if (oldImagePath) {
+            const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+            await filesDb.delete({ fileName: oldFileName, bucketName });
+        }
+        const fileName = utils.createUid();
         await filesDb.upload({ readStream: imageReadStream, fileName, bucketName });
         const path = `${avatarBasePath}/${fileName}`;
         const avatar = new Image({ path }).toJson();
@@ -323,9 +328,13 @@ module.exports = Object.freeze({
     },
     deleteAvatar: async ({ userId }) => {
         await validateUserIdExistence({ userId });
-        const fileName = userId;
         const bucketName = filesDb.bucketNames.avatars;
-        await filesDb.delete({ fileName, bucketName });
+        const user = await affiliatesDb.findOne({ id: userId }, ["avatar"]);
+        const oldImagePath = user?.avatar?.path;
+        if (oldImagePath) {
+            const oldFileName = oldImagePath.substring(oldImagePath.lastIndexOf("/") + 1);
+            await filesDb.delete({ fileName: oldFileName, bucketName });
+        }
         await affiliatesDb.updateOne({ id: userId }, { avatar: undefined });
         return true;
     },

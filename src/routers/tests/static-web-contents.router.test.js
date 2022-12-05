@@ -631,7 +631,7 @@ describe("/static-web-contents", () => {
                             .field("link", updatedBrand.link)
                             .field("rank", updatedBrand.rank);
                         expect(statusCode).toBe(200);
-                        expect(body).toEqual({ brands: [staticWebContents.brands[1], staticWebContents.brands[2], updatedBrand] });
+                        expect(body).toEqual({ brands: [staticWebContents.brands[1], staticWebContents.brands[2], {...updatedBrand,logoImage:expectImage}] });
                         staticWebContents = { ...staticWebContents, ...body };
 
                         const { statusCode: imageStatusCode, text: imageText } = await req.get(body.brands[2].logoImage.path);
@@ -652,7 +652,7 @@ describe("/static-web-contents", () => {
                             .field("link", updatedBrand.link)
                             .field("rank", updatedBrand.rank);
                         expect(statusCode).toBe(200);
-                        expect(body).toEqual({ brands: [updatedBrand, staticWebContents.brands[0], staticWebContents.brands[1]] });
+                        expect(body).toEqual({ brands: [{...updatedBrand,logoImage:expectImage}, staticWebContents.brands[0], staticWebContents.brands[1]] });
                         staticWebContents = { ...staticWebContents, ...body };
                     });
                 });
@@ -795,7 +795,7 @@ describe("/static-web-contents", () => {
                             .field("link", updatedSocialLink.link)
                             .field("rank", updatedSocialLink.rank);
                         expect(statusCode).toBe(200);
-                        expect(body).toEqual({ socialLinks: [staticWebContents.socialLinks[1], staticWebContents.socialLinks[2], updatedSocialLink] });
+                        expect(body).toEqual({ socialLinks: [staticWebContents.socialLinks[1], staticWebContents.socialLinks[2], {...updatedSocialLink,logoImage:expectImage}] });
                         staticWebContents = { ...staticWebContents, ...body };
 
                         const { statusCode: imageStatusCode, text: imageText } = await req.get(body.socialLinks[2].logoImage.path);
@@ -816,7 +816,7 @@ describe("/static-web-contents", () => {
                             .field("link", updatedSocialLink.link)
                             .field("rank", updatedSocialLink.rank);
                         expect(statusCode).toBe(200);
-                        expect(body).toEqual({ socialLinks: [updatedSocialLink, staticWebContents.socialLinks[0], staticWebContents.socialLinks[1]] });
+                        expect(body).toEqual({ socialLinks: [{...updatedSocialLink,logoImage:expectImage}, staticWebContents.socialLinks[0], staticWebContents.socialLinks[1]] });
                         staticWebContents = { ...staticWebContents, ...body };
                     });
                 });
