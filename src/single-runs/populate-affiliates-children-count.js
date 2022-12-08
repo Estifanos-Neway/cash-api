@@ -1,8 +1,3 @@
-// get all affiliate
-// for each affiliate
-//      get their children (count)
-//      update their childrenCount
-
 const mongoose = require("mongoose");
 const { affiliatesDb } = require("../database");
 const { affiliatesRepo } = require("../repositories");
